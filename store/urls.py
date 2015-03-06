@@ -1,1 +1,5 @@
-__author__ = 'kozbi'
+from django.conf.urls import patterns, include, url
+
+urlpatterns = patterns('',
+    #url(r'^/?$', , name='news-list'),
+)
