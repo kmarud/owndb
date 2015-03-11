@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Kategorie | {{ category.title }}
+{% endblock %}
+
+
+
+{% block main-title %}
+    <a href="{% url 'category-list' %}">Kategorie</a> | {{ category.title }}
+{% endblock %}
+
+
+{% load staticfiles %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block container %}
+    <ul>
+    {% for entry in form_list %}
+        <li>
+            <a href="{% url 'forminstance-list' entry.category.pk entry.pk %}">{{ entry.title }}</a>
+        </li>
+    {% endfor  %}
+    <ul/>
+
+    {% if is_paginated %}
+        {% if page_obj.has_next %}
+            <a href="{% url 'form-list' page_obj.next_page_number %}"><-</a>
+        {% endif %}
+        {% if page_obj.has_previous %}
+            <a href="{% url 'form-list' page_obj.previous_page_number %}">-></a>
+        {% endif %}
+    {% endif %}
+
+{% endblock %}

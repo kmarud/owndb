@@ -1,0 +1,16 @@
+[
+  {
+    "model": "store.type",
+    "pk": 1,
+    "fields": {
+      "name": "Text"
+    }
+  },
+  {
+    "model": "store.type",
+    "pk": 2,
+    "fields": {
+      "name": "Boolean"
+    }
+  }
+]

@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 class Category(models.Model):
     title = models.CharField(max_length=60)
     owner = models.ForeignKey(User)
+    slug = models.SlugField()
 
     class Meta:
         verbose_name = "Kategoria"
@@ -17,6 +18,7 @@ class Category(models.Model):
 class Form(models.Model):
     title = models.CharField(max_length=60)
     category = models.ForeignKey(Category)
+    slug = models.SlugField()
 
     class Meta:
         verbose_name = "Formularz"
@@ -26,15 +28,6 @@ class Form(models.Model):
         return self.title
 
 
-class FormField(models.Model):
-    form = models.ForeignKey(Form)
-    type = models.ForeignKey(Type)
-    field = models.IntegerField()
-
-    def __str__(self):
-        return self.text
-
-
 class Type(models.Model):
     name = models.CharField(max_length=60)
 
@@ -42,13 +35,33 @@ class Type(models.Model):
         return self.name
 
 
+class FormInstance(models.Model):
+    form = models.ForeignKey(Form)
+    date = models.DateTimeField('Data dodania', auto_now_add=True)
+
+    def __str__(self):
+        return str(self.pk)
+
+
+class FormField(models.Model):
+    form = models.ForeignKey(Form)
+    type = models.ForeignKey(Type)
+
+    def __str__(self):
+        return str(self.pk)
+
+
 class Text(models.Model):
+    formfield = models.ForeignKey(FormField)
+    forminstance = models.ForeignKey(FormInstance, null=True, blank=True)
     data = models.TextField(verbose_name='Treść')
-    editable = models.BooleanField()
+    label = models.BooleanField(default=False, verbose_name='Etykieta')
 
     def __str__(self):
         return self.data
 
 
 class Boolean(models.Model):
-    data = models.BooleanField()
+    formfield = models.ForeignKey(FormField)
+    forminstance = models.ForeignKey(FormInstance, null=True, blank=True)
+    data = models.BooleanField(default=False)

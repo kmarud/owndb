@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Kategorie | {{ form.category.title }} | {{ form.title }}
+{% endblock %}
+
+
+
+{% block main-title %}
+    <a href="{% url 'category-list' %}">Kategorie</a> | <a href ="{% url 'form-list' form.category.pk %}">{{ form.category.title }}</a> | {{ form.title }}
+{% endblock %}
+
+
+{% load staticfiles %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block container %}
+    <ul>
+    {% for entry in forminstance_list %}
+        <li>
+            <a href="{% url 'forminstance-detail' entry.form.category.pk entry.form.pk entry.pk %}">{{ entry.date }}</a>
+        </li>
+    {% endfor  %}
+    <ul/>
+
+    {% if is_paginated %}
+        {% if page_obj.has_next %}
+            <a href="{% url 'forminstance-list' page_obj.next_page_number %}"><-</a>
+        {% endif %}
+        {% if page_obj.has_previous %}
+            <a href="{% url 'forminstance-list' page_obj.previous_page_number %}">-></a>
+        {% endif %}
+    {% endif %}
+
+{% endblock %}

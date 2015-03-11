@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Kategorie | {{ forminstance.form.category.title }} | {{ forminstance.form.title }} | Instance {{ forminstance.pk }}
+{% endblock %}
+
+
+
+{% block main-title %}
+    <a href="{% url 'category-list' %}">Kategorie</a> |
+    <a href="{% url 'form-list' forminstance.form.category.pk %}">{{ forminstance.form.category.title }}</a> |
+    <a href="{% url 'forminstance-list' forminstance.form.category.pk forminstance.form.pk %}">{{ forminstance.form.title }}</a> |
+    Instance {{ forminstance.pk }}
+{% endblock %}
+
+
+{% load staticfiles %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block container %}
+    {% for entry in text_list %}
+            {{ entry.data }}
+        <br>
+    {% endfor  %}
+{% endblock %}
