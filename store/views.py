@@ -1,6 +1,7 @@
 from django.views.generic import ListView
 from django.views.generic import DetailView
 from store import models
+from django.db.models import Q
 
 
 class CategoryList(ListView):
@@ -9,7 +10,8 @@ class CategoryList(ListView):
     context_object_name = 'category_list'
 
 
-class FormList(ListView):
+class     \
+        FormList(ListView):
     model = models.Form
     paginate_by = 10
     context_object_name = 'form_list'
@@ -45,6 +47,6 @@ class FormInstanceDetail(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(FormInstanceDetail, self).get_context_data(**kwargs)
-        context['formfield_list'] = models.FormField.objects.filter(form__pk=self.kwargs['form'])
-        context['text_list'] = models.Text.objects.filter(forminstance__pk=self.kwargs['forminstance'])
+        context['formfield_list'] = models.FormField.objects.filter(form__pk=self.kwargs['form']).order_by('position')
+        context['text_list'] = models.Text.objects.filter(Q(forminstance__pk__isnull=True, formfield__form__pk=self.kwargs['form']) | Q(forminstance__pk=self.kwargs['forminstance'])).order_by('formfield__position')
         return context

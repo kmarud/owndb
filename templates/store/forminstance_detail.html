@@ -20,8 +20,13 @@
 {% endblock %}
 
 {% block container %}
-    {% for entry in text_list %}
-            {{ entry.data }}
+    {% i = 1 %}
+    {% for formfield in formfield_list %}
+        {% if formfield.type.pk = 1 %}
+            {% if formfield.label %}
+                {{ text_list.next() }}
+            {% endif %}
         <br>
+        {% endif %}
     {% endfor  %}
 {% endblock %}

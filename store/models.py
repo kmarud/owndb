@@ -46,6 +46,8 @@ class FormInstance(models.Model):
 class FormField(models.Model):
     form = models.ForeignKey(Form)
     type = models.ForeignKey(Type)
+    position = models.IntegerField(default=0)
+    label = models.BooleanField(default=False, verbose_name='Etykieta')
 
     def __str__(self):
         return str(self.pk)
@@ -55,7 +57,6 @@ class Text(models.Model):
     formfield = models.ForeignKey(FormField)
     forminstance = models.ForeignKey(FormInstance, null=True, blank=True)
     data = models.TextField(verbose_name='Treść')
-    label = models.BooleanField(default=False, verbose_name='Etykieta')
 
     def __str__(self):
         return self.data
