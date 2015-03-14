@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load store_extras %}
 
 {% block title %}
     Kategorie | {{ forminstance.form.category.title }} | {{ forminstance.form.title }} | Instance {{ forminstance.pk }}
@@ -20,12 +21,13 @@
 {% endblock %}
 
 {% block container %}
+    <ul>
     {% for formfield in formfield_list %}
-        {% if formfield.type.pk = 1 %}
-            {% if formfield.label %}
-                {{ text_list.next() }}
-            {% endif %}
-        <br>
+        {% if formfield.label %}
+            <li><b>{{ formfield.get_data|instance:forminstance }}</b></li>
+        {% else %}
+            <li>{{ formfield.get_data|instance:forminstance }}</li>
         {% endif %}
-    {% endfor  %}
+    {% endfor %}
+    </ul>
 {% endblock %}

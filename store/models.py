@@ -52,6 +52,13 @@ class FormField(models.Model):
     def __str__(self):
         return str(self.pk)
 
+    def get_data(self):
+        if self.type.name == "Text":
+            text = self.text_set.all()
+            return text
+        else:
+            return "Błąd"
+
 
 class Text(models.Model):
     formfield = models.ForeignKey(FormField)

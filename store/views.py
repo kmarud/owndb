@@ -10,8 +10,7 @@ class CategoryList(ListView):
     context_object_name = 'category_list'
 
 
-class     \
-        FormList(ListView):
+class FormList(ListView):
     model = models.Form
     paginate_by = 10
     context_object_name = 'form_list'
