@@ -9,4 +9,5 @@ Don't override variables in owndb/settings.py, do it in owndb/local_settings.py!
 Dependencies:
 
 > pip install pillow
+
 > pip install django-imagekit
