@@ -6,60 +6,39 @@
 {% endblock %}
 
 {% block container %}
-    <div class="forms">
+    <!-- registration -->
+    <div class="registration">
         <div class="container">
             <div class="row">
-                <div class="col-lg-3">
-                    <h3 class="form-signin-heading">Moje projekty</h3>
-                    <input name="search" type="text" id="user" class="form-control" placeholder="Wyszukaj projekt" required autofocus/>
+				<div class="col-lg-6">
+                    <h2 class="form-signin-heading">Logowanie</h2>
+                    <form action="" class="form-signin" method="post" name="passwordSignupForm">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <input name="login" type="submit" id="registration" value="Zaloguj" class="btn btn-lg btn-primary btn-block"/>
+                    </form>
+                </div>
+                <div class="col-lg-6">
+                    <form class="form-signin" method="POST" action="">
+				        <h2 class="form-signin-heading">Rejestracja</h2>
+				        	<div class="col-lg-6">
+				        		<p><input name="imie" type="text" id="user" class="form-control" placeholder="Imię" required autofocus/></p>
+				        	</div>
+				        	<div class="col-lg-6">
+				        		<input name="nazwisko" type="text" id="password" class="form-control" placeholder="Nazwisko" required/>
+				        	</div>
+				        <p><input name="email" type="email" id="email" class="form-control" placeholder="Wprowadz adres email" required/></p>
+				       	<p><input name="password" type="password" id="text" class="form-control" placeholder="Wporwadz hasło" required/></p>
+				       	<p><input name="passwordRetype" type="password" id="text" class="form-control" placeholder="Wporwadz hasło ponownie" required/></p>
+				       	<p><input name="radio" type="radio" value="remember-me">Potwierdzam przeczytanie regulaminu</p>
+				        <input name="registration" type="submit" id="registration" value="Rejestracja" class="btn btn-lg btn-primary btn-block"/>
+				    </form>
                 </div>
             </div>
-            <div class="panel panel-default">
-                <!-- Default panel contents -->
-                <div class="panel-heading">Lista dostępnych projektów  </div>
 
-                <!-- Table -->
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Nazwa</th>
-                            <th>Liczba formularzy</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for entry in category_list %}
-                            <tr>
-                                <th><img src="{% static "img/web-design.png" %}" class="img-rounded center-block"></th>
-                                <td><a href="{% url 'form-list' entry.pk %}">{{ entry.title }}</a></td>
-                                <td>{{ entry.form_set.count }}</td>
-                            </tr>
-                        {% endfor  %}
-                    </tbody>
-                </table>
-            </div>
-            <nav>
-                <ul class="pagination">
-                    {% if is_paginated %}
-                        {% if page_obj.has_previous %}
-                            <li class="disabled"><a href="{% url 'category-list' page_obj.previous_page_number %}"
-                                                    aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-                        {% endif %}
-                        {% if page_obj.has_next %}
-                            <li class="disabled"><a href="{% url 'category-list' page_obj.next_page_number %}"
-                                                    aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
-                        {% endif %}
-                    {% endif %}
-                    <!-- Page numbers
-                    <li class="active"><a href="#"> 1 <span class="sr-only">(current)</span></a></li>
-                    <li><a href="#"> 2 <span class="sr-only"></span></a></li>
-                    <li><a href="#"> 3 <span class="sr-only"></span></a></li>
-                    <li><a href="#"> 4 <span class="sr-only"></span></a></li>
-                    <li><a href="#"> 5 <span class="sr-only"></span></a></li>
-                    -->
-                </ul>
-            </nav>
         </div>
+        <!-- /.container -->
+
     </div>
-    <!-- /.forms -->
+    <!-- /.registration -->
 {% endblock %}
