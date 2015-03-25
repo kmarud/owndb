@@ -4,17 +4,19 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth import authenticate
 from django.views.generic import DetailView, FormView
-from accounts.forms import LoginForm
+from accounts.forms import RegistrationForm
+from django.contrib.auth.models import User
 
 
 class RegistrationView(FormView):
     template_name = 'accounts/registration.html'
-    form_class = LoginForm
-    success_url = 'store'
+    form_class = RegistrationForm
+    success_url = '/store'
 
     def form_valid(self, form):
-        login(self.request, form.get_account())
-        messages.success(self.request, "Logged!")
+        # Use method from form to create new user
+        form.save()
+        messages.success(self.request, "Zarejestrowano!")
         return super(RegistrationView, self).form_valid(form)
 
 
