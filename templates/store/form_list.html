@@ -1,13 +1,14 @@
+
 {% extends "base.html" %}
 
+
 {% block title %}
-    Kategorie | {{ category.title }}
+    Kategorie | {{ project.title }}
 {% endblock %}
 
 
-
 {% block main-title %}
-    <a href="{% url 'category-list' %}">Kategorie</a> | {{ category.title }}
+    <a href="{% url 'project-list' %}">Kategorie</a> | {{ project.title }}
 {% endblock %}
 
 
@@ -21,7 +22,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-3">
-                    <h3 class="form-signin-heading">Formularze projektu {{ category.title }}</h3>
+                    <h3 class="form-signin-heading">Formularze projektu {{ project.title }}</h3>
                     <input name="search" type="text" id="user" class="form-control" placeholder="Wyszukaj formularz" required autofocus/>
                 </div>
             </div>
@@ -42,7 +43,7 @@
                         {% for entry in form_list %}
                             <tr>
                                 <th><img src="{% static "img/web-design.png" %}" class="img-rounded center-block"></th>
-                                <td><a href="{% url 'forminstance-list' entry.category.pk entry.pk %}">{{ entry.title }}</a></td>
+                                <td><a href="{% url 'forminstance-list' entry.project.pk entry.pk %}">{{ entry.title }}</a></td>
                                 <td>{{ entry.forminstance_set.count }}</td>
                             </tr>
                         {% endfor  %}

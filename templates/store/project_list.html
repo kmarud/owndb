@@ -1,4 +1,6 @@
+
 {% extends "base.html" %}
+
 {% load staticfiles %}
 
 {% block title %}
@@ -16,7 +18,7 @@
             </div>
             <div class="panel panel-default">
                 <!-- Default panel contents -->
-                <div class="panel-heading">Lista dostępnych projektów  </div>
+                <div class="panel-heading">Lista dostępnych projektów </div>
 
                 <!-- Table -->
                 <table class="table">
@@ -28,7 +30,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for entry in category_list %}
+                        {% for entry in project_list %}
                             <tr>
                                 <th><img src="{% static "img/web-design.png" %}" class="img-rounded center-block"></th>
                                 <td><a href="{% url 'form-list' entry.pk %}">{{ entry.title }}</a></td>
@@ -42,11 +44,11 @@
                 <ul class="pagination">
                     {% if is_paginated %}
                         {% if page_obj.has_previous %}
-                            <li class="disabled"><a href="{% url 'category-list' page_obj.previous_page_number %}"
+                            <li class="disabled"><a href="{% url 'project-list' page_obj.previous_page_number %}"
                                                     aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
                         {% endif %}
                         {% if page_obj.has_next %}
-                            <li class="disabled"><a href="{% url 'category-list' page_obj.next_page_number %}"
+                            <li class="disabled"><a href="{% url 'project-list' page_obj.next_page_number %}"
                                                     aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
                         {% endif %}
                     {% endif %}

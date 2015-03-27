@@ -1,15 +1,18 @@
-from django.db import models
+﻿from django.db import models
 from django.contrib.auth.models import User
+from imagekit.models import ImageSpecField
+from imagekit.processors import ResizeToFill
+from owndb.settings import MEDIA_URL
+import os
 
-
-class Category(models.Model):
+class Project(models.Model):
     title = models.CharField(max_length=60)
     owner = models.ForeignKey(User)
     slug = models.SlugField()
 
     class Meta:
-        verbose_name = "Kategoria"
-        verbose_name_plural = "Kategorie"
+        verbose_name = "Projekt"
+        verbose_name_plural = "Projekty"
 
     def __str__(self):
         return self.title
@@ -17,7 +20,7 @@ class Category(models.Model):
 
 class Form(models.Model):
     title = models.CharField(max_length=60)
-    category = models.ForeignKey(Category)
+    project = models.ForeignKey(Project)
     slug = models.SlugField()
 
     class Meta:
@@ -73,3 +76,20 @@ class Boolean(models.Model):
     formfield = models.ForeignKey(FormField)
     forminstance = models.ForeignKey(FormInstance, null=True, blank=True)
     data = models.BooleanField(default=False)
+
+
+class Image(models.Model):
+    formfield = models.ForeignKey(FormField)
+    forminstance = models.ForeignKey(FormInstance, null=True, blank=True)
+    image = models.ImageField(upload_to='images')
+    thumbnailSmall = ImageSpecField(source='image',
+                                    processors=[ResizeToFill(50, 50)],
+                                    format='JPEG',
+                                    options={'quality': 80})
+
+    def __str__(self):
+        return self.image.name
+
+    def thumbnail(self):
+        return """<a href="%s"><img border="0" alt="" src="%s"/></a>""" % \
+               (os.path.join(MEDIA_URL, self.thumbnailSmall.name), os.path.join(MEDIA_URL, self.thumbnailSmall.name))

@@ -1,2 +1,11 @@
-.idea
-owndb/local_settings.py
+__pycache__
+accounts/__pycache__
+bin/
+owndb/__pycache__
+pages/__pycache__
+store/__pycache__
+temporary/
+local_settings.py
+runserver.bat
+web.config
+web.debug.config
