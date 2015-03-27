@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pl">
 {% load staticfiles %}
 <head>
@@ -35,7 +35,7 @@
     {% endblock %}
 
 </head>
-<body>
+<body style="padding-top: 40px;">
 
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
@@ -48,13 +48,14 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand topnav" href="#">owndb</a>
+                <a class="navbar-brand topnav" href="/">Owndb</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 {% if user.is_authenticated %}
+                    <a class="navbar-brand topnav" href="/store/">My projects</a>
                     <form class="navbar-form navbar-right" role="search" action="/accounts/logout">
-                            Witaj, <a href="#">{{ user.username }}</a>!
+                            Witaj, <a href="/accounts/profile">{{ user.username }}</a>!
                         <button type="submit" class="btn btn-default">Wyloguj</button>
                     </form>
                 {% else %}
@@ -89,7 +90,7 @@
                 <div class="col-lg-12">
                     <ul class="list-inline">
                         <li>
-                            <a href="#">Strona główna</a>
+                            <a href="/">Strona główna</a>
                         </li>
                         <li class="footer-menu-divider">&sdot;</li>
                         <li>
@@ -110,10 +111,25 @@
         </div>
     </footer>
 
+
+    
+
+
     <!-- jQuery -->
-    <script src="{% static "js/jquery.js" %}"></script>
+    <!--<script src="{% static "js/jquery.js" %}"></script>-->
+
+    <script src="{% static 'js/jquery-1.10.2.min.js' %}"></script>
+   
+
+
 
     <!-- Bootstrap Core JavaScript -->
     <script src="{% static "js/bootstrap.min.js" %}"></script>
+
+    <!--consider changing amount of script files beetwen subpages ,cause all they are not needed all time -->
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'js/owndb-1.0.js' %}"></script>
+    
+
 </body>
 </html>

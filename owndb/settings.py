@@ -68,6 +68,6 @@ LOGIN_URL = '/accounts/'
 MEDIA_URL = '/media/'
 
 try:
-    from local_settings import *
+    from owndb.local_settings import *
 except ImportError as e:
     pass

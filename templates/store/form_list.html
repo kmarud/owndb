@@ -8,7 +8,7 @@
 
 
 {% block main-title %}
-    <a href="{% url 'project-list' %}">Kategorie</a> | {{ project.title }}
+    <a href="{% url 'project-list' %}">Projekty</a> | {{ project.title }}
 {% endblock %}
 
 
@@ -28,7 +28,7 @@
             </div>
             <div class="panel panel-default">
                 <!-- Default panel contents -->
-                <div class="panel-heading">Lista dostępnych formularzy  </div>
+                <div class="panel-heading">Lista dostępnych formularzy | <a href="/store/add_form/">Dodaj nowy</a></div>
 
                 <!-- Table -->
                 <table class="table">

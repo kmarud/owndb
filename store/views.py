@@ -4,6 +4,43 @@ from store import models
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.shortcuts import render
+from django.http import HttpRequest
+from django.http import HttpResponse
+from django.template import RequestContext
+from datetime import datetime
+
+
+
+def add_form(request):
+    if request.POST:
+
+        #here we process POST request and insert form to database
+
+        #temp_form = Form(title='Nowy', category='aaa')
+        #temp_form.save()
+
+        names = ''
+        for name in request.POST.getlist("names[]"):
+            names += " " + name + ";"
+            #temp = FormField(form=temp_form,type='sometype')
+
+
+
+        return HttpResponse("Form was added successfully! Number of fields is " + request.POST.get('number') + ". \nNames of fields are:" + names)
+
+    else:
+
+        return render(
+            request,
+            'store/add_form.html',
+            context_instance = RequestContext(request,
+            {
+                'title':'',
+
+            })
+        )
+
 
 
 # Check if guest is a logged user

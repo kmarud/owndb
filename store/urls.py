@@ -14,4 +14,5 @@ urlpatterns = patterns(
 	url(r'^(?P<project>[\w\-\_]+)/(?P<form>[\w\-\_]+)$', FormInstanceList.as_view(), name='forminstance-list'),
 	url(r'^(?P<project>[\w\-\_]+)/(?P<form>[\w\-\_]+)/(?P<forminstance>[\w\-\_]+)/(?P<page>[0-9]+)/$', FormInstanceDetail.as_view(), name='forminstance-detail'),
 	url(r'^(?P<project>[\w\-\_]+)/(?P<form>[\w\-\_]+)/(?P<forminstance>[\w\-\_]+)$', FormInstanceDetail.as_view(), name='forminstance-detail'),
-	)
+	url(r'^add_form', 'store.views.add_form', name='add_form'),
+    )
