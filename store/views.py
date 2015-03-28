@@ -2,19 +2,19 @@ from django.views.generic import ListView
 from django.views.generic import DetailView
 from store import models
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required
+from allauth.account.decorators import verified_email_required
 from django.utils.decorators import method_decorator
 
 
 # Check if guest is a logged user
-class LoggedInMixin(object):
+class VerifiedMixin(object):
     # Transform function decorator into method decorator
-    @method_decorator(login_required)
+    @method_decorator(verified_email_required)
     def dispatch(self, *args, **kwargs):
-        return super(LoggedInMixin, self).dispatch(*args, **kwargs)
+        return super(VerifiedMixin, self).dispatch(*args, **kwargs)
 
 
-class CategoryList(LoggedInMixin, ListView):
+class CategoryList(VerifiedMixin, ListView):
     model = models.Category
     paginate_by = 6
     context_object_name = 'category_list'
@@ -23,7 +23,7 @@ class CategoryList(LoggedInMixin, ListView):
         return self.model.objects.filter(owner__pk=self.request.user.pk)
 
 
-class FormList(LoggedInMixin, ListView):
+class FormList(VerifiedMixin, ListView):
     model = models.Form
     paginate_by = 10
     context_object_name = 'form_list'
@@ -37,7 +37,7 @@ class FormList(LoggedInMixin, ListView):
         return context
 
 
-class FormInstanceList(LoggedInMixin, ListView):
+class FormInstanceList(VerifiedMixin, ListView):
     model = models.FormInstance
     paginate_by = 10
     context_object_name = 'forminstance_list'

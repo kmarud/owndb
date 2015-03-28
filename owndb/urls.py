@@ -10,5 +10,6 @@ from django.contrib import admin
 urlpatterns = patterns('',
                        url(r'^admin/', include(admin.site.urls)),
                        url(r'^store/', include('store.urls')),
-                       url(r'^accounts/', include('accounts.urls')),
+                       url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/accounts/login'}),
+                       url(r'^accounts/', include('allauth.urls')),
                        )
