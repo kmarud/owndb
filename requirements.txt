@@ -1,0 +1,13 @@
+defusedxml==0.4.1
+Django==1.7.5
+django-allauth==0.19.1
+django-appconf==1.0.1
+django-imagekit==3.2.6
+oauthlib==0.7.2
+pilkit==1.1.12
+Pillow==2.7.0
+psycopg2==2.6
+python3-openid==3.0.5
+requests==2.6.0
+requests-oauthlib==0.4.2
+six==1.9.0
