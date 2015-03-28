@@ -61,7 +61,7 @@
                 {% else %}
                     <ul class="nav navbar-nav navbar-right">
                         <li>
-                            <a href="#">Zarejestruj się</a>
+                            <a href="{% url 'login' %}">Zarejestruj się</a>
                         </li>
                     </ul>
                     <form class="navbar-form navbar-right" role="search" action="{% url 'login' %}" method="POST">

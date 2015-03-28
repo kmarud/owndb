@@ -106,7 +106,7 @@ $(function () {
         start: function (e, ui) {
             ui.placeholder.height(ui.item.height());
         }
-    }).disableSelection();
+    });
 
     $('#add_form').bind('keypress keydown keyup', function (e) {
         if (e.keyCode == 13) { e.preventDefault(); }

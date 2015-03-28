@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+﻿from django.conf.urls import patterns, include, url
 from store.views import ProjectList
 from store.views import FormList
 from store.views import FormInstanceList

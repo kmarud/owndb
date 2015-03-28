@@ -1,4 +1,4 @@
-from django.contrib import admin
+﻿from django.contrib import admin
 from store.models import Project
 from store.models import Form
 from store.models import Type

@@ -1,4 +1,4 @@
-
+﻿
 {% extends "base.html" %}
 
 
@@ -20,9 +20,13 @@
 {% block container %}
     <div class="forms">
         <div class="container">
-            <div class="row">
+			<div class="row">
+				<div class="col-lg-6">
+					<h3 class="form-signin-heading">Formularze projektu: {{ project.title }}</h3>
+				</div>
+			</div>
+			<div class="row" style="margin-bottom:10px;">
                 <div class="col-lg-3">
-                    <h3 class="form-signin-heading">Formularze projektu {{ project.title }}</h3>
                     <input name="search" type="text" id="user" class="form-control" placeholder="Wyszukaj formularz" required autofocus/>
                 </div>
             </div>

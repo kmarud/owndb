@@ -1,15 +1,13 @@
-
+﻿
 {% extends "base.html" %}
 
 {% block title %}
     Add form
 {% endblock %}
 
-
 {% block main-title %}
    
 {% endblock %}
-
 
 {% load staticfiles %}
 
@@ -19,31 +17,20 @@
 {% block container %}
     <div class="forms">
         <div class="container">
-           
-            <div style="position:relative; margin-top:50px;" class="panel panel-default">
-
-
-
-               <h3>Here you can design form</h3>
-                <form id="add_form">
-                    {% csrf_token %}
-	                <p>
-                        <a id="add_field" style="cursor:pointer">Add new field</a>
-	                </p>
-                    <table id="fields_wrapper" style="border-bottom:10px; border-collapse:separate">
-                        <tbody></tbody>
-                    </table>
-                    <p>Drag and drop fields to reorder them.</p>
-                    <p>
-                        <input id="add_button" type="hidden" value="Add this form to project" />
-                    </p>
-                </form>
-
-
-
-
-            </div>
-            
+		   <h3>Design new form</h3>
+			<form id="add_form">
+				{% csrf_token %}
+				<p>
+					<a id="add_field" style="cursor:pointer">Add new field</a>
+				</p>
+				<table id="fields_wrapper" style="border-bottom:10px; border-collapse:separate">
+					<tbody></tbody>
+				</table>
+				<p>Drag and drop fields to reorder them.</p>
+				<p>
+					<input id="add_button" type="hidden" value="Add this form to project" />
+				</p>
+			</form>
         </div>
     </div>
     <!-- /.forms -->
