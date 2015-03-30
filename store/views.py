@@ -8,38 +8,36 @@ from django.shortcuts import render
 from django.http import HttpRequest
 from django.http import HttpResponse
 from django.template import RequestContext
+from django.template.defaultfilters import slugify
 from datetime import datetime
 
 
-
-def add_form(request):
+def add_form(request,project):
     if request.POST:
+    
+        if request.POST.get('title') == '':
+            return HttpResponse("Form name can't be empty!")
 
-        #here we process POST request and insert form to database
-
-        #temp_form = Form(title='Nowy', category='aaa')
-        #temp_form.save()
-
-        names = ''
+        p = models.Project.objects.get(id=project)
+        f = models.Form(
+                title=request.POST.get('title'),
+                project=p, 
+                slug = slugify(request.POST.get('title'))
+            )
+        f.save()
+        
+        i = 0
         for name in request.POST.getlist("names[]"):
-            names += " " + name + ";"
-            #temp = FormField(form=temp_form,type='sometype')
+            t = models.Type.objects.get(name=request.POST.getlist("types[]")[i])
+            ff = models.FormField(form=f, type=t, caption=name, position=i)
+            ff.save()
+            i = i + 1
 
-
-
-        return HttpResponse("Form was added successfully! Number of fields is " + request.POST.get('number') + ". \nNames of fields are:" + names)
+        return HttpResponse("OK")
 
     else:
 
-        return render(
-            request,
-            'store/add_form.html',
-            context_instance = RequestContext(request,
-            {
-                'title':'',
-
-            })
-        )
+        return render(request, 'store/add_form.html', context_instance = RequestContext(request, {'project': project,}))
 
 
 
@@ -53,7 +51,7 @@ class LoggedInMixin(object):
 
 class ProjectList(LoggedInMixin, ListView):
     model = models.Project
-    paginate_by = 1
+    paginate_by = 2
     context_object_name = 'project_list'
 
     def get_queryset(self):

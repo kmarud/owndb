@@ -1,4 +1,4 @@
-﻿[
+[
   {
     "model": "store.type",
     "pk": 1,
@@ -10,7 +10,42 @@
     "model": "store.type",
     "pk": 2,
     "fields": {
-      "name": "Boolean"
+      "name": "Number"
+    }
+  },
+  {
+    "model": "store.type",
+    "pk": 3,
+    "fields": {
+      "name": "Choice"
+    }
+  },
+  {
+    "model": "store.type",
+    "pk": 4,
+    "fields": {
+      "name": "Checkbox"
+    }
+  },
+  {
+    "model": "store.type",
+    "pk": 5,
+    "fields": {
+      "name": "Picture"
+    }
+  },
+  {
+    "model": "store.type",
+    "pk": 6,
+    "fields": {
+      "name": "File"
+    }
+  },
+  {
+    "model": "store.type",
+    "pk": 7,
+    "fields": {
+      "name": "Connection"
     }
   }
 ]

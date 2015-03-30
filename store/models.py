@@ -37,18 +37,11 @@ class Type(models.Model):
     def __str__(self):
         return self.name
 
-
-class FormInstance(models.Model):
-    form = models.ForeignKey(Form)
-    date = models.DateTimeField('Data dodania', auto_now_add=True)
-
-    def __str__(self):
-        return str(self.pk)
-
-
 class FormField(models.Model):
     form = models.ForeignKey(Form)
     type = models.ForeignKey(Type)
+    caption = models.CharField(max_length=200)
+    settings = models.CharField(max_length=1000, null=True)
     position = models.IntegerField(default=0)
     label = models.BooleanField(default=False, verbose_name='Etykieta')
 
@@ -61,6 +54,15 @@ class FormField(models.Model):
             return text
         else:
             return "Błąd"
+
+
+class FormInstance(models.Model):
+    form = models.ForeignKey(Form)
+    date = models.DateTimeField('Data dodania', auto_now_add=True)
+
+    def __str__(self):
+        return str(self.pk)
+
 
 
 class Text(models.Model):

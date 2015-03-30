@@ -1,15 +1,22 @@
 /* 
- * Owndb client-side logic.
- * Designing new form script.
+ * Adding new form client-side logic.
  */
 
-$(function () {
+$(function add_new_form() {
 
     var $wrapper = $("#fields_wrapper tbody");
     
-    var plaintext_settings = '<p>Content can be nullable: <input class="nullable" type="checkbox" /></p>';
+    var plaintext_settings = '\
+		<p>Not null: <input class="notnull" type="checkbox" /> | Multiline: <input class="multiline" type="checkbox" /></p>';
+		
+	var number_settings = '\
+		<p>Not null: <input class="notnull" type="checkbox" /> | Natural values: <input class="natural" type="checkbox" /></p>'
 
-    //insert field area
+    var choice_settings = '\
+		<p class="options_block">\
+			<a class="add_option" style="cursor:pointer">Add option</a>\
+		</p>';
+
     $("#add_field").click(function (e) {
         e.preventDefault();
         $($wrapper).append(
@@ -21,13 +28,13 @@ $(function () {
                     <div class="field_settings">\
                         <p>Choose type:&nbsp;\
                             <select class="field_type">\
-                                <option value="text">Plain text</option>\
-                                <option value="number">Number</option>\
-                                <option value="choice">Choice (single)</option>\
-                                <option value="checkbox">Checkbox (multiple)</option>\
-                                <option value="picture">Picture</option>\
-                                <option value="file">File upload</option>\
-                                <option value="connection">Connect with other form</option>\
+                                <option value="Text">Plain text</option>\
+                                <option value="Number">Number</option>\
+                                <option value="Choice">Choice (single)</option>\
+                                <option value="Checkbox">Checkbox (multiple)</option>\
+                                <option value="Picture">Picture</option>\
+                                <option value="File">File upload</option>\
+                                <option value="Connection">Connect with other form</option>\
                             </select>\
                         </p>\
                         ' + plaintext_settings + '\
@@ -42,23 +49,20 @@ $(function () {
             $('#add_button').get(0).type = 'submit';
     });
 
-    //remove field area
     $($wrapper).on("click", ".remove_field", function () {
         $(this).parent().closest('tr').remove();
         if ($(".field_cell").length == 0)
             $('#add_button').get(0).type = 'hidden';
     });
 
-    var number_settings = '<p>This field accepts all type of numbers.</p>'
-
-    var choice_settings = '<p class="options_block"><a class="add_option" style="cursor:pointer">Add option</a></p>';
-
-
     //insert radio option
     $($wrapper).on("click", ".add_option", function () {
-        $(this).parent().append(
-            '<div><input type="radio" /> <input class="radio_field" type="text" placeholder=" set option name" />\
-             <a class="remove_option" style="cursor:pointer">Remove</a></div>'
+        $(this).parent().append('\
+			<div>\
+				<input type="radio" name="r" />&nbsp;\
+				<input class="radio_field" type="text" placeholder=" set option name" />\
+				<a class="remove_option" style="cursor:pointer">Remove</a>\
+			</div>'
         );
     });
 
@@ -72,13 +76,13 @@ $(function () {
         $(this).parent('p').siblings().remove();
         var settings = "";
         switch ($(this).find('option:selected').val()) {
-            case "text":
+            case "Text":
                 settings = plaintext_settings;
                 break;
-            case "number":
+            case "Number":
                 settings = number_settings;
                 break;
-            case "choice":
+            case "Choice":
                 settings = choice_settings;
                 break;
             default:
@@ -107,21 +111,21 @@ $(function () {
             ui.placeholder.height(ui.item.height());
         }
     });
-
+	
+	//preventing accidental enter
     $('#add_form').bind('keypress keydown keyup', function (e) {
         if (e.keyCode == 13) { e.preventDefault(); }
     });
 
-    var process_address = "/store/add_form/"
-    var after_process = "/store/"
-
+	
     var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
 
     //parse form and send
     $("#add_form").submit(function (e) {
         e.preventDefault();
 
-        //here we parse form to send data to server
+		var title = $("#form_name").val();
+		
         var field_quantity = $(".field_cell").length;
 
         var field_names = [];
@@ -131,22 +135,35 @@ $(function () {
             i = i + 1;
         });
 
+        var field_types = [];
+        var i = 0;
+        $(".field_type").each(function () {
+            field_types[i] = $(this).find('option:selected').val();
+            i = i + 1;
+        });
+		
+		var after_process = $(this).attr('action');
+		var process_address = after_process + "/add_form/";
+
         $.ajax({
             url: process_address,
             method: "POST",
             data: {
-                csrfmiddlewaretoken: token,
-                number: field_quantity,
-                names: field_names
+                'csrfmiddlewaretoken': token,
+				'title': title,
+                'number': field_quantity,
+                'names': field_names,
+                'types': field_types
             }
         }).done(function (data) {
-            alert(data); //check data, if there are some errors display them, if no redirect
+            if (data == "OK") {
+				redirect = true;
+				$(location).attr('href', after_process);
+			} else {
+				alert(data);
+			}
         }).fail(function () {
             alert("Some error occured while sending data. Try again later.");
-        }).always(function () {
-            alert("Now we redirect you to your project view.");
-            redirect = true;
-            $(location).attr('href', after_process);
         });
     });
 

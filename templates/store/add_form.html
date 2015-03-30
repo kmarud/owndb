@@ -18,8 +18,11 @@
     <div class="forms">
         <div class="container">
 		   <h3>Design new form</h3>
-			<form id="add_form">
+			<form id="add_form" action="/store/{{ project }}">
 				{% csrf_token %}
+				<p>
+					<input type="text" id="form_name" placeholder="set form name" style="width:250px"/>
+				</p>
 				<p>
 					<a id="add_field" style="cursor:pointer">Add new field</a>
 				</p>
