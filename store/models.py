@@ -3,7 +3,9 @@ from django.contrib.auth.models import User
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from owndb.settings import MEDIA_URL
+from django.utils.html import format_html
 import os
+
 
 class Category(models.Model):
     title = models.CharField(max_length=60)
@@ -56,11 +58,11 @@ class FormField(models.Model):
         return str(self.pk)
 
     def get_data(self):
-        if self.type.name == "Text":
-            text = self.text_set.all()
-            return text
-        else:
-            return "Błąd"
+        data = {
+            'Text': self.text_set.all(),
+            'Image': self.image_set.all(),
+        }[self.type.name]
+        return data
 
 
 class Text(models.Model):
@@ -68,7 +70,7 @@ class Text(models.Model):
     forminstance = models.ForeignKey(FormInstance, null=True, blank=True)
     data = models.TextField(verbose_name='Treść')
 
-    def __str__(self):
+    def display(self):
         return self.data
 
 
@@ -90,6 +92,6 @@ class Image(models.Model):
     def __str__(self):
         return self.image.name
 
-    def thumbnail(self):
-        return """<a href="%s"><img border="0" alt="" src="%s"/></a>""" % \
-               (os.path.join(MEDIA_URL, self.thumbnailSmall.name), os.path.join(MEDIA_URL, self.thumbnailSmall.name))
+    def display(self):
+        return format_html('<img border="0" alt="" src="{0}"/>', os.path.join(MEDIA_URL, self.image.name))
+    display.allow_tags = True

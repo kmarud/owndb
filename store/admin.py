@@ -1,4 +1,6 @@
 from django.contrib import admin
+from imagekit.admin import AdminThumbnail
+
 from store.models import Category
 from store.models import Form
 from store.models import Type
@@ -18,7 +20,8 @@ class FormAdmin(admin.ModelAdmin):
 
 
 class ImageAdmin(admin.ModelAdmin):
-    list_display = ["__str__", "thumbnail"]
+    list_display = ["__str__", "admin_thumbnail"]
+    admin_thumbnail = AdminThumbnail(image_field='thumbnailSmall')
 
 
 admin.site.register(Category, CategoryAdmin)
