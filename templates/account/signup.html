@@ -23,14 +23,14 @@
 
 						Korzystanie z Usług nie daje użytkownikowi żadnych praw własności intelektualnej do Usług ani do dostępnych treści. Materiałów pochodzących z Usług nie wolno wykorzystywać, chyba że ich właściciel udzieli na to pozwolenia lub jest to w inny sposób dozwolone przez prawo. Niniejsze warunki nie powodują przyznania użytkownikowi prawa do wykorzystania jakichkolwiek marek i logo użytych w Usługach. Nie wolno usuwać, zasłaniać ani zmieniać żadnych informacji prawnych wyświetlanych w Usługach lub w związku z nimi.</p>
                 </div>
-                <div class="col-lg-5">
-                    <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+                <div class="col-lg-4">
+                    <form class="form-signin" id="signup_form" method="post" action="{% url 'account_signup' %}">
                       {% csrf_token %}
                       {{ form.as_p }}
                       {% if redirect_field_value %}
                       <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
                       {% endif %}
-                      <button type="submit">Rejestruj</button>
+                      <input name="registration" type="submit" id="registration" value="Rejestracja" class="btn btn-lg btn-success btn-block"/>
                     </form>
                 </div>
             </div>

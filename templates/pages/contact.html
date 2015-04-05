@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}
+    Owndb - kontakt
+{% endblock %}
+
+
+{% block container %}
+    
+
+
+<div class="container" style="margin-top: 40px">
+    <div class="row">
+        <div class="col-lg-12">
+        	<div class="panel panel-primary">
+			  <div class="panel-heading">
+			    <h3 class="panel-title"><a href="/">Strona główna</a> / <a href="/contact">Kontakt</a></h3>
+			  </div>
+			  <div class="panel-body">
+			    <div class="row">
+			    	<div class="col-lg-5">
+			    		<form>
+
+			    		  <div clas="form-grup">
+			    		  	<label for="topic">Temat</label>
+						  	<select class="form-control">
+							  <option>Problemy techniczne</option>
+							  <option>Inne</option>
+							</select>
+						  </div>
+
+						  <div class="form-group">
+						    <label for="name">Imię</label>
+						    <input type="text" class="form-control" id="name" placeholder="Wpisz swoje imię">
+						  </div>
+
+						  <div class="form-group">
+						    <label for="email">Email</label>
+						    <input type="text" class="form-control" id="email" placeholder="Wpisz swój email">
+						  </div>
+				    
+						  
+						  <div class="form-group">
+						    <label for="text">Treść</label>
+						    <textarea class="form-control" rows="10" name="text" placeholder="Wpisz treść"></textarea>
+						  </div>
+						 
+						  <button type="submit" class="btn btn-default">Submit</button>
+						</form>
+			    	</div>
+			    </div>
+			  </div>
+			</div>
+        </div>
+    </div>
+</div>
+
+	
+{% endblock %}
