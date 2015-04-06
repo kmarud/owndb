@@ -1,10 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.html import format_html
+import os
+
+# Image type
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from owndb.settings import MEDIA_URL
-from django.utils.html import format_html
-import os
+from django.dispatch import receiver
+from django.db.models.signals import post_delete
 
 
 class Category(models.Model):
@@ -95,3 +99,15 @@ class Image(models.Model):
     def display(self):
         return format_html('<img border="0" alt="" src="{0}"/>', os.path.join(MEDIA_URL, self.image.name))
     display.allow_tags = True
+
+
+# Automatically delete photo file when database object is being deleted
+@receiver(post_delete, sender=Image)
+def photo_post_delete_handler(sender, **kwargs):
+    photo = kwargs['instance']
+    storage, path = photo.image.storage, photo.image.path
+    storage.delete(path)
+    storage, path = photo.thumbnailSmall.storage, photo.thumbnailSmall.path
+    storage.delete(path)
+    # Delete empty folder created by django-imagekit
+    os.rmdir(os.path.dirname(path))
