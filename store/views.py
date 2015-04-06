@@ -61,6 +61,13 @@ class FormInstanceDetail(DetailView):
         context = super(FormInstanceDetail, self).get_context_data(**kwargs)
         context['formfield_list'] = models.FormField.objects.filter(form__pk=self.kwargs['form']).order_by('position')
         context['text_list'] = models.Text.objects.filter(
-            Q(forminstance__pk__isnull=True, formfield__form__pk=self.kwargs['form'])
-            | Q(forminstance__pk=self.kwargs['forminstance'])).order_by('formfield__position')
+            # Get text labels
+            Q(forminstance__pk__isnull=True, formfield__form__pk=self.kwargs['form']) |
+            # Get text data
+            Q(forminstance__pk=self.kwargs['forminstance'])).order_by('formfield__position')
+        context['image_list'] = models.Image.objects.filter(
+            # Get image labels
+            Q(forminstance__pk__isnull=True, formfield__form__pk=self.kwargs['form']) |
+            # Get image data
+            Q(forminstance__pk=self.kwargs['forminstance'])).order_by('formfield__position')
         return context

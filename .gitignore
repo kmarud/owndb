@@ -1,2 +1,6 @@
+*.pyc
+*.pyo
+
 .idea
 owndb/local_settings.py
+media

@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
+    'imagekit',
     'store',
 )
 
@@ -137,6 +138,7 @@ STATICFILES_DIRS = (
 )
 
 LOGIN_URL = '/accounts/login'
+MEDIA_URL = '/media/'
 
 try:
     from owndb.local_settings import *
