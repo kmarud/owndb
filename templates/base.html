@@ -16,6 +16,8 @@
 
     <!-- Custom CSS -->
     <link href="{% static "css/landing-page.css" %}" rel="stylesheet">
+	
+	<link href="{% static "css/owndb-1.0.css" %}" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="{% static "font-awesome/css/font-awesome.min.css" %}" rel="stylesheet" type="text/css">
@@ -35,7 +37,7 @@
     {% endblock %}
 
 </head>
-<body style="padding-top: 40px;">
+<body>
 
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
@@ -128,6 +130,7 @@
 
     <!--consider changing amount of script files beetwen subpages ,cause all they are not needed all time -->
     <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+	<script src="{% static 'js/jquery.livequery.min.js' %}"></script>
     <script src="{% static 'js/owndb-1.0.js' %}"></script>
     
 

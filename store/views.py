@@ -10,13 +10,20 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.template.defaultfilters import slugify
 from datetime import datetime
+from django.views.generic import View
+import re
 
 
-def add_form(request,project):
-    if request.POST:
+class AddForm(View):
     
-        if request.POST.get('title') == '':
-            return HttpResponse("Form name can't be empty!")
+    def get(self, request, project):
+        return render(request, 'store/add_form.html', context_instance = RequestContext(request, {'project': project,}))
+    
+    def post(self, request, project):
+
+        title_pattern = re.compile("^([a-zA-Z0-9][a-zA-Z0-9 ]*[a-zA-Z0-9])$")
+        if not title_pattern.match(request.POST.get('title')):
+            return HttpResponse("Form name is invalid (letters, digits and spaces between allowed)!")
 
         p = models.Project.objects.get(id=project)
         f = models.Form(
@@ -28,19 +35,29 @@ def add_form(request,project):
         
         i = 0
         for name in request.POST.getlist("names[]"):
-            t = models.Type.objects.get(name=request.POST.getlist("types[]")[i])
-            ff = models.FormField(form=f, type=t, caption=name, position=i)
+            ff = models.FormField(
+                form=f, 
+                type=models.Type.objects.get(name=request.POST.getlist("types[]")[i]),
+                caption=name, 
+                settings=request.POST.getlist("settings[]")[i],
+                position=i
+            )
             ff.save()
             i = i + 1
 
         return HttpResponse("OK")
 
-    else:
+        
+class UseForm(View):
 
-        return render(request, 'store/add_form.html', context_instance = RequestContext(request, {'project': project,}))
-
-
-
+    def get(self, request, project, form):
+        return render(request, 'store/use_form.html', context_instance = RequestContext(request, {'project': project, 'form': form,}))
+        
+    def post(self, request, project, form):
+        return HttpResponse("OK")
+        
+        
+        
 # Check if guest is a logged user
 class LoggedInMixin(object):
     # Transform function decorator into method decorator
