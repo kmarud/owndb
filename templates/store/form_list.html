@@ -3,12 +3,12 @@
 
 
 {% block title %}
-    Kategorie | {{ project.title }}
+    Projects | {{ project.title }}
 {% endblock %}
 
 
 {% block main-title %}
-    <a href="{% url 'project-list' %}">Projekty</a> | {{ project.title }}
+    <a class="navbar-brand topnav" href="{% url 'form-list' project.pk %}">{{ project.title }}</a>
 {% endblock %}
 
 
@@ -22,26 +22,26 @@
         <div class="container">
 			<div class="row">
 				<div class="col-lg-6">
-					<h3 class="form-signin-heading">Formularze projektu: {{ project.title }}</h3>
+					<h3 class="form-signin-heading">Forms of {{ project.title }}</h3>
 				</div>
 			</div>
 			<div class="row" style="margin-bottom:10px;">
                 <div class="col-lg-3">
-                    <input name="search" type="text" id="user" class="form-control" placeholder="Wyszukaj formularz" required autofocus/>
+                    <input name="search" type="text" id="user" class="form-control" placeholder="Search form" required autofocus/>
                 </div>
             </div>
             <div class="panel panel-default">
                 <!-- Default panel contents -->
-                <div class="panel-heading">Lista dostępnych formularzy | <a href="/store/{{ project.pk }}/add/">Dodaj nowy formularz</a></div>
+                <div class="panel-heading">List of available forms | <a href="/store/{{ project.pk }}/add/">Design new form</a></div>
 
                 <!-- Table -->
                 <table class="table">
                     <thead>
                         <tr>
                             <th></th>
-                            <th>Nazwa</th>
-                            <th>Liczba instancji formularza</th>
-							<th>Opcje</th>
+                            <th>Title</th>
+                            <th>Instances count</th>
+							<th>Tasks</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,9 +50,9 @@
                                 <th><img src="{% static "img/web-design.png" %}" class="img-rounded center-block"></th>
                                 <td><a href="{% url 'forminstance-list' entry.project.pk entry.pk %}">{{ entry.title }}</a></td>
                                 <td>{{ entry.forminstance_set.count }}</td>
-								<td><a href="{% url 'forminstance-list' entry.project.pk entry.pk %}/add/">Dodaj instancję</a></td>
+								<td><a href="{% url 'forminstance-list' entry.project.pk entry.pk %}add/">Add new instance</a></td>
                             </tr>
-                        {% endfor  %}
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -68,13 +68,7 @@
                                                     aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
                         {% endif %}
                     {% endif %}
-                    <!-- Page numbers
-                    <li class="active"><a href="#"> 1 <span class="sr-only">(current)</span></a></li>
-                    <li><a href="#"> 2 <span class="sr-only"></span></a></li>
-                    <li><a href="#"> 3 <span class="sr-only"></span></a></li>
-                    <li><a href="#"> 4 <span class="sr-only"></span></a></li>
-                    <li><a href="#"> 5 <span class="sr-only"></span></a></li>
-                    -->
+
                 </ul>
             </nav>
         </div>

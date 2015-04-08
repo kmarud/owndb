@@ -2,12 +2,12 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Kategorie | {{ form.project.title }} | {{ form.title }}
+    Instances | {{ form.project.title }} | {{ form.title }}
 {% endblock %}
 
 
 {% block main-title %}
-    <a href="{% url 'project-list' %}">Kategorie</a> | <a href ="{% url 'form-list' form.project.pk %}">{{ form.project.title }}</a> | {{ form.title }}
+	<a class="navbar-brand topnav" href="{% url 'form-list' form.project.pk %}">{{ form.project.title }}</a> <a class="navbar-brand topnav" href="{% url 'form-list' form.project.pk %}{{ form.pk }}" >{{ form.title }}</a>
 {% endblock %}
 
 
@@ -19,22 +19,25 @@
 {% block container %}
     <div class="forms">
         <div class="container">
-            <div class="row">
+			<div class="row">
+				<div class="col-lg-6">
+					<h3 class="form-signin-heading">Instances of {{ form.title }}</h3>
+				</div>
+			</div>
+			<div class="row" style="margin-bottom:10px;">
                 <div class="col-lg-3">
-                    <h3 class="form-signin-heading">Instancje formularza {{ form.title }}</h3>
-                    <input name="search" type="text" id="user" class="form-control" placeholder="Wyszukaj formularz" required autofocus/>
+                    <input name="search" type="text" id="user" class="form-control" placeholder="Search instance" required autofocus/>
                 </div>
             </div>
             <div class="panel panel-default">
                 <!-- Default panel contents -->
-                <div class="panel-heading">Lista dostępnych instancji  </div>
+                <div class="panel-heading">List of available instances</div>
 
                 <!-- Table -->
                 <table class="table">
                     <thead>
                         <tr>
-
-                            <th>Data wypełnienia</th>
+                            <th>Completion date</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -58,13 +61,7 @@
                                                     aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
                         {% endif %}
                     {% endif %}
-                    <!-- Page numbers
-                    <li class="active"><a href="#"> 1 <span class="sr-only">(current)</span></a></li>
-                    <li><a href="#"> 2 <span class="sr-only"></span></a></li>
-                    <li><a href="#"> 3 <span class="sr-only"></span></a></li>
-                    <li><a href="#"> 4 <span class="sr-only"></span></a></li>
-                    <li><a href="#"> 5 <span class="sr-only"></span></a></li>
-                    -->
+
                 </ul>
             </nav>
         </div>

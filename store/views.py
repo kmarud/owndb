@@ -12,10 +12,10 @@ from django.template.defaultfilters import slugify
 from datetime import datetime
 from django.views.generic import View
 from django.views.generic.base import TemplateView
+from django.http import HttpResponseRedirect
 import re
 
-        
-        
+
 # Check if guest is a logged user
 class LoggedInMixin(object):
     # Transform function decorator into method decorator
@@ -23,20 +23,24 @@ class LoggedInMixin(object):
     def dispatch(self, *args, **kwargs):
         return super(LoggedInMixin, self).dispatch(*args, **kwargs)
 
-
-
-class FormAdd(LoggedInMixin,View):
+        
+class FormAdd(LoggedInMixin,TemplateView):
     
-    def get(self, request, project):
-        return render(request, 'store/form_add.html', context_instance = RequestContext(request, {'project': project,}))
+    template_name = 'store/form_add.html'
     
-    def post(self, request, project):
+    def get_context_data(self, **kwargs):
+        context = super(FormAdd, self).get_context_data(**kwargs)
+        context['project'] = models.Project.objects.get(pk=self.kwargs['project'])
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
 
         title_pattern = re.compile("^([a-zA-Z0-9][a-zA-Z0-9 ]*[a-zA-Z0-9])$")
         if not title_pattern.match(request.POST.get('title')):
             return HttpResponse("Form name is invalid (letters, digits and spaces between allowed)!")
 
-        p = models.Project.objects.get(id=project)
+        p = models.Project.objects.get(pk=self.kwargs['project'])
         f = models.Form(
                 title=request.POST.get('title'),
                 project=p, 
@@ -60,12 +64,21 @@ class FormAdd(LoggedInMixin,View):
 
         
 class FormInstanceAdd(LoggedInMixin, TemplateView):
+    
     template_name = 'store/forminstance_add.html'
-
+    
     def get_context_data(self, **kwargs):
         context = super(FormInstanceAdd, self).get_context_data(**kwargs)
-        context['label'] = "test"
+        context['project'] = models.Project.objects.get(pk=self.kwargs['project'])
+        context['fields'] = models.FormField.objects.filter(form=self.kwargs['form']).order_by('position')
+
         return context
+    
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        
+        
+        return HttpResponse("Not implemented yet.")
     
         
         
@@ -103,6 +116,7 @@ class FormInstanceList(LoggedInMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(FormInstanceList, self).get_context_data(**kwargs)
+        context['project'] = models.Project.objects.get(pk=self.kwargs['project'])
         context['form'] = models.Form.objects.get(pk=self.kwargs['form'])
         return context
 

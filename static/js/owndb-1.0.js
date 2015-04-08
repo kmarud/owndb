@@ -3,7 +3,7 @@
  *
  */
 
-$(function() {
+$(function global() {
     	
 	//set up a loading indicator
 	$(document).bind("ajaxStart", function() {
@@ -30,9 +30,11 @@ $(function form_add() {
 		<p><a class="add_checkbox">Add option</a></p>\
 		<ul class="options_block"></ul>';
 		
-	var picture_settings = '<p>Picture type is not implemented yet.</p>';
+	var picture_settings = '<p>No settings available.</p>';
 	var file_settings = '<p>File type is not implemented yet.</p>';
 	var connection_settings = '<p>Connection with other form is not implemented yet.</p>';
+	var labeltext_settings = '<p><input class="label_text" type="text" placeholder=" set label text" /></p>';
+	var labelimage_settings = '<p><input class="label_image" type="file" accept=".png,.gif,.jpg,.jpeg" /></p>';
 		
 	var choice_item = '\
 		<li>\
@@ -68,6 +70,8 @@ $(function form_add() {
 							<option value="Picture">Picture</option>\
 							<option value="File">File upload</option>\
 							<option value="Connection">Connect with other form</option>\
+							<option value="LabelText">Text label</option>\
+							<option value="LabelImage">Image label</option>\
 						</select>\
 					</p>\
 					' + text_settings + '\
@@ -159,6 +163,12 @@ $(function form_add() {
 			case "Connection":
                 settings = connection_settings;
                 break;
+			case "LabelText":
+			    settings = labeltext_settings;
+                break;
+			case "LabelImage":
+                settings = labelimage_settings;
+                break;
         }
         $(this).parent().closest('div').append(settings);
     });
@@ -222,7 +232,7 @@ $(function form_add() {
 		var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
 
 		var after_process = $(this).attr('action');
-		var process_address = after_process + "/add/";
+		var process_address = after_process + "add/";
 
         $.ajax({
             url: process_address,
@@ -263,7 +273,7 @@ $(function forminstance_add() {
 		var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
 
 		var after_process = $(this).attr('action');
-		var process_address = after_process + "/add/";
+		var process_address = after_process + "add/";
 
         $.ajax({
             url: process_address,

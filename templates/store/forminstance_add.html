@@ -2,11 +2,11 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Add form
+    Add new instance
 {% endblock %}
 
 {% block main-title %}
-   
+	<a class="navbar-brand topnav" href="{% url 'form-list' project.pk %}">{{ project.title }}</a> <a class="navbar-brand topnav" >Add instance</a>
 {% endblock %}
 
 {% load staticfiles %}
@@ -20,19 +20,33 @@
 		
 			<h3>Add new instance</h3>
 			<div id="loading"></div>
-			<form id="add_forminstance" action="{% url 'form-list' project form %}">
+			<form id="add_forminstance" action="{% url 'forminstance-list' project.pk form %}">
 				{% csrf_token %}
-				<table id="fields_wrapper">
+				<table>
 					<tbody>
+						{% for field in fields %}
 						<tr>
-							<td>{{ label }}
-								<input type="text" style="width:300px" />
+							<td>
+								<p>{{ field.caption }}</p>
+								{% if field.type|stringformat:"s" == "Text" %}
+									<input type="text" />
+								{% elif field.type|stringformat:"s" == "Number" %}
+									<input type="text" style="width:50px" />
+								{% elif field.type|stringformat:"s" == "Choice" %}
+									<input type="radio" />
+								{% else %}
+									<input type="checkbox" />
+								{% endif %}
 							</td>
 						</tr>
+						{% endfor %}
 					</tbody>
 				</table>
 				<p>
-					<input id="add_button" type="hidden" value="Add instance" />
+					Complete form and click button below.
+				</p>
+				<p>
+					<input id="add_button" type="submit" value="Add instance" />
 				</p>
 			</form>
 			
