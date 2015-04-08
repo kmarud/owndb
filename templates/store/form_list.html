@@ -32,7 +32,7 @@
             </div>
             <div class="panel panel-default">
                 <!-- Default panel contents -->
-                <div class="panel-heading">Lista dostępnych formularzy | <a href="/store/{{ project.pk }}/add-form/">Dodaj nowy</a></div>
+                <div class="panel-heading">Lista dostępnych formularzy | <a href="/store/{{ project.pk }}/add/">Dodaj nowy formularz</a></div>
 
                 <!-- Table -->
                 <table class="table">
@@ -41,6 +41,7 @@
                             <th></th>
                             <th>Nazwa</th>
                             <th>Liczba instancji formularza</th>
+							<th>Opcje</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,6 +50,7 @@
                                 <th><img src="{% static "img/web-design.png" %}" class="img-rounded center-block"></th>
                                 <td><a href="{% url 'forminstance-list' entry.project.pk entry.pk %}">{{ entry.title }}</a></td>
                                 <td>{{ entry.forminstance_set.count }}</td>
+								<td><a href="{% url 'forminstance-list' entry.project.pk entry.pk %}/add/">Dodaj instancję</a></td>
                             </tr>
                         {% endfor  %}
                     </tbody>

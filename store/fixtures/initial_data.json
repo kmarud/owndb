@@ -47,5 +47,19 @@
     "fields": {
       "name": "Connection"
     }
+  },
+  {
+    "model": "store.type",
+    "pk": 8,
+    "fields": {
+      "name": "LabelText"
+    }
+  },
+  {
+    "model": "store.type",
+    "pk": 9,
+    "fields": {
+      "name": "LabelPicture"
+    }
   }
 ]

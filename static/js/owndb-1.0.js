@@ -3,7 +3,18 @@
  *
  */
 
-$(function add_new_form() {
+$(function() {
+    	
+	//set up a loading indicator
+	$(document).bind("ajaxStart", function() {
+		$("#loading").show();
+	}).bind("ajaxStop", function() {
+		$("#loading").hide();
+	});
+
+});
+ 
+$(function form_add() {
     
     var text_settings = '\
 		<p>Not null: <input class="notnull" type="checkbox" /> | Multiline: <input class="multiline" type="checkbox" /></p>';
@@ -211,7 +222,7 @@ $(function add_new_form() {
 		var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
 
 		var after_process = $(this).attr('action');
-		var process_address = after_process + "/add-form/";
+		var process_address = after_process + "/add/";
 
         $.ajax({
             url: process_address,
@@ -234,12 +245,42 @@ $(function add_new_form() {
             alert("Some error occured while sending data. Try again later.");
         });
     });
-	
-	//set up a loading indicator
-	$(document).bind("ajaxStart", function() {
-		$("#loading").show();
-	}).bind("ajaxStop", function() {
-		$("#loading").hide();
-	});
+
+});
+
+$(function forminstance_add() {
+    
+    //prevent accidental enter
+    $('#add_forminstance').bind('keypress keydown keyup', function (e) {
+        if (e.keyCode == 13) { e.preventDefault(); }
+    });
+
+    //parse form and send
+    $("#add_forminstance").submit(function (e) {
+        
+		e.preventDefault();
+		
+		var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
+
+		var after_process = $(this).attr('action');
+		var process_address = after_process + "/add/";
+
+        $.ajax({
+            url: process_address,
+            method: "POST",
+            data: {
+                'csrfmiddlewaretoken': token
+            }
+        }).done(function (data) {
+            if (data == "OK") {
+				redirect = true;
+				$(location).attr('href', after_process);
+			} else {
+				alert(data);
+			}
+        }).fail(function () {
+            alert("Some error occured while sending data. Try again later.");
+        });
+    });
 
 });

@@ -1,0 +1,42 @@
+﻿
+{% extends "base.html" %}
+
+{% block title %}
+    Add form
+{% endblock %}
+
+{% block main-title %}
+   
+{% endblock %}
+
+{% load staticfiles %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block container %}
+    <div class="forms">
+        <div class="container">
+		
+			<h3>Add new instance</h3>
+			<div id="loading"></div>
+			<form id="add_forminstance" action="{% url 'form-list' project form %}">
+				{% csrf_token %}
+				<table id="fields_wrapper">
+					<tbody>
+						<tr>
+							<td>{{ label }}
+								<input type="text" style="width:300px" />
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<p>
+					<input id="add_button" type="hidden" value="Add instance" />
+				</p>
+			</form>
+			
+        </div>
+    </div>
+    <!-- /.forms -->
+{% endblock %}

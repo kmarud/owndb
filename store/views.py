@@ -11,13 +11,24 @@ from django.template import RequestContext
 from django.template.defaultfilters import slugify
 from datetime import datetime
 from django.views.generic import View
+from django.views.generic.base import TemplateView
 import re
 
+        
+        
+# Check if guest is a logged user
+class LoggedInMixin(object):
+    # Transform function decorator into method decorator
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(LoggedInMixin, self).dispatch(*args, **kwargs)
 
-class AddForm(View):
+
+
+class FormAdd(LoggedInMixin,View):
     
     def get(self, request, project):
-        return render(request, 'store/add_form.html', context_instance = RequestContext(request, {'project': project,}))
+        return render(request, 'store/form_add.html', context_instance = RequestContext(request, {'project': project,}))
     
     def post(self, request, project):
 
@@ -48,24 +59,17 @@ class AddForm(View):
         return HttpResponse("OK")
 
         
-class UseForm(View):
+class FormInstanceAdd(LoggedInMixin, TemplateView):
+    template_name = 'store/forminstance_add.html'
 
-    def get(self, request, project, form):
-        return render(request, 'store/use_form.html', context_instance = RequestContext(request, {'project': project, 'form': form,}))
+    def get_context_data(self, **kwargs):
+        context = super(FormInstanceAdd, self).get_context_data(**kwargs)
+        context['label'] = "test"
+        return context
+    
         
-    def post(self, request, project, form):
-        return HttpResponse("OK")
         
         
-        
-# Check if guest is a logged user
-class LoggedInMixin(object):
-    # Transform function decorator into method decorator
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(LoggedInMixin, self).dispatch(*args, **kwargs)
-
-
 class ProjectList(LoggedInMixin, ListView):
     model = models.Project
     paginate_by = 2

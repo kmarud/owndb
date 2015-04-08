@@ -20,7 +20,7 @@
 		
 			<h3>Design new form</h3>
 			<div id="loading"></div>
-			<form id="add_form" action="/store/{{ project }}">
+			<form id="add_form" action="{% url 'form-list' project %}">
 				{% csrf_token %}
 				<p>
 					<input id="form_name" type="text" placeholder=" set form name" autofocus />
