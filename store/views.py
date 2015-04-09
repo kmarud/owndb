@@ -71,12 +71,12 @@ class FormInstanceAdd(LoggedInMixin, TemplateView):
         context = super(FormInstanceAdd, self).get_context_data(**kwargs)
         context['project'] = models.Project.objects.get(pk=self.kwargs['project'])
         context['fields'] = models.FormField.objects.filter(form=self.kwargs['form']).order_by('position')
-
         return context
     
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
         
+        #save form instance or return issue
         
         return HttpResponse("Not implemented yet.")
     

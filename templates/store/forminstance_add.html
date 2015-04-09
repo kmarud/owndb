@@ -11,6 +11,8 @@
 
 {% load staticfiles %}
 
+{% load store_extras %}
+
 {% block extra_css %}
 {% endblock %}
 
@@ -22,20 +24,41 @@
 			<div id="loading"></div>
 			<form id="add_forminstance" action="{% url 'forminstance-list' project.pk form %}">
 				{% csrf_token %}
-				<table>
+				<table id="fields_render">
 					<tbody>
 						{% for field in fields %}
 						<tr>
-							<td>
+							<td class="field_render">
 								<p>{{ field.caption }}</p>
 								{% if field.type|stringformat:"s" == "Text" %}
-									<input type="text" />
+									{% with field.settings|split_all:";" as options %}
+										{% if options.1|stringformat:"s" == "0" %}
+											<input type="text" style="width:250px" placeholder=" type some text" {% if options.0|stringformat:"s" == "1" %}required{% endif %} />
+										{% else %}
+											<textarea style="width:250px; height:50px" {% if options.0|stringformat:"s" == "1" %}required="required"{% endif %} ></textarea>
+										{% endif %}
+									{% endwith %}
+									
 								{% elif field.type|stringformat:"s" == "Number" %}
-									<input type="text" style="width:50px" />
+									<input type="number" min="0" max="100" style="width:150px" placeholder=" type number" />
 								{% elif field.type|stringformat:"s" == "Choice" %}
-									<input type="radio" />
+									{% with field.settings|split_remove_first:";" as options %}
+										{% for option in options %}
+											<input type="radio" name="{{ field.pk }}" /> {{ option }}<br />
+										{% endfor %}
+									{% endwith %}
+								{% elif field.type|stringformat:"s" == "Checkbox" %}
+									{% with field.settings|split_remove_first:";" as options %}
+										{% for option in options %}
+											<input type="checkbox" name="{{ field.pk }}" /> {{ option }}<br />
+										{% endfor %}
+									{% endwith %}
+								{% elif field.type|stringformat:"s" == "LabelText" %}
+									<p>{{ field.settings }}</p>
+								{% elif field.type|stringformat:"s" == "LabelImage" %}
+									{{ field.settings }}
 								{% else %}
-									<input type="checkbox" />
+									<p>Not supported field</p>
 								{% endif %}
 							</td>
 						</tr>

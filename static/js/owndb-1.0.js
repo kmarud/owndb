@@ -222,6 +222,12 @@ $(function form_add() {
 				case "Connection":
 					field_settings[i] = "-;-";
 					break;
+				case "LabelImage":
+					field_settings[i] = "-";
+					break;
+				case "LabelText":
+					field_settings[i] = $(this).find(".label_text").val();
+					break;
 				default:
 					field_settings[i] = "not supported";
 					break;

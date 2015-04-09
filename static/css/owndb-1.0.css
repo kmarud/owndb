@@ -15,12 +15,12 @@ input.field_name {
 	width:280px;
 }
 
-table#fields_wrapper {
+table#fields_wrapper, table#fields_render {
 	border-bottom:10px; 
 	border-collapse:separate;
 }
 
-td.field_cell {
+td.field_cell, td.field_render {
 	background-color:#fafafa; 
 	padding:5px; 
 	border-bottom:5px solid #fff; 
