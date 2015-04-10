@@ -36,31 +36,81 @@ class FormAdd(LoggedInMixin,TemplateView):
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
 
-        title_pattern = re.compile("^([a-zA-Z0-9][a-zA-Z0-9 ]*[a-zA-Z0-9])$")
-        if not title_pattern.match(request.POST.get('title')):
-            return HttpResponse("Form name is invalid (letters, digits and spaces between allowed)!")
-
-        p = models.Project.objects.get(pk=self.kwargs['project'])
-        f = models.Form(
-                title=request.POST.get('title'),
-                project=p, 
-                slug = slugify(request.POST.get('title'))
-            )
-        f.save()
+        if (request.POST.get('connection') == "false"):
         
-        i = 0
-        for name in request.POST.getlist("names[]"):
-            ff = models.FormField(
-                form=f, 
-                type=models.Type.objects.get(name=request.POST.getlist("types[]")[i]),
-                caption=name, 
-                settings=request.POST.getlist("settings[]")[i],
-                position=i
-            )
-            ff.save()
-            i = i + 1
+            title_pattern = re.compile("^([a-zA-Z0-9][a-zA-Z0-9 ]*[a-zA-Z0-9])$")
+            if not title_pattern.match(request.POST.get('title')):
+                return HttpResponse("Form name is invalid (letters, digits and spaces between allowed)!")
 
-        return HttpResponse("OK")
+            p = models.Project.objects.get(pk=self.kwargs['project'])
+            f = models.Form(
+                    title=request.POST.get('title'),
+                    project=p, 
+                    slug = slugify(request.POST.get('title'))
+                )
+            f.save()
+            
+            i = 0
+            for name in request.POST.getlist("names[]"):
+                ff = models.FormField(
+                    form=f, 
+                    type=models.Type.objects.get(name=request.POST.getlist("types[]")[i]),
+                    caption=name, 
+                    settings=request.POST.getlist("settings[]")[i],
+                    position=i
+                )
+                ff.save()
+                i = i + 1
+
+            return HttpResponse("OK")
+            
+        elif (request.POST.get('connection') == "field"):
+            #fields of given form
+            fields = ""
+            for field in models.FormField.objects.filter(form=request.POST.get('form')):
+                fields += '<option value="' + str(field.pk) + '">' + field.caption + '</option>'
+            return HttpResponse(fields)
+            
+        else:
+            #list of forms in project for connection field
+            forms = ""
+            for form in models.Form.objects.filter(project=self.kwargs['project']):
+                forms += '<option value="' + str(form.pk) + '">' + form.title + '</option>'
+            return HttpResponse(forms)
+        
+        
+class FormEdit(LoggedInMixin,TemplateView):
+    
+    template_name = 'store/form_edit.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super(FormEdit, self).get_context_data(**kwargs)
+        context['project'] = models.Project.objects.get(pk=self.kwargs['project'])
+        context['form'] = models.Form.objects.get(pk=self.kwargs['form'])
+        context['fields'] = models.FormField.objects.filter(form=self.kwargs['form']).order_by('position')
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        
+        if (request.POST.get('connection') == "false"):
+        
+
+            return HttpResponse("Not implemented yet.")
+            
+        elif (request.POST.get('connection') == "field"):
+            #fields of given form (but not the same as in formadd above because here active choice should be at first option)
+            fields = ""
+            for field in models.FormField.objects.filter(form=request.POST.get('form')):
+                fields += '<option value="' + str(field.pk) + '">' + field.caption + '</option>'
+            return HttpResponse(fields)
+            
+        else:
+            #list of forms in project for connection field (but not the same as in formadd above because here active choice should be at first option)
+            forms = ""
+            for form in models.Form.objects.filter(project=self.kwargs['project']):
+                forms += '<option value="' + str(form.pk) + '">' + form.title + '</option>'
+            return HttpResponse(forms)
 
         
 class FormInstanceAdd(LoggedInMixin, TemplateView):
@@ -70,6 +120,7 @@ class FormInstanceAdd(LoggedInMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(FormInstanceAdd, self).get_context_data(**kwargs)
         context['project'] = models.Project.objects.get(pk=self.kwargs['project'])
+        context['form'] = models.Form.objects.get(pk=self.kwargs['form'])
         context['fields'] = models.FormField.objects.filter(form=self.kwargs['form']).order_by('position')
         return context
     

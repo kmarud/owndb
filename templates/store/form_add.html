@@ -20,10 +20,11 @@
 		
 			<h3>Design new form</h3>
 			<div id="loading"></div>
-			<form id="add_form" action="{% url 'form-list' project.pk %}">
+			<form id="add_form" action="{% url 'form-add' project.pk %}">
 				{% csrf_token %}
+				<input name="after_process" type="hidden" value="{% url 'form-list' project.pk %}" />
 				<p>
-					<input id="form_name" type="text" placeholder=" set form name" autofocus />
+					<input id="form_name" type="text" placeholder=" set form name" autofocus required />
 				</p>
 				<table id="fields_wrapper">
 					<tbody></tbody>
@@ -32,7 +33,7 @@
 					<a id="add_field">Add new field</a> or drag and drop to reorder them.
 				</p>
 				<p>
-					<input id="add_button" type="hidden" value="Add this form to project" />
+					<input id="submit_button" type="hidden" value="Add this form to project" />
 				</p>
 			</form>
 			

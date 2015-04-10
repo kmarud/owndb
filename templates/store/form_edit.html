@@ -1,0 +1,117 @@
+﻿
+{% extends "base.html" %}
+
+{% block title %}
+    Edit existing form
+{% endblock %}
+
+{% block main-title %}
+	<a class="navbar-brand topnav" href="{% url 'form-list' project.pk %}">{{ project.title }}</a>  <a class="navbar-brand topnav" href="{% url 'forminstance-list' project.pk form.pk %}">{{ form.title }}</a> <a class="navbar-brand topnav" >Edit existing form</a>
+{% endblock %}
+
+{% load staticfiles %}
+
+{% load store_extras %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block container %}
+    <div class="forms">
+        <div class="container">
+		
+			<h3>Edit existing form</h3>
+			<div id="loading"></div>
+			<form id="edit_form" action="{% url 'form-edit' project.pk form.pk %}">
+				{% csrf_token %}
+				<input name="after_process" type="hidden" value="{% url 'form-list' project.pk %}" />
+				<p>
+					<input id="form_name" type="text" value="{{ form.title }}" placeholder=" set form name" autofocus required/>
+				</p>
+				<table id="fields_wrapper">
+					<tbody>
+						{% for field in fields %}
+						<tr class="field_row">
+							<td class="field_cell">
+								<p>
+									<input class="field_name" type="text" value="{{ field.caption }}" placeholder=" set form name" autofocus required />
+								</p>
+								<div class="field_settings">
+								
+								
+								
+								
+								
+									<p>Choose type:&nbsp;
+										<select class="field_type">
+											<option value="Text">Plain text</option>
+											<option value="Number">Number</option>
+											<option value="Choice">Choice (single)</option>
+											<option value="Checkbox">Checkbox (multiple)</option>
+											<option value="Picture">Picture</option>
+											<option value="File">File upload</option>
+											<option value="Connection">Connection</option>
+											<option value="LabelText">Text label</option>
+											<option value="LabelImage">Image label</option>
+										</select>
+									</p>
+										
+										
+									
+										
+										{% if field.type|stringformat:"s" == "Text" %}
+											{% with field.settings|split_all:";" as options %}
+												{% if options.1|stringformat:"s" == "0" %}
+													<input type="text" style="width:250px" placeholder=" type some text" {% if options.0|stringformat:"s" == "1" %}required{% endif %} />
+												{% else %}
+													<textarea style="width:250px; height:50px" {% if options.0|stringformat:"s" == "1" %}required="required"{% endif %} ></textarea>
+												{% endif %}
+											{% endwith %}
+										{% elif field.type|stringformat:"s" == "Number" %}
+											<input type="number" min="0" max="100" style="width:150px" placeholder=" type number" />
+										{% elif field.type|stringformat:"s" == "Choice" %}
+											{% with field.settings|split_remove_first:";" as options %}
+												{% for option in options %}
+													<input type="radio" name="{{ field.pk }}" /> {{ option }}<br />
+												{% endfor %}
+											{% endwith %}
+										{% elif field.type|stringformat:"s" == "Checkbox" %}
+											{% with field.settings|split_remove_first:";" as options %}
+												{% for option in options %}
+													<input type="checkbox" name="{{ field.pk }}" /> {{ option }}<br />
+												{% endfor %}
+											{% endwith %}
+										{% elif field.type|stringformat:"s" == "LabelText" %}
+											<p style="font-size:18px; color:#789" >{{ field.settings }}</p>
+										{% elif field.type|stringformat:"s" == "LabelImage" %}
+											{{ field.settings }}
+										{% else %}
+											<p>Not implemented yet.</p>
+										{% endif %}
+										
+										
+										
+										
+										
+										
+								</div>
+								<p>
+									<a class="remove_field">Remove</a> or customize this field.
+								</p>
+							</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				<p>
+					<a id="add_field">Add new field</a> or drag and drop to reorder them.
+				</p>
+				<p>
+					<input id="submit_button" type="submit" value="Save changes" />
+				</p>
+			</form>
+			
+        </div>
+    </div>
+    <!-- /.forms -->
+{% endblock %}

@@ -31,6 +31,11 @@ class Form(models.Model):
         return self.title
 
 
+class Sharing(models.Model):
+    form = models.ForeignKey(Form)
+    owner = models.ForeignKey(User)
+    
+        
 class Type(models.Model):
     name = models.CharField(max_length=60)
 
@@ -72,8 +77,8 @@ class Text(models.Model):
 
     def __str__(self):
         return self.data
-
-
+ 
+        
 class Boolean(models.Model):
     formfield = models.ForeignKey(FormField)
     forminstance = models.ForeignKey(FormInstance, null=True, blank=True)
