@@ -206,11 +206,11 @@ class BaseSignupForm(_base_signup_form_class()):
                                min_length=app_settings.USERNAME_MIN_LENGTH,
                                widget=forms.TextInput(
                                    attrs={'placeholder':
-                                          _('Usernasssssssssssme'),
+                                          "Usernamejaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
                                           'autofocus': 'autofocus'}))
     email = forms.EmailField(widget=forms.TextInput(
         attrs={'type': 'email',
-               'placeholder': _('E-mail address')}))
+               'placeholder': _('E-mail addresssss')}))
 
     def __init__(self, *args, **kwargs):
         email_required = kwargs.pop('email_required',
