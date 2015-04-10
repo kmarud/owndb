@@ -5,7 +5,19 @@
 {% block head_title %}{% trans "Account Inactive" %}{% endblock %}
 
 {% block container %}
-<h1>{% trans "Account Inactive" %}</h1>
 
-<p>{% trans "This account is inactive." %}</p>
+<div class="container" style="margin-top: 40px">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-primary" style="margin-top: 5%">
+            	<div class="panel-heading">
+            		<h3 class="panel-title"><a href="/">{% trans "Konto nieaktywne" %}</a></h3>
+            	</div>
+        	    <div class="panel-body">
+        	    	<p>Twoje konto zostało zdezaktywowane. W celu odzyskania konta, skontaktuj się z administratorem.</p>
+				</div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
