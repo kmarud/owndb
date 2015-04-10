@@ -1,7 +1,7 @@
 from django.contrib import admin
 from imagekit.admin import AdminThumbnail
 
-from store.models import Category
+from store.models import Project
 from store.models import Form
 from store.models import Type
 from store.models import FormField
@@ -11,7 +11,7 @@ from store.models import Boolean
 from store.models import Image
 
 
-class CategoryAdmin(admin.ModelAdmin):
+class ProjectAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
 
 
@@ -24,7 +24,7 @@ class ImageAdmin(admin.ModelAdmin):
     admin_thumbnail = AdminThumbnail(image_field='thumbnailSmall')
 
 
-admin.site.register(Category, CategoryAdmin)
+admin.site.register(Project, ProjectAdmin)
 admin.site.register(Form, FormAdmin)
 admin.site.register(Type)
 admin.site.register(FormField)
