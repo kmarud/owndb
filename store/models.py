@@ -45,14 +45,14 @@ class UserProfile(models.Model):
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 
-class Category(models.Model):
+class Project(models.Model):
     title = models.CharField(max_length=60)
     owner = models.ForeignKey(User)
     slug = models.SlugField()
 
     class Meta:
-        verbose_name = "Kategoria"
-        verbose_name_plural = "Kategorie"
+        verbose_name = "Projekt"
+        verbose_name_plural = "Projekty"
 
     def __str__(self):
         return self.title
@@ -60,7 +60,7 @@ class Category(models.Model):
 
 class Form(models.Model):
     title = models.CharField(max_length=60)
-    category = models.ForeignKey(Category)
+    project = models.ForeignKey(Project)
     slug = models.SlugField()
 
     class Meta:
