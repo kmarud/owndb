@@ -8,15 +8,37 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('contenttypes', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Boolean',
+            name='Connection',
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
-                ('data', models.BooleanField(default=False)),
+                ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ConnectionInstance',
+            fields=[
+                ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
+                ('object_id', models.PositiveIntegerField()),
+                ('connection', models.ForeignKey(to='store.Connection')),
+                ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='DataText',
+            fields=[
+                ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
+                ('data', models.TextField()),
             ],
             options={
             },
@@ -25,24 +47,21 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Form',
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
+                ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
                 ('title', models.CharField(max_length=60)),
                 ('slug', models.SlugField()),
             ],
             options={
-                'verbose_name_plural': 'Formularze',
-                'verbose_name': 'Formularz',
             },
             bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='FormField',
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
+                ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
                 ('caption', models.CharField(max_length=200)),
                 ('settings', models.CharField(max_length=1000, null=True)),
                 ('position', models.IntegerField(default=0)),
-                ('label', models.BooleanField(verbose_name='Etykieta', default=False)),
                 ('form', models.ForeignKey(to='store.Form')),
             ],
             options={
@@ -52,21 +71,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FormInstance',
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
-                ('date', models.DateTimeField(auto_now_add=True, verbose_name='Data dodania')),
+                ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
+                ('date', models.DateTimeField(verbose_name='Data dodania', auto_now_add=True)),
                 ('form', models.ForeignKey(to='store.Form')),
-            ],
-            options={
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='Image',
-            fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
-                ('image', models.ImageField(upload_to='images')),
-                ('formfield', models.ForeignKey(to='store.FormField')),
-                ('forminstance', models.ForeignKey(blank=True, to='store.FormInstance', null=True)),
+                ('user', models.ForeignKey(blank=True, null=True, to=settings.AUTH_USER_MODEL)),
             ],
             options={
             },
@@ -75,24 +83,21 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Project',
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
+                ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
                 ('title', models.CharField(max_length=60)),
                 ('slug', models.SlugField()),
                 ('owner', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'verbose_name_plural': 'Projekty',
-                'verbose_name': 'Projekt',
             },
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Text',
+            name='Sharing',
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
-                ('data', models.TextField(verbose_name='Treść')),
-                ('formfield', models.ForeignKey(to='store.FormField')),
-                ('forminstance', models.ForeignKey(blank=True, to='store.FormInstance', null=True)),
+                ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
+                ('form', models.ForeignKey(to='store.Form')),
+                ('owner', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
             },
@@ -101,7 +106,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Type',
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
+                ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
                 ('name', models.CharField(max_length=60)),
             ],
             options={
@@ -121,15 +126,33 @@ class Migration(migrations.Migration):
             preserve_default=True,
         ),
         migrations.AddField(
-            model_name='boolean',
+            model_name='datatext',
             name='formfield',
             field=models.ForeignKey(to='store.FormField'),
             preserve_default=True,
         ),
         migrations.AddField(
-            model_name='boolean',
+            model_name='datatext',
             name='forminstance',
-            field=models.ForeignKey(blank=True, to='store.FormInstance', null=True),
+            field=models.ForeignKey(blank=True, null=True, to='store.FormInstance'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='connectioninstance',
+            name='forminstance',
+            field=models.ForeignKey(to='store.FormInstance'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='connection',
+            name='formfield_begin',
+            field=models.ForeignKey(to='store.FormField'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='connection',
+            name='formfield_end',
+            field=models.ForeignKey(to='store.FormField', related_name='ff_end-ff'),
             preserve_default=True,
         ),
     ]
