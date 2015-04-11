@@ -3,35 +3,24 @@
  *
  */
 
-var text_settings = '\
-	<p>Not null: <input class="notnull" type="checkbox" /> | Multiline: <input class="multiline" type="checkbox" /></p>';
-	
-var number_settings = '\
-	<p>Not null: <input class="notnull" type="checkbox" /> | Natural values: <input class="natural" type="checkbox" /></p>'
+var field_name = '<p><input class="field_name" type="text" placeholder=" set field name" required /></p>';
+var field_name_label = '<p><input class="field_name" type="hidden" value="label" /></p>';
 
-var choice_settings = '\
-	<p><a class="add_option">Add option</a></p>\
-	<ul class="options_block"></ul>';
+var text_settings = field_name + '<p>Not null: <input class="notnull" type="checkbox" /> | Multiline: <input class="multiline" type="checkbox" /></p>';
+var number_settings = field_name + '<p>Not null: <input class="notnull" type="checkbox" /> | Natural values: <input class="natural" type="checkbox" /></p>'
+var choice_settings = field_name + '<p><a class="add_choice">Add option</a></p><ul class="options_block"></ul>';
+var checkbox_settings = field_name + '<p><a class="add_checkbox">Add option</a></p><ul class="options_block"></ul>';
+var image_settings = field_name + '<p><input class="image" type="file" accept=".png,.gif,.jpg,.jpeg" /></p>';
+var file_settings = field_name + '<p><input class="file" type="file" /></p>';
+var connection_settings = field_name + '<p>Select form and field:&nbsp;<select class="connection_form"></select>&nbsp;<select class="connection_field"></select></p>';
+var labeltext_settings = field_name_label + '<p><input class="label_text" type="text" placeholder=" set text" /></p>';
+var labelimage_settings = field_name_label + '<p><input class="label_image" type="file" accept=".png,.gif,.jpg,.jpeg" /></p>';
 
-var checkbox_settings = '\
-	<p><a class="add_checkbox">Add option</a></p>\
-	<ul class="options_block"></ul>';
-	
-var picture_settings = '<p><input class="picture" type="file" accept=".png,.gif,.jpg,.jpeg" /></p>';
-var file_settings = '<p><input class="file" type="file" /></p>';
-var connection_settings = '\
-	<p>Select form and field:&nbsp;\
-		<select class="connection_form"></select>&nbsp;\
-		<select class="connection_field"></select>\
-	</p>';
-var labeltext_settings = '<p><input class="label_text" type="text" placeholder=" set label text" /></p>';
-var labelimage_settings = '<p><input class="label_image" type="file" accept=".png,.gif,.jpg,.jpeg" /></p>';
-	
 var choice_item = '\
 	<li>\
 		<span>\
 			<input type="radio" name="r" tabindex="-1" />&nbsp;\
-			<input class="radio_field" type="text" placeholder=" set option name" />\
+			<input class="option_item" type="text" placeholder=" option text" />\
 			<a class="remove_option">Remove</a>\
 		</span>\
 	</li>';
@@ -40,7 +29,7 @@ var checkbox_item = '\
 	<li>\
 		<span>\
 			<input type="checkbox" tabindex="-1" />&nbsp;\
-			<input class="radio_field" type="text" placeholder=" set option name" />\
+			<input class="option_item" type="text" placeholder=" option text" />\
 			<a class="remove_option">Remove</a>\
 		</span>\
 	</li>';
@@ -48,30 +37,29 @@ var checkbox_item = '\
 var field = '\
 	<tr class="field_row">\
 		<td class="field_cell">\
-			<p>\
-				<input class="field_name" type="text" placeholder=" field name" required />\
-			</p>\
 			<div class="field_settings">\
 				<p>Choose type:&nbsp;\
 					<select class="field_type">\
+						<option value="LabelText">Text label</option>\
+						<option value="LabelImage">Image label</option>\
 						<option value="Text">Plain text</option>\
 						<option value="Number">Number</option>\
 						<option value="Choice">Choice (single)</option>\
 						<option value="Checkbox">Checkbox (multiple)</option>\
-						<option value="Picture">Picture</option>\
-						<option value="File">File upload</option>\
+						<option value="Image">Image</option>\
+						<option value="File">File</option>\
 						<option value="Connection">Connection</option>\
-						<option value="LabelText">Text label</option>\
-						<option value="LabelImage">Image label</option>\
 					</select>\
 				</p>\
-				' + text_settings + '\
+				' + labeltext_settings + '\
 			</div>\
 			<p>\
 				<a class="remove_field">Remove</a> or customize this field.\
 			</p>\
 		</td>\
 	</tr>';
+ 
+var error = "Some error occured while sending data. Try again later.";
  
 var redirect = false;
 
@@ -84,13 +72,14 @@ $(function() {
 		$("#loading").hide();
 	});
 	
+	//prevent redirection
     $(window).bind('beforeunload', function () {
         if ($(".field_cell").length > 0 && !redirect)
             return 'Unsaved data will be lost! Are you sure?';
     });
 	
     //prevent accidental enter
-    $('#edit_form, #add_form, #add_forminstance').bind('keypress keydown keyup', function (e) {
+    $('#add_form, #edit_form, #add_forminstance').bind('keypress keydown keyup', function (e) {
         if (e.keyCode == 13) { e.preventDefault(); }
     });
 
@@ -116,7 +105,7 @@ $(function() {
     });
 
     //insert choice item
-    $($wrapper).on("click", ".add_option", function () {
+    $($wrapper).on("click", ".add_choice", function () {
         $(this).parent().siblings(".options_block").append(choice_item);
     });
 	
@@ -152,16 +141,14 @@ $(function() {
         }
     });
 	
-	//change list of fields in connection settings
+	//change field list of form in connection settings
 	$($wrapper).on("change", ".connection_form", function () {
-        	
-		var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
-
+		
 		$.ajax({
 			url: $(this).attr('action'),
 			method: "POST",
 			data: {
-				'csrfmiddlewaretoken': token,
+				'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').prop('value'),
 				'connection': "field",
 				'form': $(".connection_form").find('option:selected').val()
 			}
@@ -169,7 +156,7 @@ $(function() {
 			$("#add_form, #edit_form").find(".connection_field").children().remove();
 			$("#add_form, #edit_form").find(".connection_field").append(data);
 		}).fail(function () {
-			alert("Some error occured while sending data. Try again later.");
+			alert(error);
 		});
 
     });
@@ -191,22 +178,20 @@ $(function() {
 			case "Checkbox":
                 settings = checkbox_settings;
                 break;
-			case "Picture":
-                settings = picture_settings;
+			case "Image":
+                settings = image_settings;
                 break;
 			case "File":
                 settings = file_settings;
                 break;
 			case "Connection":
-				
-				var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
 
 				$.ajax({
 					url: $(this).attr('action'),
 					method: "POST",
 					data: {
-						'csrfmiddlewaretoken': token,
-						'connection': "true"
+						'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').prop('value'),
+						'connection': "form"
 					}
 				}).done(function (data) {
 					$("#add_form, #edit_form").find(".connection_form").append(data);
@@ -228,15 +213,13 @@ $(function() {
     });
 
     //parse form and send
-    $("#add_form").submit(function (e) {
+    $("#add_form, #edit_form").submit(function (e) {
 		e.preventDefault();
 
 		var title = $("#form_name").val();
-
 		var field_names = [];
         var field_types = [];
 		var field_settings = [];
-		
         var i = 0;
         $(".field_cell").each(function () {
 			field_names[i] = $(this).find(".field_name").val();
@@ -252,44 +235,43 @@ $(function() {
 					break;
 				case "Choice":
 				case "Checkbox":
-					var q = $(this).find(".radio_field").length;
-					field_settings[i] = q;
-					$(this).find(".radio_field").each(function () {
+					field_settings[i] = $(this).find(".option_item").length;
+					$(this).find(".option_item").each(function () {
 						field_settings[i] += ";"+$(this).val();
 					});
 					break;
-				case "Picture":
+				case "Image":
 				case "File":
-				case "LabelImage":
-					//url or foreign key of image model will be fine, but we have to send image meanwhile via different ajax request
-					field_settings[i] = "-;-";
+					field_settings[i] = "none";
 					break;
-				case "Connection": 
-					//here will be foreign key of connection (as show at erd diagrams) but we'll do it in view, now send form and field ids.
-					field_settings[i] = "formid;fieldid;additionalsettings";
+				case "Connection":
+					var formid = $(this).find(".connection_form").find('option:selected').val();
+					var fieldid = $(this).find(".connection_field").find('option:selected').val();
+					field_settings[i] = formid + ";" + fieldid;
 					break;
 				case "LabelText":
 					field_settings[i] = $(this).find(".label_text").val();
 					break;
+				case "LabelImage":
+					field_settings[i] = "primary_key_of_image_object";
+					break;
 				default:
-					field_settings[i] = "not supported";
+					field_settings[i] = "error";
 					break;
 			}
             i = i + 1;
         });
-		
-		var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
 
         $.ajax({
             url: $(this).attr('action'),
             method: "POST",
             data: {
-                'csrfmiddlewaretoken': token,
+                'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').prop('value'),
+				'connection': "false",
 				'title': title,
                 'names': field_names,
                 'types': field_types,
-				'settings': field_settings,
-				'connection': "false"
+				'settings': field_settings
             }
         }).done(function (data) {
             if (data == "OK") {
@@ -299,32 +281,7 @@ $(function() {
 				alert(data);
 			}
         }).fail(function () {
-            alert("Some error occured while sending data. Try again later.");
-        });
-    });
-	
-	//parse form and send
-    $("#edit_form").submit(function (e) {
-		e.preventDefault();
-		
-		var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
-
-        $.ajax({
-            url: $(this).attr('action'),
-            method: "POST",
-            data: {
-                'csrfmiddlewaretoken': token,
-				'connection': "false"
-            }
-        }).done(function (data) {
-            if (data == "OK") {
-				redirect = true;
-				$(location).attr('href', $('input[name="after_process"]').prop('value'));
-			} else {
-				alert(data);
-			}
-        }).fail(function () {
-            alert("Some error occured while sending data. Try again later.");
+            alert(error);
         });
     });
 	
@@ -332,13 +289,19 @@ $(function() {
     $("#add_forminstance").submit(function (e) {
 		e.preventDefault();
 		
-		var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
-
+		var field_contents = [];
+		var i = 0;
+        $(".field_cell").each(function () {
+			field_contents[i] = "answer";
+            i = i + 1;
+        });
+		
         $.ajax({
             url: $(this).attr('action'),
             method: "POST",
             data: {
-                'csrfmiddlewaretoken': token
+                'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').prop('value'),
+				'contents': field_contents
             }
         }).done(function (data) {
             if (data == "OK") {
@@ -348,7 +311,7 @@ $(function() {
 				alert(data);
 			}
         }).fail(function () {
-            alert("Some error occured while sending data. Try again later.");
+            alert(error);
         });
     });
 

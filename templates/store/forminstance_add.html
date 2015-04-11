@@ -30,18 +30,22 @@
 						{% for field in fields %}
 						<tr>
 							<td class="field_render">
-								<span>{{ field.caption }}</span><br />
 								{% if field.type|stringformat:"s" == "Text" %}
 									{% with field.settings|split_all:";" as options %}
 										{% if options.1|stringformat:"s" == "0" %}
-											<input type="text" style="width:250px" placeholder=" type some text" {% if options.0|stringformat:"s" == "1" %}required{% endif %} />
+											<input type="text" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
 										{% else %}
-											<textarea style="width:250px; height:50px" {% if options.0|stringformat:"s" == "1" %}required="required"{% endif %} ></textarea>
+											<textarea {% if options.0|stringformat:"s" == "1" %}required="required" {% endif %}></textarea>
 										{% endif %}
 									{% endwith %}
-									
 								{% elif field.type|stringformat:"s" == "Number" %}
-									<input type="number" min="0" max="100" style="width:150px" placeholder=" type number" />
+									{% with field.settings|split_all:";" as options %}
+										{% if options.1|stringformat:"s" == "0" %}
+											<input type="text" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
+										{% else %}
+											<input type="number" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
+										{% endif %}
+									{% endwith %}
 								{% elif field.type|stringformat:"s" == "Choice" %}
 									{% with field.settings|split_remove_first:";" as options %}
 										{% for option in options %}
@@ -51,15 +55,15 @@
 								{% elif field.type|stringformat:"s" == "Checkbox" %}
 									{% with field.settings|split_remove_first:";" as options %}
 										{% for option in options %}
-											<input type="checkbox" name="{{ field.pk }}" /> {{ option }}<br />
+											<input type="checkbox" /> {{ option }}<br />
 										{% endfor %}
 									{% endwith %}
 								{% elif field.type|stringformat:"s" == "LabelText" %}
-									<p style="font-size:18px; color:#789" >{{ field.settings }}</p>
-								{% elif field.type|stringformat:"s" == "LabelImage" %}
-									{{ field.settings }}
+									<p class="textlabel" >{{ field.settings }}</p>
+								{% elif field.type|stringformat:"s" == "Connection" %}
+									<p>Here will be input with dynamic content from connected field.</p>
 								{% else %}
-									<p>Not implemented yet.</p>
+									<p>{{ field.settings }}</p>
 								{% endif %}
 							</td>
 						</tr>

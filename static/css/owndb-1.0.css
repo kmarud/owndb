@@ -3,31 +3,19 @@
  *
  */
 
-body {
-	padding-top: 40px;
-}
-
-input#form_name {
-	width:300px;
-}
-
-input.field_name {
-	width:280px;
-}
-
 table#fields_wrapper, table#fields_render {
 	border-bottom:10px; 
 	border-collapse:separate;
 }
 
 td.field_cell, td.field_render {
-	background-color:#fafafa; 
+	background-color:#eef; 
 	padding:5px; 
 	border-bottom:5px solid #fff; 
 	width:600px;
 }
 
-#add_field, .remove_field, .add_option, .add_checkbox, .remove_option {
+#add_field, .remove_field, .add_choice, .add_checkbox, .remove_option {
 	cursor:pointer;
 }
 
@@ -47,4 +35,10 @@ ul.options_block {
 	top:0px; 
 	left:0px; 
 	z-index:2000;
+}
+
+p.textlabel {
+	font-size:18px; 
+	padding-top:10px; 
+	color:#789" 
 }

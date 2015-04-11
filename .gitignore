@@ -1,13 +1,5 @@
-*.pyc
-*.pyo
-
-__pycache__
-accounts/__pycache__
-owndb/__pycache__
+*.py[cod]
 owndb/local_settings.py
-pages/__pycache__
-store/__pycache__
 store/migrations/
-store/templatetags/__pycache__
 runserver.bat
 makemigrations.bat

@@ -33,67 +33,70 @@
 						{% for field in fields %}
 						<tr class="field_row">
 							<td class="field_cell">
-								<p>
-									<input class="field_name" type="text" value="{{ field.caption }}" placeholder=" set form name" autofocus required />
-								</p>
 								<div class="field_settings">
-								
-								
-								
-								
-								
 									<p>Choose type:&nbsp;
 										<select class="field_type">
+											<option value="LabelText">Text label</option>
+											<option value="LabelImage">Image label</option>
 											<option value="Text">Plain text</option>
 											<option value="Number">Number</option>
 											<option value="Choice">Choice (single)</option>
 											<option value="Checkbox">Checkbox (multiple)</option>
-											<option value="Picture">Picture</option>
-											<option value="File">File upload</option>
+											<option value="Image">Image</option>
+											<option value="File">File</option>
 											<option value="Connection">Connection</option>
-											<option value="LabelText">Text label</option>
-											<option value="LabelImage">Image label</option>
-										</select>
+										</select> (*{{ field.type.name }})
 									</p>
-										
-										
-									
-										
-										{% if field.type|stringformat:"s" == "Text" %}
-											{% with field.settings|split_all:";" as options %}
-												{% if options.1|stringformat:"s" == "0" %}
-													<input type="text" style="width:250px" placeholder=" type some text" {% if options.0|stringformat:"s" == "1" %}required{% endif %} />
-												{% else %}
-													<textarea style="width:250px; height:50px" {% if options.0|stringformat:"s" == "1" %}required="required"{% endif %} ></textarea>
-												{% endif %}
-											{% endwith %}
-										{% elif field.type|stringformat:"s" == "Number" %}
-											<input type="number" min="0" max="100" style="width:150px" placeholder=" type number" />
-										{% elif field.type|stringformat:"s" == "Choice" %}
-											{% with field.settings|split_remove_first:";" as options %}
-												{% for option in options %}
-													<input type="radio" name="{{ field.pk }}" /> {{ option }}<br />
-												{% endfor %}
-											{% endwith %}
-										{% elif field.type|stringformat:"s" == "Checkbox" %}
-											{% with field.settings|split_remove_first:";" as options %}
-												{% for option in options %}
-													<input type="checkbox" name="{{ field.pk }}" /> {{ option }}<br />
-												{% endfor %}
-											{% endwith %}
-										{% elif field.type|stringformat:"s" == "LabelText" %}
-											<p style="font-size:18px; color:#789" >{{ field.settings }}</p>
-										{% elif field.type|stringformat:"s" == "LabelImage" %}
-											{{ field.settings }}
-										{% else %}
-											<p>Not implemented yet.</p>
-										{% endif %}
-										
-										
-										
-										
-										
-										
+									{% if field.type|stringformat:"s" == "LabelText" %}
+										<p><input class="field_name" type="hidden" value="label" /></p>
+									{% else %}
+										<p><input class="field_name" type="text" value="{{ field.caption }}" placeholder=" set field name" required /></p>
+									{% endif %}
+									{% if field.type|stringformat:"s" == "Text" %}
+										{% with field.settings|split_all:";" as options %}
+											<p>Not null: <input class="notnull" type="checkbox" {% if options.0|stringformat:"s" == "1" %}checked {% endif %}/> | Multiline: <input class="multiline" type="checkbox" {% if options.1|stringformat:"s" == "1" %}checked {% endif %}/></p>
+										{% endwith %}
+									{% elif field.type|stringformat:"s" == "Number" %}
+										{% with field.settings|split_all:";" as options %}
+											<p>Not null: <input class="notnull" type="checkbox" {% if options.0|stringformat:"s" == "1" %}checked {% endif %}/> | Natural values: <input class="natural" type="checkbox" {% if options.1|stringformat:"s" == "1" %}checked {% endif %}/></p>
+										{% endwith %}
+									{% elif field.type|stringformat:"s" == "Choice" %}
+										<p><a class="add_choice">Add option</a></p>
+										<ul class="options_block">
+										{% with field.settings|split_remove_first:";" as options %}
+											{% for option in options %}
+											<li>
+												<span>
+													<input type="radio" name="{{ field.pk }}" tabindex="-1" />&nbsp;
+													<input class="option_item" type="text" value="{{ option }}" placeholder=" option text" />
+													<a class="remove_option">Remove</a>
+												</span>
+											</li>
+											{% endfor %}
+										{% endwith %}
+										</ul>
+									{% elif field.type|stringformat:"s" == "Checkbox" %}
+										<p><a class="add_checkbox">Add option</a></p>
+										<ul class="options_block">
+										{% with field.settings|split_remove_first:";" as options %}
+											{% for option in options %}
+											<li>
+												<span>
+													<input type="checkbox" tabindex="-1" />&nbsp;
+													<input class="option_item" type="text" value="{{ option }}" placeholder=" option text" />
+													<a class="remove_option">Remove</a>
+												</span>
+											</li>
+											{% endfor %}
+										{% endwith %}
+										</ul>
+									{% elif field.type|stringformat:"s" == "LabelText" %}
+										<p><input class="label_text" type="text" value="{{ field.settings }}" placeholder=" set text" /></p>
+									{% elif field.type|stringformat:"s" == "Connection" %}
+										<p>Select form and field:&nbsp;<select class="connection_form"></select>&nbsp;<select class="connection_field"></select></p>
+									{% else %}
+										<p>{{ field.settings }}</p>
+									{% endif %}
 								</div>
 								<p>
 									<a class="remove_field">Remove</a> or customize this field.

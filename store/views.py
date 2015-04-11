@@ -25,7 +25,6 @@ class LoggedInMixin(object):
 
         
 class FormAdd(LoggedInMixin,TemplateView):
-    
     template_name = 'store/form_add.html'
     
     def get_context_data(self, **kwargs):
@@ -49,7 +48,7 @@ class FormAdd(LoggedInMixin,TemplateView):
                     slug = slugify(request.POST.get('title'))
                 )
             f.save()
-            
+
             i = 0
             for name in request.POST.getlist("names[]"):
                 ff = models.FormField(
@@ -65,14 +64,12 @@ class FormAdd(LoggedInMixin,TemplateView):
             return HttpResponse("OK")
             
         elif (request.POST.get('connection') == "field"):
-            #fields of given form
             fields = ""
             for field in models.FormField.objects.filter(form=request.POST.get('form')):
                 fields += '<option value="' + str(field.pk) + '">' + field.caption + '</option>'
             return HttpResponse(fields)
             
         else:
-            #list of forms in project for connection field
             forms = ""
             for form in models.Form.objects.filter(project=self.kwargs['project']):
                 forms += '<option value="' + str(form.pk) + '">' + form.title + '</option>'
@@ -80,7 +77,6 @@ class FormAdd(LoggedInMixin,TemplateView):
         
         
 class FormEdit(LoggedInMixin,TemplateView):
-    
     template_name = 'store/form_edit.html'
     
     def get_context_data(self, **kwargs):
@@ -95,18 +91,19 @@ class FormEdit(LoggedInMixin,TemplateView):
         
         if (request.POST.get('connection') == "false"):
         
+            #remove all old formfields and make new (simplest solution)
 
-            return HttpResponse("Not implemented yet.")
+            return HttpResponse("OK")
             
         elif (request.POST.get('connection') == "field"):
-            #fields of given form (but not the same as in formadd above because here active choice should be at first option)
+            #fields of form (active choice should be at first option)
             fields = ""
             for field in models.FormField.objects.filter(form=request.POST.get('form')):
                 fields += '<option value="' + str(field.pk) + '">' + field.caption + '</option>'
             return HttpResponse(fields)
             
         else:
-            #list of forms in project for connection field (but not the same as in formadd above because here active choice should be at first option)
+            #list of forms in project for connection field (active choice should be at first option)
             forms = ""
             for form in models.Form.objects.filter(project=self.kwargs['project']):
                 forms += '<option value="' + str(form.pk) + '">' + form.title + '</option>'
@@ -114,7 +111,6 @@ class FormEdit(LoggedInMixin,TemplateView):
 
         
 class FormInstanceAdd(LoggedInMixin, TemplateView):
-    
     template_name = 'store/forminstance_add.html'
     
     def get_context_data(self, **kwargs):
@@ -134,10 +130,17 @@ class FormInstanceAdd(LoggedInMixin, TemplateView):
             )
         fi.save()
         
+        for field in models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'):
+            data = models.DataText(
+                    formfield = field,
+                    forminstance = fi,
+                    data = "answer"
+                )
+            data.save();
+        
         return HttpResponse("OK")
     
-        
-        
+    
 class ProjectList(LoggedInMixin, ListView):
     model = models.Project
     paginate_by = 2
