@@ -10,8 +10,8 @@ var text_settings = field_name + '<p>Not null: <input class="notnull" type="chec
 var number_settings = field_name + '<p>Not null: <input class="notnull" type="checkbox" /> | Natural values: <input class="natural" type="checkbox" /></p>'
 var choice_settings = field_name + '<p><a class="add_choice">Add option</a></p><ul class="options_block"></ul>';
 var checkbox_settings = field_name + '<p><a class="add_checkbox">Add option</a></p><ul class="options_block"></ul>';
-var image_settings = field_name + '<p><input class="image" type="file" accept=".png,.gif,.jpg,.jpeg" /></p>';
-var file_settings = field_name + '<p><input class="file" type="file" /></p>';
+var image_settings = field_name + '<p><input class="image" disabled type="file" accept=".png,.gif,.jpg,.jpeg" /></p>';
+var file_settings = field_name + '<p><input class="file" disabled type="file" /></p>';
 var connection_settings = field_name + '<p>Select form and field:&nbsp;<select class="connection_form"></select>&nbsp;<select class="connection_field"></select></p>';
 var labeltext_settings = field_name_label + '<p><input class="label_text" type="text" placeholder=" set text" /></p>';
 var labelimage_settings = field_name_label + '<p><input class="label_image" type="file" accept=".png,.gif,.jpg,.jpeg" /></p>';
@@ -82,6 +82,12 @@ $(function() {
     $('#add_form, #edit_form, #add_forminstance').bind('keypress keydown keyup', function (e) {
         if (e.keyCode == 13) { e.preventDefault(); }
     });
+	
+	//discard changes
+    $("#cancel_button").click(function (e) {
+        redirect = true;
+		$(location).attr('href', $('input[name="after_process"]').prop('value'));
+    });
 
 });
  
@@ -94,14 +100,14 @@ $(function() {
         e.preventDefault();
         $($wrapper).append(field);
         if ($(".field_cell").length == 1)
-            $("#submit_button").get(0).type = 'submit';
+            $("#submit_button").removeAttr("disabled");
     });
 
 	//remove field area
     $($wrapper).on("click", ".remove_field", function () {
         $(this).parent().closest('tr').remove();
         if ($(".field_cell").length == 0)
-            $('#submit_button').get(0).type = 'hidden';
+            $('#submit_button').attr("disabled", true);
     });
 
     //insert choice item
@@ -291,8 +297,12 @@ $(function() {
 		
 		var field_contents = [];
 		var i = 0;
-        $(".field_cell").each(function () {
-			field_contents[i] = "answer";
+        $(".field_render").each(function () {
+			if ($(this).find('.textcontent').length > 0) {
+				field_contents[i] = $(this).find('.textcontent').val();
+			} else {
+				field_contents[i] = "temp answer";
+			}
             i = i + 1;
         });
 		

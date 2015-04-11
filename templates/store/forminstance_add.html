@@ -33,9 +33,9 @@
 								{% if field.type|stringformat:"s" == "Text" %}
 									{% with field.settings|split_all:";" as options %}
 										{% if options.1|stringformat:"s" == "0" %}
-											<input type="text" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
+											<input class="textcontent" type="text" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
 										{% else %}
-											<textarea {% if options.0|stringformat:"s" == "1" %}required="required" {% endif %}></textarea>
+											<textarea class="textcontent" {% if options.0|stringformat:"s" == "1" %}required="required" {% endif %}></textarea>
 										{% endif %}
 									{% endwith %}
 								{% elif field.type|stringformat:"s" == "Number" %}
@@ -75,6 +75,7 @@
 				</p>
 				<p>
 					<input id="submit_button" type="submit" value="Add instance" />
+					<input id="cancel_button" type="button" value="Cancel" />
 				</p>
 			</form>
 			

@@ -91,7 +91,29 @@ class FormEdit(LoggedInMixin,TemplateView):
         
         if (request.POST.get('connection') == "false"):
         
-            #remove all old formfields and make new (simplest solution)
+            title_pattern = re.compile("^([a-zA-Z0-9][a-zA-Z0-9 ]*[a-zA-Z0-9])$")
+            if not title_pattern.match(request.POST.get('title')):
+                return HttpResponse("Form name is invalid (letters, digits and spaces between allowed)!")
+
+            f = models.Form.objects.get(pk=self.kwargs['form'])
+            f.title = request.POST.get('title')
+            f.slug = slugify(request.POST.get('title'))
+            f.save()
+
+            models.FormField.objects.filter(form=f).delete()
+            #the simplest but in the future will be easily added more intelligent solution here
+
+            i = 0
+            for name in request.POST.getlist("names[]"):
+                ff = models.FormField(
+                    form=f, 
+                    type=models.Type.objects.get(name=request.POST.getlist("types[]")[i]),
+                    caption=name, 
+                    settings=request.POST.getlist("settings[]")[i],
+                    position=i
+                )
+                ff.save()
+                i = i + 1
 
             return HttpResponse("OK")
             
@@ -130,13 +152,15 @@ class FormInstanceAdd(LoggedInMixin, TemplateView):
             )
         fi.save()
         
+        i = 0
         for field in models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'):
             data = models.DataText(
                     formfield = field,
                     forminstance = fi,
-                    data = "answer"
+                    data = request.POST.getlist("contents[]")[i]
                 )
-            data.save();
+            data.save()
+            i = i + 1
         
         return HttpResponse("OK")
     
@@ -152,7 +176,7 @@ class ProjectList(LoggedInMixin, ListView):
 
 class FormList(LoggedInMixin, ListView):
     model = models.Form
-    paginate_by = 10
+    paginate_by = 100
     context_object_name = 'form_list'
 
     def get_queryset(self):
@@ -166,7 +190,7 @@ class FormList(LoggedInMixin, ListView):
 
 class FormInstanceList(LoggedInMixin, ListView):
     model = models.FormInstance
-    paginate_by = 10
+    paginate_by = 100
     context_object_name = 'forminstance_list'
 
     def get_queryset(self):
