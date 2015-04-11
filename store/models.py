@@ -5,6 +5,9 @@ from imagekit.processors import ResizeToFill
 from owndb.settings import MEDIA_URL
 import os
 
+from django.dispatch import receiver
+from django.db.models.signals import post_delete
+
 class Project(models.Model):
     title = models.CharField(max_length=60)
     owner = models.ForeignKey(User)
@@ -52,51 +55,44 @@ class FormField(models.Model):
 
     def __str__(self):
         return str(self.pk)
-
+            
     def get_data(self):
-        if self.type.name == "Text":
-            text = self.text_set.all()
-            return text
-        else:
-            return "Błąd"
+        data = {
+            'Text': self.datatext_set.all(),
+        }[self.type.name]
+        return data
 
 
 class FormInstance(models.Model):
     form = models.ForeignKey(Form)
     date = models.DateTimeField('Data dodania', auto_now_add=True)
+    user = models.ForeignKey(User, null=True, blank=True)
 
     def __str__(self):
         return str(self.pk)
 
+        
+class Connection(models.Model):
+    formfield = models.ForeignKey(FormField)
+    #formfield_connected = models.ForeignKey(FormField)
 
+    def __str__(self):
+        return str(self.pk)
 
-class Text(models.Model):
+        
+class DataText(models.Model):
     formfield = models.ForeignKey(FormField)
     forminstance = models.ForeignKey(FormInstance, null=True, blank=True)
     data = models.TextField(verbose_name='Treść')
 
-    def __str__(self):
+    def display(self):
         return self.data
- 
+
         
-class Boolean(models.Model):
-    formfield = models.ForeignKey(FormField)
-    forminstance = models.ForeignKey(FormInstance, null=True, blank=True)
-    data = models.BooleanField(default=False)
-
-
-class Image(models.Model):
-    formfield = models.ForeignKey(FormField)
-    forminstance = models.ForeignKey(FormInstance, null=True, blank=True)
-    image = models.ImageField(upload_to='images')
-    thumbnailSmall = ImageSpecField(source='image',
-                                    processors=[ResizeToFill(50, 50)],
-                                    format='JPEG',
-                                    options={'quality': 80})
-
+class ConnectionInstance(models.Model):
+    connection = models.ForeignKey(Connection)
+    forminstance = models.ForeignKey(FormInstance)
+    #content = models.ForeignKey(DataText)
+   
     def __str__(self):
-        return self.image.name
-
-    def thumbnail(self):
-        return """<a href="%s"><img border="0" alt="" src="%s"/></a>""" % \
-               (os.path.join(MEDIA_URL, self.thumbnailSmall.name), os.path.join(MEDIA_URL, self.thumbnailSmall.name))
+        return str(self.pk)   

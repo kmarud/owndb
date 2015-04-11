@@ -38,12 +38,14 @@
                     <thead>
                         <tr>
                             <th>Completion date</th>
+							<th>User</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for entry in forminstance_list %}
                             <tr>
                                 <td><a href="{% url 'forminstance-detail' entry.form.project.pk entry.form.pk entry.pk %}">{{ entry.date }}</a></td>
+								<td><a href="#">{{ entry.user.username }}</a></td>
                             </tr>
                         {% endfor  %}
                     </tbody>

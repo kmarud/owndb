@@ -127,11 +127,15 @@ class FormInstanceAdd(LoggedInMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
         
-        #save form instance or return issue
+        f = models.Form.objects.get(pk=self.kwargs['form'])
+        fi = models.FormInstance(
+                form=f,
+                user = self.request.user
+            )
+        fi.save()
         
-        return HttpResponse("Not implemented yet.")
+        return HttpResponse("OK")
     
-        
         
         
 class ProjectList(LoggedInMixin, ListView):
@@ -181,7 +185,7 @@ class FormInstanceDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super(FormInstanceDetail, self).get_context_data(**kwargs)
         context['formfield_list'] = models.FormField.objects.filter(form__pk=self.kwargs['form']).order_by('position')
-        context['text_list'] = models.Text.objects.filter(
+        context['text_list'] = models.DataText.objects.filter(
             Q(forminstance__pk__isnull=True, formfield__form__pk=self.kwargs['form'])
             | Q(forminstance__pk=self.kwargs['forminstance'])).order_by('formfield__position')
         return context

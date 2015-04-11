@@ -9,10 +9,7 @@
 
 
 {% block main-title %}
-    <a href="{% url 'project-list' %}">Kategorie</a> |
-    <a href="{% url 'form-list' forminstance.form.project.pk %}">{{ forminstance.form.project.title }}</a> |
-    <a href="{% url 'forminstance-list' forminstance.form.project.pk forminstance.form.pk %}">{{ forminstance.form.title }}</a> |
-    Instance {{ forminstance.pk }}
+    
 {% endblock %}
 
 
@@ -23,12 +20,14 @@
 
 {% block container %}
     <ul>
+	{% comment %}
     {% for formfield in formfield_list %}
         {% if formfield.label %}
-            <li><b>{{ formfield.get_data|instance:forminstance }}</b></li>
+            #<li><b>{{ formfield.get_data|instance:forminstance }}</b></li>
         {% else %}
-            <li>{{ formfield.get_data|instance:forminstance }}</li>
+            #<li>{{ formfield.get_data|instance:forminstance }}</li>
         {% endif %}
     {% endfor %}
+	{% endcomment %}
     </ul>
 {% endblock %}
