@@ -1,5 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import User
+
+from django.utils.html import format_html
+import os
+
+# Image type
+from imagekit.models import ImageSpecField
+from imagekit.processors import ResizeToFill
+from owndb.settings import MEDIA_URL
+from django.dispatch import receiver
+from django.db.models.signals import post_delete
+
+# django-allauth
 from allauth.account.models import EmailAddress
 from allauth.socialaccount.models import SocialAccount
 import hashlib
@@ -84,11 +96,11 @@ class FormField(models.Model):
         return str(self.pk)
 
     def get_data(self):
-        if self.type.name == "Text":
-            text = self.text_set.all()
-            return text
-        else:
-            return "Błąd"
+        data = {
+            'Text': self.text_set.all(),
+            'Image': self.image_set.all(),
+        }[self.type.name]
+        return data
 
 
 class Text(models.Model):
@@ -96,7 +108,7 @@ class Text(models.Model):
     forminstance = models.ForeignKey(FormInstance, null=True, blank=True)
     data = models.TextField(verbose_name='Treść')
 
-    def __str__(self):
+    def display(self):
         return self.data
 
 
@@ -104,3 +116,32 @@ class Boolean(models.Model):
     formfield = models.ForeignKey(FormField)
     forminstance = models.ForeignKey(FormInstance, null=True, blank=True)
     data = models.BooleanField(default=False)
+
+
+class Image(models.Model):
+    formfield = models.ForeignKey(FormField)
+    forminstance = models.ForeignKey(FormInstance, null=True, blank=True)
+    image = models.ImageField(upload_to='images')
+    thumbnailSmall = ImageSpecField(source='image',
+                                    processors=[ResizeToFill(50, 50)],
+                                    format='JPEG',
+                                    options={'quality': 80})
+
+    def __str__(self):
+        return self.image.name
+
+    def display(self):
+        return format_html('<img border="0" alt="" src="{0}"/>', os.path.join(MEDIA_URL, self.image.name))
+    display.allow_tags = True
+
+
+# Automatically delete photo file when database object is being deleted
+@receiver(post_delete, sender=Image)
+def photo_post_delete_handler(sender, **kwargs):
+    photo = kwargs['instance']
+    storage, path = photo.image.storage, photo.image.path
+    storage.delete(path)
+    storage, path = photo.thumbnailSmall.storage, photo.thumbnailSmall.path
+    storage.delete(path)
+    # Delete empty folder created by django-imagekit
+    os.rmdir(os.path.dirname(path))
