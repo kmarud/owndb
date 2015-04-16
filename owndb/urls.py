@@ -10,6 +10,7 @@ from django.conf.urls.static import static
 # admin.autodiscover()
 
 urlpatterns = patterns('',
+					   url(r'^', include('pages.urls')),	
                        url(r'^admin/', include(admin.site.urls)),
                        url(r'^store/', include('store.urls')),
                        url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/accounts/login'}),
