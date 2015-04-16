@@ -1,7 +1,8 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 
 {% block title %}
-    Kategorie | {{ form.project.title }} | {{ form.title }}
+    owndb - kategorie | {{ form.project.title }} | {{ form.title }}
 {% endblock %}
 
 
@@ -16,35 +17,53 @@
 {% block extra_css %}
 {% endblock %}
 
+
 {% block container %}
-    <div class="forms">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3">
-                    <h3 class="form-signin-heading">Instancje formularza {{ form.title }}</h3>
-                    <input name="search" type="text" id="user" class="form-control" placeholder="Wyszukaj formularz" required autofocus/>
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <!-- Default panel contents -->
-                <div class="panel-heading">Lista dostępnych instancji  </div>
+    
 
-                <!-- Table -->
-                <table class="table">
-                    <thead>
-                        <tr>
 
-                            <th>Data wypełnienia</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for entry in forminstance_list %}
+<div class="container" style="margin-top: 40px">
+    <div class="row">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <h3 class="panel-title"><a href="/">Strona główna</a> / <a href="/store">Kategorie</a> / <a href="{% url 'form-list' form.project.pk %}">{{ form.Project.title }}</a> / <a href="{{ current_path }}">{{ form.title }}</a></h3>
+              </div>
+              <div class="panel-body">
+                    <div class="col-lg-3">
+                            
+                        <h3>Instancje formularza <small>{{ form.title }}</small></h3>       
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <label class="sr-only" for="search">Wyszukaj formularz</label>
+                                <input type="text" class="form-control" id="search-form" placeholder="Wyszukaj formularz">
+                            </div>
+                            <button type="submit" class="btn btn-default">Szukaj</button>
+                        </form><br>
+                    </div>
+
+                    <div class="panel panel-default" style="margin-top: 12%">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">Lista dostępnych instancji</h3>
+                      </div>
+                      <table class="table">
+                        <thead>
                             <tr>
-                                <td><a href="{% url 'forminstance-detail' entry.form.project.pk entry.form.pk entry.pk %}">{{ entry.date }}</a></td>
+                                <th>Data wypełnienia</th>
                             </tr>
-                        {% endfor  %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for entry in forminstance_list %}
+                                <tr>
+                                    <td><a href="{% url 'forminstance-detail' entry.form.project.pk entry.form.pk entry.pk %}">{{ entry.date }}</a></td>
+                                </tr>
+                            {% endfor  %}
+                        </tbody>
+                    </table>
+                    </div>
+
+
+
+              </div>
             </div>
             <nav>
                 <ul class="pagination">
@@ -69,5 +88,6 @@
             </nav>
         </div>
     </div>
-    <!-- /.forms -->
+
+    
 {% endblock %}
