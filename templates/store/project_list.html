@@ -8,8 +8,7 @@
 
 {% block container %}
     
-
-
+z
 <div class="container" style="margin-top: 40px">
     <div class="row">
             <div class="panel panel-primary">
@@ -42,7 +41,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for entry in category_list %}
+                            {% for entry in project_list %}
                                 <tr>
                                     <th><img src="{% static "img/web-design.png" %}" class="img-rounded center-block"></th>
                                     <td><a href="{% url 'form-list' entry.pk %}">{{ entry.title }}</a></td>
@@ -52,22 +51,27 @@
                         </tbody>
                     </table>
                     </div>
-
-                    <nav>
-                        <ul class="pagination">
-                            {% if is_paginated %}
-                                {% if page_obj.has_previous %}
-                                    <li class="disabled"><a href="{% url 'category-list' page_obj.previous_page_number %}"
-                                                            aria-label="Previous"><span aria-hidden="true">&laquo; Poprzednia strona</span></a></li>
-                                {% endif %}
-                                {% if page_obj.has_next %}
-                                    <li class="disabled"><a href="{% url 'category-list' page_obj.next_page_number %}"
-                                                            aria-label="Next"><span aria-hidden="true">Następna strona &raquo;</span></a></li>
-                                {% endif %}
-                            {% endif %}
-                        </ul>
-                    </nav>
-            </div>
+            <nav>
+                <ul class="pagination">
+                    {% if is_paginated %}
+                        {% if page_obj.has_previous %}
+                            <li class="disabled"><a href="{% url 'project-list' page_obj.previous_page_number %}"
+                                                    aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                        {% endif %}
+                        {% if page_obj.has_next %}
+                            <li class="disabled"><a href="{% url 'project-list' page_obj.next_page_number %}"
+                                                    aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+                        {% endif %}
+                    {% endif %}
+                    <!-- Page numbers
+                    <li class="active"><a href="#"> 1 <span class="sr-only">(current)</span></a></li>
+                    <li><a href="#"> 2 <span class="sr-only"></span></a></li>
+                    <li><a href="#"> 3 <span class="sr-only"></span></a></li>
+                    <li><a href="#"> 4 <span class="sr-only"></span></a></li>
+                    <li><a href="#"> 5 <span class="sr-only"></span></a></li>
+                    -->
+                </ul>
+            </nav>
         </div>
     </div>
 </div>

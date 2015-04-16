@@ -14,10 +14,10 @@ class VerifiedMixin(object):
         return super(VerifiedMixin, self).dispatch(*args, **kwargs)
 
 
-class CategoryList(VerifiedMixin, ListView):
-    model = models.Category
-    paginate_by = 6
-    context_object_name = 'category_list'
+class ProjectList(VerifiedMixin, ListView):
+    model = models.Project
+    paginate_by = 1
+    context_object_name = 'project_list'
 
     def get_queryset(self):
         return self.model.objects.filter(owner__pk=self.request.user.pk)
@@ -25,15 +25,15 @@ class CategoryList(VerifiedMixin, ListView):
 
 class FormList(VerifiedMixin, ListView):
     model = models.Form
-    paginate_by = 10
+    paginate_by = 1
     context_object_name = 'form_list'
 
     def get_queryset(self):
-        return self.model.objects.filter(category__pk=self.kwargs['category'])
+        return self.model.objects.filter(project__pk=self.kwargs['project'])
 
     def get_context_data(self, **kwargs):
         context = super(FormList, self).get_context_data(**kwargs)
-        context['category'] = models.Category.objects.get(pk=self.kwargs['category'])
+        context['project'] = models.Project.objects.get(pk=self.kwargs['project'])
         return context
 
 
