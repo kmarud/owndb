@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block title %}
-    owndb - kategorie | {{ project.title }}
+    owndb - projekty | {{ project.title }}
 {% endblock %}
 
 
@@ -31,7 +31,7 @@
 
                     <div class="panel panel-default" style="margin-top: 140px">
                       <div class="panel-heading">
-                        <h3 class="panel-title">Lista dostępnych formularzy</h3>
+                        <h3 class="panel-title">Lista dostępnych formularzy</h3> | <a href="{% url 'project-edit' category.pk %}">Edit project name</a> 
                       </div>
                       <table class="table">
                         <thead>
