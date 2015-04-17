@@ -9,10 +9,9 @@
 
 
 {% block main-title %}
-    <a href="{% url 'project-list' %}">Projects</a> |
-    <a href="{% url 'form-list' forminstance.form.project.pk %}">{{ forminstance.form.project.title }}</a> |
-    <a href="{% url 'forminstance-list' forminstance.form.project.pk forminstance.form.pk %}">{{ forminstance.form.title }}</a> |
-    Instance {{ forminstance.pk }}
+    <a class="navbar-brand topnav" href="{% url 'form-list' forminstance.form.project.pk %}">{{ forminstance.form.project.title }}</a>
+    <a class="navbar-brand topnav" href="{% url 'forminstance-list' forminstance.form.project.pk forminstance.form.pk %}">{{ forminstance.form.title }}</a>
+    <a class="navbar-brand topnav">Instance {{ forminstance.pk }}</a>
 {% endblock %}
 
 
@@ -65,7 +64,9 @@
 							<div>
 									{% for formfield in formfield_list %}
 									<li class="list-group-item">
+									{% comment %}
 										<b>{{ formfield.get_data|instance:forminstance }}</b>
+									{% endcomment %}
 									</li>
 									{% endfor %}
 								</ul>

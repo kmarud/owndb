@@ -5,8 +5,7 @@ from store.models import Form
 from store.models import Type
 from store.models import FormField
 from store.models import FormInstance
-from store.models import Text
-from store.models import Boolean
+from store.models import DataText
 from store.models import Image
 
 

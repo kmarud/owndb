@@ -8,7 +8,8 @@
 
 
 {% block main-title %}
-	<a class="navbar-brand topnav" href="{% url 'form-list' form.project.pk %}">{{ form.project.title }}</a> <a class="navbar-brand topnav" href="{% url 'form-list' form.project.pk %}{{ form.pk }}" >{{ form.title }}</a>
+	<a class="navbar-brand topnav" href="{% url 'form-list' form.project.pk %}">{{ form.project.title }}</a> 
+	<a class="navbar-brand topnav" href="{{ current_path }}" >{{ form.title }}</a>
 {% endblock %}
 
 
