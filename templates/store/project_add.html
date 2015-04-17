@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Add new project
+{% endblock %}
+
+{% block main-title %}
+    <a class="navbar-brand topnav" href="{% url 'form-list' project.pk %}">{{ project.title }}</a> <a class="navbar-brand topnav" >Design new form</a>
+{% endblock %}
+
+
+{% load staticfiles %}
+
+{% block extra_css %}
+
+{% endblock %}
+
+{% block container %}
+
+    <div class="forms">
+        <div class="container">
+            <h3>
+                Add project
+            </h3>
+            <div id="loading"></div>
+            <form method="post" action="{% url 'project-add' %}">
+                {% csrf_token %}
+                    <p>
+                        <input id="project_name" type="text" placeholder=" set project name" autofocus name="project_name" />
+                    </p>
+                    <p>
+                        <input type="submit" value="Add this project" />
+                    </p>
+            </form>
+        </div>
+    </div>
+<!-- /.forms -->
+{% endblock %}

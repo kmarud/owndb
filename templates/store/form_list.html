@@ -21,13 +21,13 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-3">
-                    <h3 class="form-signin-heading">Formularze projektu {{ category.title }}</h3>
+                    <h3 class="form-signin-heading">Formularze projektu {{ category.title }}  </h3>
                     <input name="search" type="text" id="user" class="form-control" placeholder="Wyszukaj formularz" required autofocus/>
                 </div>
             </div>
             <div class="panel panel-default">
                 <!-- Default panel contents -->
-                <div class="panel-heading">Lista dostępnych formularzy  </div>
+                <div class="panel-heading">Lista dostępnych formularzy  | <a href="{% url 'project-edit' category.pk %}">Edit project name</a> </div>
 
                 <!-- Table -->
                 <table class="table">
