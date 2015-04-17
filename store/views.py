@@ -96,8 +96,12 @@ class ProjectAdd(VerifiedMixin, SuccessMessageMixin, TemplateView):
             slug=slugify(self.request.POST.get('project_name'))
 
         )
+        if ( p.title.isspace() or p.title=='' ):
+            messages.error(request, "Bad project name!")
+            return HttpResponseRedirect('/store/')
 
         p.save()
+        messages.success(request, "Your project succesfully added!")
         return HttpResponseRedirect('/store/')
 
 
@@ -114,7 +118,10 @@ class ProjectEdit(VerifiedMixin, TemplateView):
         p = models.Category.objects.get(pk=self.kwargs['category'])
         p.title = self.request.POST.get('project_name')
         p.slug = slugify(self.request.POST.get('project_name'))
+        if ( p.title.isspace() or p.title=='' ):
+            messages.error(request, "Bad project name!")
+            return HttpResponseRedirect('/store/')
+
         p.save()
-        #return self.model.objects.filter(owner__pk=self.request.user.pk)
-        #return context
+        messages.success(request, "Your project succesfully edited!")
         return HttpResponseRedirect('/store/')

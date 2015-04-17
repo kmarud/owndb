@@ -10,13 +10,13 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-3">
-{% if messages %}
-<ul class="messages">
-  {% for message in messages %}
-  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-  {% endfor %}
-</ul>
-{% endif %}
+                    {% if messages %}
+                    <ul class="messages">
+                            {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                            {% endfor %}
+                    </ul>
+                    {% endif %}
                     <h3 class="form-signin-heading">Moje projekty</h3>
                     <input name="search" type="text" id="user" class="form-control" placeholder="Wyszukaj projekt" required autofocus/>
                 </div>
