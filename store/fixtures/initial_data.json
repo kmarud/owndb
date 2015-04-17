@@ -1,0 +1,65 @@
+[
+  {
+    "model": "store.type",
+    "pk": 1,
+    "fields": {
+      "name": "Text"
+    }
+  },
+  {
+    "model": "store.type",
+    "pk": 2,
+    "fields": {
+      "name": "Number"
+    }
+  },
+  {
+    "model": "store.type",
+    "pk": 3,
+    "fields": {
+      "name": "Choice"
+    }
+  },
+  {
+    "model": "store.type",
+    "pk": 4,
+    "fields": {
+      "name": "Checkbox"
+    }
+  },
+  {
+    "model": "store.type",
+    "pk": 5,
+    "fields": {
+      "name": "Image"
+    }
+  },
+  {
+    "model": "store.type",
+    "pk": 6,
+    "fields": {
+      "name": "File"
+    }
+  },
+  {
+    "model": "store.type",
+    "pk": 7,
+    "fields": {
+      "name": "Connection"
+    }
+  },
+  {
+    "model": "store.type",
+    "pk": 8,
+    "fields": {
+      "name": "LabelText"
+    }
+  },
+  {
+    "model": "store.type",
+    "pk": 9,
+    "fields": {
+      "name": "LabelImage"
+    }
+  }
+]

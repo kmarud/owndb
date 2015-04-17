@@ -1,6 +1,5 @@
 from django.contrib import admin
 from imagekit.admin import AdminThumbnail
-
 from store.models import Project
 from store.models import Form
 from store.models import Type
@@ -26,9 +25,7 @@ class ImageAdmin(admin.ModelAdmin):
 
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Form, FormAdmin)
-admin.site.register(Type)
 admin.site.register(FormField)
 admin.site.register(FormInstance)
-admin.site.register(Text)
-admin.site.register(Boolean)
+admin.site.register(DataText)
 admin.site.register(Image, ImageAdmin)

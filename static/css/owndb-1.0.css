@@ -1,0 +1,44 @@
+﻿/* 
+ * Owndb additional css file.
+ *
+ */
+
+table#fields_wrapper, table#fields_render {
+	border-bottom:10px; 
+	border-collapse:separate;
+}
+
+td.field_cell, td.field_render {
+	background-color:#eef; 
+	padding:5px; 
+	border-bottom:5px solid #fff; 
+	width:600px;
+}
+
+#add_field, .remove_field, .add_choice, .add_checkbox, .remove_option {
+	cursor:pointer;
+}
+
+ul.options_block {
+	list-style-type:none;
+	margin-left:0px;
+	padding-left:0px;
+}
+
+#loading {
+	display:none; 
+	opacity:0.8; 
+	background-color:#fafafa; 
+	position:fixed; 
+	width:100%; 
+	height:100%; 
+	top:0px; 
+	left:0px; 
+	z-index:2000;
+}
+
+p.textlabel {
+	font-size:18px; 
+	padding-top:10px; 
+	color:#789" 
+}

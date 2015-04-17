@@ -1,17 +1,14 @@
-from django.db import models
+﻿from django.db import models
 from django.contrib.auth.models import User
-
-from django.utils.html import format_html
-import os
-
-# Image type
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from owndb.settings import MEDIA_URL
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.dispatch import receiver
 from django.db.models.signals import post_delete
-
-# django-allauth
+import os
+from django.utils.html import format_html
 from allauth.account.models import EmailAddress
 from allauth.socialaccount.models import SocialAccount
 import hashlib
@@ -50,10 +47,6 @@ class Project(models.Model):
     owner = models.ForeignKey(User)
     slug = models.SlugField()
 
-    class Meta:
-        verbose_name = "Projekt"
-        verbose_name_plural = "Projekty"
-
     def __str__(self):
         return self.title
 
@@ -63,61 +56,61 @@ class Form(models.Model):
     project = models.ForeignKey(Project)
     slug = models.SlugField()
 
-    class Meta:
-        verbose_name = "Formularz"
-        verbose_name_plural = "Formularze"
-
     def __str__(self):
         return self.title
 
 
+class Sharing(models.Model):
+    form = models.ForeignKey(Form)
+    owner = models.ForeignKey(User)
+    
+    def __str__(self):
+        return str(self.pk)
+        
+        
 class Type(models.Model):
     name = models.CharField(max_length=60)
 
     def __str__(self):
         return self.name
 
-
-class FormInstance(models.Model):
-    form = models.ForeignKey(Form)
-    date = models.DateTimeField('Data dodania', auto_now_add=True)
-
-    def __str__(self):
-        return str(self.pk)
-
-
+        
 class FormField(models.Model):
     form = models.ForeignKey(Form)
     type = models.ForeignKey(Type)
+    caption = models.CharField(max_length=200)
+    settings = models.CharField(max_length=1000, null=True)
     position = models.IntegerField(default=0)
-    label = models.BooleanField(default=False, verbose_name='Etykieta')
 
     def __str__(self):
         return str(self.pk)
-
+            
     def get_data(self):
         data = {
-            'Text': self.text_set.all(),
+            'Text': self.datatext_set.all(),
             'Image': self.image_set.all(),
         }[self.type.name]
         return data
 
 
-class Text(models.Model):
+class FormInstance(models.Model):
+    form = models.ForeignKey(Form)
+    date = models.DateTimeField('Data dodania', auto_now_add=True)
+    user = models.ForeignKey(User, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.pk)
+
+
+class DataText(models.Model):
     formfield = models.ForeignKey(FormField)
     forminstance = models.ForeignKey(FormInstance, null=True, blank=True)
-    data = models.TextField(verbose_name='Treść')
+    data = models.TextField()
 
     def display(self):
         return self.data
-
-
-class Boolean(models.Model):
-    formfield = models.ForeignKey(FormField)
-    forminstance = models.ForeignKey(FormInstance, null=True, blank=True)
-    data = models.BooleanField(default=False)
-
-
+        
+        
 class Image(models.Model):
     formfield = models.ForeignKey(FormField)
     forminstance = models.ForeignKey(FormInstance, null=True, blank=True)
@@ -145,3 +138,23 @@ def photo_post_delete_handler(sender, **kwargs):
     storage.delete(path)
     # Delete empty folder created by django-imagekit
     os.rmdir(os.path.dirname(path))
+
+        
+class Connection(models.Model):
+    formfield_begin = models.ForeignKey(FormField)
+    formfield_end = models.ForeignKey(FormField, related_name='ff_end-ff')
+
+    def __str__(self):
+        return str(self.pk)
+        
+ 
+class ConnectionInstance(models.Model):
+    connection = models.ForeignKey(Connection)
+    forminstance = models.ForeignKey(FormInstance)
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content = GenericForeignKey('content_type', 'object_id')
+   
+    def __str__(self):
+        return str(self.pk)
+        

@@ -1,14 +1,22 @@
+﻿
 {% extends "base.html" %}
 {% load staticfiles %}
 
+
 {% block title %}
-    owndb - projekty | {{ project.title }}
+    Owndb - Projects | {{ project.title }}
+{% endblock %}
+
+
+{% block main-title %}
+    <a class="navbar-brand topnav" href="{% url 'form-list' project.pk %}">{{ project.title }}</a>
 {% endblock %}
 
 
 {% load staticfiles %}
 
 {% block container %}
+<<<<<<< HEAD
 
 <div class="container" style="margin-top: 40px">
     <div class="row">
@@ -31,47 +39,44 @@
 
                     <div class="panel panel-default" style="margin-top: 140px">
                       <div class="panel-heading">
-                        <h3 class="panel-title">Lista dostępnych formularzy</h3> | <a href="{% url 'project-edit' category.pk %}">Edit project name</a> 
+                        <h3 class="panel-title">Lista dostępnych formularzy</h3> | <a href="{% url 'project-edit' category.pk %}">Edit project name</a> | <a href="/store/{{ project.pk }}/add/">Design new form</a>
                       </div>
                       <table class="table">
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>Nazwa</th>
-                                <th>Liczba instancji formularza</th>
+                                <th>Title</th>
+								<th>Instances count</th>
+								<th>Tasks</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for entry in form_list %}
-                                <tr>
-                                    <th><img src="{% static "img/web-design.png" %}" class="img-rounded center-block"></th>
-                                    <td><a href="{% url 'forminstance-list' entry.project.pk entry.pk %}">{{ entry.title }}</a></td>
-                                    <td>{{ entry.forminstance_set.count }}</td>
-                                </tr>
-                            {% endfor  %}
+								<tr>
+									<th><img src="{% static "img/web-design.png" %}" class="img-rounded center-block"></th>
+									<td><a href="{% url 'forminstance-list' entry.project.pk entry.pk %}">{{ entry.title }}</a></td>
+									<td>{{ entry.forminstance_set.count }}</td>
+									<td>
+										<a href="{% url 'forminstance-list' entry.project.pk entry.pk %}add/">Add new instance</a> | 
+										<a href="{% url 'forminstance-list' entry.project.pk entry.pk %}edit/">Edit form</a>
+									</td>
+								</tr>
+							{% endfor %}
                         </tbody>
                     </table>
                     </div>
-
             <nav>
                 <ul class="pagination">
                     {% if is_paginated %}
                         {% if page_obj.has_previous %}
-                            <li class="disabled"><a href="{% url 'form-list' project.pk page_obj.previous_page_number %}"
+                            <li class="enabled"><a href="{% url 'form-list' project.pk page_obj.previous_page_number %}"
                                                     aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
                         {% endif %}
                         {% if page_obj.has_next %}
-                            <li class="disabled"><a href="{% url 'form-list' project.pk page_obj.next_page_number %}"
+                            <li class="enabled"><a href="{% url 'form-list' project.pk page_obj.next_page_number %}"
                                                     aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
                         {% endif %}
                     {% endif %}
-                    <!-- Page numbers
-                    <li class="active"><a href="#"> 1 <span class="sr-only">(current)</span></a></li>
-                    <li><a href="#"> 2 <span class="sr-only"></span></a></li>
-                    <li><a href="#"> 3 <span class="sr-only"></span></a></li>
-                    <li><a href="#"> 4 <span class="sr-only"></span></a></li>
-                    <li><a href="#"> 5 <span class="sr-only"></span></a></li>
-                    -->
                 </ul>
             </nav>
         </div>

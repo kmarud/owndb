@@ -1,6 +1,7 @@
-*.pyc
-*.pyo
-
 .idea
+*.py[cod]
 owndb/local_settings.py
 media
+store/migrations/
+runserver.bat
+makemigrations.bat

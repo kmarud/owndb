@@ -1,14 +1,14 @@
+﻿
 {% extends "base.html" %}
 {% load staticfiles %}
 
 {% block title %}
-    owndb - projekty | {{ form.project.title }} | {{ form.title }}
+    Instances | {{ form.project.title }} | {{ form.title }}
 {% endblock %}
 
 
-
 {% block main-title %}
-    <a href="{% url 'project-list' %}">Kategorie</a> | <a href ="{% url 'form-list' form.project.pk %}">{{ form.project.title }}</a> | {{ form.title }}
+	<a class="navbar-brand topnav" href="{% url 'form-list' form.project.pk %}">{{ form.project.title }}</a> <a class="navbar-brand topnav" href="{% url 'form-list' form.project.pk %}{{ form.pk }}" >{{ form.title }}</a>
 {% endblock %}
 
 
@@ -19,8 +19,6 @@
 
 
 {% block container %}
-    
-
 
 <div class="container" style="margin-top: 40px">
     <div class="row">
@@ -48,20 +46,20 @@
                       <table class="table">
                         <thead>
                             <tr>
-                                <th>Data wypełnienia</th>
+                                <th>Completion date</th>
+								<th>User</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for entry in forminstance_list %}
                                 <tr>
                                     <td><a href="{% url 'forminstance-detail' entry.form.project.pk entry.form.pk entry.pk %}">{{ entry.date }}</a></td>
+									<td><a href="#">{{ entry.user.username }}</a></td>
                                 </tr>
                             {% endfor  %}
                         </tbody>
                     </table>
                     </div>
-
-
 
               </div>
             </div>
@@ -69,25 +67,19 @@
                 <ul class="pagination">
                     {% if is_paginated %}
                         {% if page_obj.has_previous %}
-                            <li class="disabled"><a href="{% url 'forminstance-list' form.project.pk form.pk page_obj.previous_page_number %}"
+                            <li class="enabled"><a href="{% url 'forminstance-list' form.project.pk form.pk page_obj.previous_page_number %}"
                                                     aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
                         {% endif %}
                         {% if page_obj.has_next %}
-                            <li class="disabled"><a href="{% url 'forminstance-list' form.project.pk form.pk page_obj.next_page_number %}"
+                            <li class="enabled"><a href="{% url 'forminstance-list' form.project.pk form.pk page_obj.next_page_number %}"
                                                     aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
                         {% endif %}
                     {% endif %}
-                    <!-- Page numbers
-                    <li class="active"><a href="#"> 1 <span class="sr-only">(current)</span></a></li>
-                    <li><a href="#"> 2 <span class="sr-only"></span></a></li>
-                    <li><a href="#"> 3 <span class="sr-only"></span></a></li>
-                    <li><a href="#"> 4 <span class="sr-only"></span></a></li>
-                    <li><a href="#"> 5 <span class="sr-only"></span></a></li>
-                    -->
+
                 </ul>
             </nav>
         </div>
     </div>
 
-    
 {% endblock %}
+

@@ -1,14 +1,15 @@
+﻿
 {% extends "base.html" %}
+
 {% load store_extras %}
 
 {% block title %}
-    Projekty | {{ forminstance.form.project.title }} | {{ forminstance.form.title }} | Instance {{ forminstance.pk }}
+    Projects | {{ forminstance.form.project.title }} | {{ forminstance.form.title }} | Instance {{ forminstance.pk }}
 {% endblock %}
 
 
-
 {% block main-title %}
-    <a href="{% url 'project-list' %}">Kategorie</a> |
+    <a href="{% url 'project-list' %}">Projects</a> |
     <a href="{% url 'form-list' forminstance.form.project.pk %}">{{ forminstance.form.project.title }}</a> |
     <a href="{% url 'forminstance-list' forminstance.form.project.pk forminstance.form.pk %}">{{ forminstance.form.title }}</a> |
     Instance {{ forminstance.pk }}
@@ -25,7 +26,7 @@
 	    <div class="row">
 	        <div class="panel panel-primary">
 	            <div class="panel-heading">
-	            	<h3 class="panel-title"><a href="/">Strona główna</a> / <a href="/store">Kategorie</a></h3>
+	            	<h3 class="panel-title"><a href="/">Strona główna</a> / <a href="/store/">Projekty</a></h3>
 	             </div>
 	            <div class="panel-body">
 		            <div class="col-lg-3">
@@ -76,3 +77,4 @@
 	    </div>
 	</div>
 {% endblock %}
+
