@@ -1,5 +1,4 @@
-﻿
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block title %}
     Edit existing form
@@ -17,106 +16,114 @@
 {% endblock %}
 
 {% block container %}
-    <div class="forms">
-        <div class="container">
+<div class="container">
+	<div class="row">
+		<div class="col-lg-12">
+        	<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title"><a href="/">Home</a></h3>
+				</div>
+				<div class="panel-body">
 		
-			<h3>Edit existing form</h3>
-			<div id="loading"></div>
-			<form id="edit_form" action="{% url 'form-edit' project.pk form.pk %}">
-				{% csrf_token %}
-				<input name="after_process" type="hidden" value="{% url 'form-list' project.pk %}" />
-				<p>
-					<input id="form_name" type="text" value="{{ form.title }}" placeholder=" set form name" autofocus required/>
-				</p>
-				<table id="fields_wrapper">
-					<tbody>
-						{% for field in fields %}
-						<tr class="field_row">
-							<td class="field_cell">
-								<div class="field_settings">
-									<p>Choose type:&nbsp;
-										<select class="field_type">
-											<option value="{{ field.type.name }}">Without change</option>
-											<option value="LabelText">Text label</option>
-											<option value="LabelImage">Image label</option>
-											<option value="Text">Plain text</option>
-											<option value="Number">Number</option>
-											<option value="Choice">Choice (single)</option>
-											<option value="Checkbox">Checkbox (multiple)</option>
-											<option value="Image">Image</option>
-											<option value="File">File</option>
-											<option value="Connection">Connection</option>
-										</select>
-									</p>
-									{% if field.type|stringformat:"s" == "LabelText" %}
-										<p><input class="field_name" type="hidden" value="label" /></p>
-									{% else %}
-										<p><input class="field_name" type="text" value="{{ field.caption }}" placeholder=" set field name" required /></p>
-									{% endif %}
-									{% if field.type|stringformat:"s" == "Text" %}
-										{% with field.settings|split_all:";" as options %}
-											<p>Not null: <input class="notnull" type="checkbox" {% if options.0|stringformat:"s" == "1" %}checked {% endif %}/> | Multiline: <input class="multiline" type="checkbox" {% if options.1|stringformat:"s" == "1" %}checked {% endif %}/></p>
-										{% endwith %}
-									{% elif field.type|stringformat:"s" == "Number" %}
-										{% with field.settings|split_all:";" as options %}
-											<p>Not null: <input class="notnull" type="checkbox" {% if options.0|stringformat:"s" == "1" %}checked {% endif %}/> | Natural values: <input class="natural" type="checkbox" {% if options.1|stringformat:"s" == "1" %}checked {% endif %}/></p>
-										{% endwith %}
-									{% elif field.type|stringformat:"s" == "Choice" %}
-										<p><a class="add_choice">Add option</a></p>
-										<ul class="options_block">
-										{% with field.settings|split_remove_first:";" as options %}
-											{% for option in options %}
-											<li>
-												<span>
-													<input type="radio" name="{{ field.pk }}" tabindex="-1" />&nbsp;
-													<input class="option_item" type="text" value="{{ option }}" placeholder=" option text" />
-													<a class="remove_option">Remove</a>
-												</span>
-											</li>
-											{% endfor %}
-										{% endwith %}
-										</ul>
-									{% elif field.type|stringformat:"s" == "Checkbox" %}
-										<p><a class="add_checkbox">Add option</a></p>
-										<ul class="options_block">
-										{% with field.settings|split_remove_first:";" as options %}
-											{% for option in options %}
-											<li>
-												<span>
-													<input type="checkbox" tabindex="-1" />&nbsp;
-													<input class="option_item" type="text" value="{{ option }}" placeholder=" option text" />
-													<a class="remove_option">Remove</a>
-												</span>
-											</li>
-											{% endfor %}
-										{% endwith %}
-										</ul>
-									{% elif field.type|stringformat:"s" == "LabelText" %}
-										<p><input class="label_text" type="text" value="{{ field.settings }}" placeholder=" set text" /></p>
-									{% elif field.type|stringformat:"s" == "Connection" %}
-										<p>Select form and field:&nbsp;<select class="connection_form"></select>&nbsp;<select class="connection_field"></select></p>
-									{% else %}
-										<p>{{ field.settings }}</p>
-									{% endif %}
-								</div>
-								<p>
-									<a class="remove_field">Remove</a> or customize this field.
-								</p>
-							</td>
-						</tr>
-						{% endfor %}
-					</tbody>
-				</table>
-				<p>
-					<a id="add_field">Add new field</a> or drag and drop to reorder them.
-				</p>
-				<p>
-					<input id="submit_button" type="submit" value="Save changes" />
-					<input id="cancel_button" type="button" value="Cancel" />
-				</p>
-			</form>
+					<h3>Edit existing form</h3>
+					<div id="loading"></div>
+					<form id="edit_form" action="{% url 'form-edit' project.pk form.pk %}">
+						{% csrf_token %}
+						<input name="after_process" type="hidden" value="{% url 'form-list' project.pk %}" />
+						<p>
+							<input id="form_name" type="text" value="{{ form.title }}" placeholder=" set form name" autofocus required/>
+						</p>
+						<table id="fields_wrapper">
+							<tbody>
+								{% for field in fields %}
+								<tr class="field_row">
+									<td class="field_cell">
+										<div class="field_settings">
+											<p>Choose type:&nbsp;
+												<select class="field_type">
+													<option value="{{ field.type.name }}">Without change</option>
+													<option value="LabelText">Text label</option>
+													<option value="LabelImage">Image label</option>
+													<option value="Text">Plain text</option>
+													<option value="Number">Number</option>
+													<option value="Choice">Choice (single)</option>
+													<option value="Checkbox">Checkbox (multiple)</option>
+													<option value="Image">Image</option>
+													<option value="File">File</option>
+													<option value="Connection">Connection</option>
+												</select>
+											</p>
+											{% if field.type|stringformat:"s" == "LabelText" %}
+												<p><input class="field_name" type="hidden" value="label" /></p>
+											{% else %}
+												<p><input class="field_name" type="text" value="{{ field.caption }}" placeholder=" set field name" required /></p>
+											{% endif %}
+											{% if field.type|stringformat:"s" == "Text" %}
+												{% with field.settings|split_all:";" as options %}
+													<p>Not null: <input class="notnull" type="checkbox" {% if options.0|stringformat:"s" == "1" %}checked {% endif %}/> | Multiline: <input class="multiline" type="checkbox" {% if options.1|stringformat:"s" == "1" %}checked {% endif %}/></p>
+												{% endwith %}
+											{% elif field.type|stringformat:"s" == "Number" %}
+												{% with field.settings|split_all:";" as options %}
+													<p>Not null: <input class="notnull" type="checkbox" {% if options.0|stringformat:"s" == "1" %}checked {% endif %}/> | Natural values: <input class="natural" type="checkbox" {% if options.1|stringformat:"s" == "1" %}checked {% endif %}/></p>
+												{% endwith %}
+											{% elif field.type|stringformat:"s" == "Choice" %}
+												<p><a class="add_choice">Add option</a></p>
+												<ul class="options_block">
+												{% with field.settings|split_remove_first:";" as options %}
+													{% for option in options %}
+													<li>
+														<span>
+															<input type="radio" name="{{ field.pk }}" tabindex="-1" />&nbsp;
+															<input class="option_item" type="text" value="{{ option }}" placeholder=" option text" />
+															<a class="remove_option">Remove</a>
+														</span>
+													</li>
+													{% endfor %}
+												{% endwith %}
+												</ul>
+											{% elif field.type|stringformat:"s" == "Checkbox" %}
+												<p><a class="add_checkbox">Add option</a></p>
+												<ul class="options_block">
+												{% with field.settings|split_remove_first:";" as options %}
+													{% for option in options %}
+													<li>
+														<span>
+															<input type="checkbox" tabindex="-1" />&nbsp;
+															<input class="option_item" type="text" value="{{ option }}" placeholder=" option text" />
+															<a class="remove_option">Remove</a>
+														</span>
+													</li>
+													{% endfor %}
+												{% endwith %}
+												</ul>
+											{% elif field.type|stringformat:"s" == "LabelText" %}
+												<p><input class="label_text" type="text" value="{{ field.settings }}" placeholder=" set text" /></p>
+											{% elif field.type|stringformat:"s" == "Connection" %}
+												<p>Select form and field:&nbsp;<select class="connection_form"></select>&nbsp;<select class="connection_field"></select></p>
+											{% else %}
+												<p>{{ field.settings }}</p>
+											{% endif %}
+										</div>
+										<p>
+											<a class="remove_field">Remove</a> or customize this field.
+										</p>
+									</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+						<p>
+							<a id="add_field">Add new field</a> or drag and drop to reorder them.
+						</p>
+						<p>
+							<input id="submit_button" type="submit" value="Save changes" />
+							<input id="cancel_button" type="button" value="Cancel" />
+						</p>
+					</form>
 			
-        </div>
-    </div>
-    <!-- /.forms -->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}

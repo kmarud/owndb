@@ -1,4 +1,3 @@
-﻿
 {% extends "base.html" %}
 
 {% block title %}
@@ -17,75 +16,83 @@
 {% endblock %}
 
 {% block container %}
-    <div class="forms">
-        <div class="container">
-		
-			<h3>Add new instance</h3>
-			<div id="loading"></div>
-			<form id="add_forminstance" action="{% url 'forminstance-add' project.pk form.pk %}">
-				{% csrf_token %}
-				<input name="after_process" type="hidden" value="{% url 'forminstance-list' project.pk form.pk %}" />
-				<table id="fields_render">
-					<tbody>
-						{% for field in fields %}
-						<tr>
-							<td class="field_render">
-								{% if field.type|stringformat:"s" == "Text" %}
-									{% with field.settings|split_all:";" as options %}
-										{% if options.1|stringformat:"s" == "0" %}
-											<input class="textcontent" type="text" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
+<div class="container">
+	<div class="row">
+		<div class="col-lg-12">
+        	<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title"><a href="/">Home</a></h3>
+				</div>
+				<div class="panel-body">
+
+					<h3>Add new instance</h3>
+					<div id="loading"></div>
+					<form id="add_forminstance" action="{% url 'forminstance-add' project.pk form.pk %}">
+						{% csrf_token %}
+						<input name="after_process" type="hidden" value="{% url 'forminstance-list' project.pk form.pk %}" />
+						<table id="fields_render">
+							<tbody>
+								{% for field in fields %}
+								<tr>
+									<td class="field_render">
+										{% if field.type|stringformat:"s" == "Text" %}
+											{% with field.settings|split_all:";" as options %}
+												{% if options.1|stringformat:"s" == "0" %}
+													<input class="textcontent" type="text" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
+												{% else %}
+													<textarea class="textcontent" {% if options.0|stringformat:"s" == "1" %}required="required" {% endif %}></textarea>
+												{% endif %}
+											{% endwith %}
+										{% elif field.type|stringformat:"s" == "Number" %}
+											{% with field.settings|split_all:";" as options %}
+												{% if options.1|stringformat:"s" == "0" %}
+													<input type="text" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
+												{% else %}
+													<input type="number" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
+												{% endif %}
+											{% endwith %}
+										{% elif field.type|stringformat:"s" == "Choice" %}
+											{% with field.settings|split_remove_first:";" as options %}
+												{% for option in options %}
+													<input type="radio" name="{{ field.pk }}" /> {{ option }}<br />
+												{% endfor %}
+											{% endwith %}
+										{% elif field.type|stringformat:"s" == "Checkbox" %}
+											{% with field.settings|split_remove_first:";" as options %}
+												{% for option in options %}
+													<input type="checkbox" /> {{ option }}<br />
+												{% endfor %}
+											{% endwith %}
+										{% elif field.type|stringformat:"s" == "LabelText" %}
+											<p class="textlabel" >{{ field.settings }}</p>
+										{% elif field.type|stringformat:"s" == "Connection" %}
+											<p>Here will be input with dynamic content from connected field. 
+												<select class="temp_data_list">
+												{% for item in temp_data_list %}
+													<option value="{{ item.pk }}">{{ item.data }}</option>
+												{% endfor %}
+												</select>
+											</p>
 										{% else %}
-											<textarea class="textcontent" {% if options.0|stringformat:"s" == "1" %}required="required" {% endif %}></textarea>
+											<p>{{ field.settings }}</p>
 										{% endif %}
-									{% endwith %}
-								{% elif field.type|stringformat:"s" == "Number" %}
-									{% with field.settings|split_all:";" as options %}
-										{% if options.1|stringformat:"s" == "0" %}
-											<input type="text" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
-										{% else %}
-											<input type="number" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
-										{% endif %}
-									{% endwith %}
-								{% elif field.type|stringformat:"s" == "Choice" %}
-									{% with field.settings|split_remove_first:";" as options %}
-										{% for option in options %}
-											<input type="radio" name="{{ field.pk }}" /> {{ option }}<br />
-										{% endfor %}
-									{% endwith %}
-								{% elif field.type|stringformat:"s" == "Checkbox" %}
-									{% with field.settings|split_remove_first:";" as options %}
-										{% for option in options %}
-											<input type="checkbox" /> {{ option }}<br />
-										{% endfor %}
-									{% endwith %}
-								{% elif field.type|stringformat:"s" == "LabelText" %}
-									<p class="textlabel" >{{ field.settings }}</p>
-								{% elif field.type|stringformat:"s" == "Connection" %}
-									<p>Here will be input with dynamic content from connected field. 
-										<select class="temp_data_list">
-										{% for item in temp_data_list %}
-											<option value="{{ item.pk }}">{{ item.data }}</option>
-										{% endfor %}
-										</select>
-									</p>
-								{% else %}
-									<p>{{ field.settings }}</p>
-								{% endif %}
-							</td>
-						</tr>
-						{% endfor %}
-					</tbody>
-				</table>
-				<p>
-					Complete form and click button below.
-				</p>
-				<p>
-					<input id="submit_button" type="submit" value="Add instance" />
-					<input id="cancel_button" type="button" value="Cancel" />
-				</p>
-			</form>
-			
-        </div>
-    </div>
-    <!-- /.forms -->
+									</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+						<p>
+							Complete form and click button below.
+						</p>
+						<p>
+							<input id="submit_button" type="submit" value="Add instance" />
+							<input id="cancel_button" type="button" value="Cancel" />
+						</p>
+					</form>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}

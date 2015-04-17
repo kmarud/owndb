@@ -1,5 +1,4 @@
-﻿
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block title %}
     Design new form
@@ -15,30 +14,38 @@
 {% endblock %}
 
 {% block container %}
-    <div class="forms">
-        <div class="container">
-		
-			<h3>Design new form</h3>
-			<div id="loading"></div>
-			<form id="add_form" action="{% url 'form-add' project.pk %}">
-				{% csrf_token %}
-				<input name="after_process" type="hidden" value="{% url 'form-list' project.pk %}" />
-				<p>
-					<input id="form_name" type="text" placeholder=" set form name" autofocus required />
-				</p>
-				<table id="fields_wrapper">
-					<tbody></tbody>
-				</table>
-				<p>
-					<a id="add_field">Add new field</a> or drag and drop to reorder them.
-				</p>
-				<p>
-					<input id="submit_button" type="submit" value="Add this form to project" disabled="disabled" />
-					<input id="cancel_button" type="button" value="Cancel" />
-				</p>
-			</form>
-			
-        </div>
-    </div>
-    <!-- /.forms -->
+<div class="container">
+	<div class="row">
+		<div class="col-lg-12">
+        	<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title"><a href="/">Home</a> / <a href="{% url 'form-list' project.pk %}">{{ project.title }}</a> / <a href="{{ current_url }}">Design new form</a></h3>
+				</div>
+				<div class="panel-body">
+	
+					<h3>Design new form</h3>
+					<div id="loading"></div>
+					<form id="add_form" action="{% url 'form-add' project.pk %}">
+						{% csrf_token %}
+						<input name="after_process" type="hidden" value="{% url 'form-list' project.pk %}" />
+						<p>
+							<input id="form_name" type="text" placeholder=" set form name" autofocus required />
+						</p>
+						<table id="fields_wrapper">
+							<tbody></tbody>
+						</table>
+						<p>
+							<a id="add_field">Add new field</a> or drag and drop to reorder them.
+						</p>
+						<p>
+							<input id="submit_button" type="submit" value="Add this form to project" disabled="disabled" />
+							<input id="cancel_button" type="button" value="Cancel" />
+						</p>
+					</form>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}

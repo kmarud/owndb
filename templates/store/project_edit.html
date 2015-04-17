@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Edit project
+    Edit existing project
 {% endblock %}
 
 {% block main-title %}
@@ -16,23 +16,30 @@
 {% endblock %}
 
 {% block container %}
-
-    <div class="forms">
-        <div class="container">
-            <h3>
-                Edit project
-            </h3>
-            <div id="loading"></div>
-            <form method="post" action="{% url 'project-edit' project %}">
-                {% csrf_token %}
-                    <p>
-                        <input id="project_name" type="text" placeholder=" set project name" autofocus name="project_name" />
-                    </p>
-                    <p>
-                        <input type="submit" value="Edit this project" />
-                    </p>
-            </form>
-        </div>
-    </div>
-<!-- /.forms -->
+<div class="container">
+	<div class="row">
+		<div class="col-lg-12">
+        	<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title"><a href="/">Home</a></h3>
+				</div>
+				<div class="panel-body">
+				
+					<h3>Edit project</h3>
+					<div id="loading"></div>
+					<form method="post" action="{% url 'project-edit' project %}">
+						{% csrf_token %}
+							<p>
+								<input id="project_name" type="text" placeholder=" set project name" autofocus name="project_name" />
+							</p>
+							<p>
+								<input type="submit" value="Edit this project" />
+							</p>
+					</form>
+			
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}
