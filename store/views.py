@@ -13,6 +13,7 @@ from datetime import datetime
 from django.views.generic import View
 from django.views.generic.base import TemplateView
 from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 import re
 
 
@@ -51,14 +52,28 @@ class FormAdd(LoggedInMixin,TemplateView):
 
             i = 0
             for name in request.POST.getlist("names[]"):
+                
+                t = models.Type.objects.get(name=request.POST.getlist("types[]")[i])
+                s = request.POST.getlist("settings[]")[i]
+                
                 ff = models.FormField(
                     form=f, 
-                    type=models.Type.objects.get(name=request.POST.getlist("types[]")[i]),
+                    type=t,
                     caption=name, 
-                    settings=request.POST.getlist("settings[]")[i],
+                    settings=s,
                     position=i
                 )
                 ff.save()
+
+                if (t.name == "Connection"):
+                    ffepk = s.split(';')
+                    ffe = models.FormField.objects.get(pk=ffepk[1])
+                    c = models.Connection(
+                            formfield_begin = ff,
+                            formfield_end = ffe
+                        )
+                    c.save()
+                
                 i = i + 1
 
             return HttpResponse("OK")
@@ -140,11 +155,18 @@ class FormInstanceAdd(LoggedInMixin, TemplateView):
         context['project'] = models.Project.objects.get(pk=self.kwargs['project'])
         context['form'] = models.Form.objects.get(pk=self.kwargs['form'])
         context['fields'] = models.FormField.objects.filter(form=self.kwargs['form']).order_by('position')
+
+        try:
+            temp = models.FormField.objects.filter(form=self.kwargs['form'], type=models.Type.objects.get(name="Connection"))[0]
+            context['temp_data_list'] = models.DataText.objects.filter(formfield=models.Connection.objects.get(formfield_begin=temp).formfield_end)
+        except:
+            print("That's only temporary...")
+            
         return context
-    
+
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
-        
+                    
         f = models.Form.objects.get(pk=self.kwargs['form'])
         fi = models.FormInstance(
                 form=f,
@@ -163,6 +185,18 @@ class FormInstanceAdd(LoggedInMixin, TemplateView):
             i = i + 1
         
         return HttpResponse("OK")
+        
+
+class FormInstanceAddConnectionAutocomplete(View):
+
+    def get(self, request, *args, **kwargs):
+        if 'connection' in kwargs:
+            json_response = ['value1','value2','value3','value4']
+            return HttpResponse(json_response,content_type='application/json')
+    
+    
+    
+    
     
     
 class ProjectList(LoggedInMixin, ListView):
