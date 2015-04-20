@@ -1,5 +1,6 @@
 ﻿{% extends "base.html" %}
 {% load staticfiles %}
+
 {% block title %}
     Form instances
 {% endblock %}
@@ -9,19 +10,12 @@
 	<a class="navbar-brand topnav" href="{{ current_path }}" >{{ form.title }}</a>
 {% endblock %}
 
-
-{% load staticfiles %}
-
-{% block extra_css %}
-{% endblock %}
-
-
 {% block container %}
-
-<div class="container" style="margin-top: 40px">
+<div class="container">
     <div class="row">
-            <div class="panel panel-primary">
-              <div class="panel-heading">
+        <div class="col-lg-12">
+        	<div class="panel panel-primary">
+				<div class="panel-heading">
                 <h3 class="panel-title"><a href="/">Home</a> / <a href="/store">Projects</a> / <a href="{% url 'form-list' form.project.pk %}">{{ form.project.title }}</a> / <a href="{{ current_path }}">{{ form.title }}</a></h3>
               </div>
               <div class="panel-body">
@@ -78,6 +72,7 @@
             </nav>
         </div>
     </div>
+</div>
 
 {% endblock %}
 

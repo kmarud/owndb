@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load staticfiles %}
+
 {% block title %}
     Form list
 {% endblock %}
@@ -8,78 +9,72 @@
     <a class="navbar-brand topnav" href="{% url 'form-list' project.pk %}">{{ project.title }}</a>
 {% endblock %}
 
-
-{% load staticfiles %}
-
 {% block container %}
-
-<div class="container" style="margin-top: 40px">
+<div class="container">
     <div class="row">
-            <div class="panel panel-primary">
-              <div class="panel-heading">
-                <h3 class="panel-title"><a href="/">Home</a> / <a href="/store">Projects</a> / {{ project.title }} </h3>
-              </div>
-              <div class="panel-body">
-                    <div class="col-lg-5">
-                            
+        <div class="col-lg-12">
+        	<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title"><a href="/">Home</a> / <a href="/store">Projects</a> / {{ project.title }} </h3>
+				</div>
+				<div class="panel-body">
+                    <div class="col-lg-5"> 
                         <h3>Project forms<small>{{ project.title }}</small></h3>
                         <form class="form-inline">
                             <div class="form-group">
                                 <label class="sr-only" for="search">Search form</label>
                                 <input type="text" class="form-control" id="search-project" placeholder="Search form">
                             </div>
-                            <button type="submit" class="btn btn-default">Szukaj</button>
-                        </form><br>
+                            <button type="submit" class="btn btn-default">Search</button>
+                        </form>
                     </div>
-
-                    <div class="panel panel-default" style="margin-top: 140px">
-                      <div class="panel-heading">
-                        <h3 class="panel-title">List of available forms</h3>
-						<a href="{% url 'project-edit' project.pk %}">Edit project name</a> | 
-						<a href="/store/{{ project.pk }}/add/">Design new form</a>
-                      </div>
-                      <table class="table">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Title</th>
-								<th>Instances count</th>
-								<th>Tasks</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for entry in form_list %}
+                    <div class="panel panel-default" style="margin-top: 120px">
+						<div class="panel-heading">
+							<h3 class="panel-title">List of available forms</h3>
+							<a href="{% url 'project-edit' project.pk %}">Edit project name</a> | 
+							<a href="/store/{{ project.pk }}/add/">Design new form</a>
+						</div>
+						<table class="table">
+							<thead>
 								<tr>
-									<th><img src="{% static "img/web-design.png" %}" class="img-rounded center-block"></th>
-									<td><a href="{% url 'forminstance-list' entry.project.pk entry.pk %}">{{ entry.title }}</a></td>
-									<td>{{ entry.forminstance_set.count }}</td>
-									<td>
-										<a href="{% url 'forminstance-add' entry.project.pk entry.pk %}">Add new instance</a> | 
-										<a href="{% url 'form-edit' entry.project.pk entry.pk %}">Edit form</a>
-									</td>
+									<th></th>
+									<th>Title</th>
+									<th>Instances count</th>
+									<th>Tasks</th>
 								</tr>
-							{% endfor %}
-                        </tbody>
-                    </table>
+							</thead>
+							<tbody>
+								{% for entry in form_list %}
+									<tr>
+										<th><img src="{% static "img/web-design.png" %}" class="img-rounded center-block"></th>
+										<td><a href="{% url 'forminstance-list' entry.project.pk entry.pk %}">{{ entry.title }}</a></td>
+										<td>{{ entry.forminstance_set.count }}</td>
+										<td>
+											<a href="{% url 'forminstance-add' entry.project.pk entry.pk %}">Add new instance</a> | 
+											<a href="{% url 'form-edit' entry.project.pk entry.pk %}">Edit form</a>
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
                     </div>
-            <nav>
-                <ul class="pagination">
-                    {% if is_paginated %}
-                        {% if page_obj.has_previous %}
-                            <li class="enabled"><a href="{% url 'form-list' project.pk page_obj.previous_page_number %}"
-                                                    aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-                        {% endif %}
-                        {% if page_obj.has_next %}
-                            <li class="enabled"><a href="{% url 'form-list' project.pk page_obj.next_page_number %}"
-                                                    aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
-                        {% endif %}
-                    {% endif %}
-                </ul>
-            </nav>
-        </div>
-    </div>
+					<nav>
+						<ul class="pagination">
+							{% if is_paginated %}
+								{% if page_obj.has_previous %}
+									<li class="enabled"><a href="{% url 'form-list' project.pk page_obj.previous_page_number %}"
+															aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+								{% endif %}
+								{% if page_obj.has_next %}
+									<li class="enabled"><a href="{% url 'form-list' project.pk page_obj.next_page_number %}"
+															aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+								{% endif %}
+							{% endif %}
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
-        </div></div>
-
-    
 {% endblock %}

@@ -1,5 +1,7 @@
 ﻿{% extends "base.html" %}
+{% load staticfiles %}
 {% load store_extras %}
+
 {% block title %}
     Form instance detail
 {% endblock %}
@@ -10,17 +12,12 @@
     <a class="navbar-brand topnav">Instance {{ forminstance.pk }}</a>
 {% endblock %}
 
-
-{% load staticfiles %}
-
-{% block extra_css %}
-{% endblock %}
-
 {% block container %}
-	<div class="container" style="margin-top: 40px">
-	    <div class="row">
-	        <div class="panel panel-primary">
-	            <div class="panel-heading">
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+        	<div class="panel panel-primary">
+				<div class="panel-heading">
 	            	<h3 class="panel-title"><a href="/">Home</a> / <a href="/store/">Projects</a></h3>
 	             </div>
 	            <div class="panel-body">
@@ -73,5 +70,6 @@
 	        </div>
 	    </div>
 	</div>
+</div>
 {% endblock %}
 

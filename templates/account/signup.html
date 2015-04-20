@@ -3,41 +3,28 @@
 {% load url from future %}
 
 {% block title %}
-    owndb - rejestracja
-{% endblock %}
-
-{% block add_css %}
-<link href="{% static "css/style.css" %}" rel="stylesheet">
+    Owndb - Rejestracja
 {% endblock %}
 
 {% block container %}
-    <!-- registration -->
-    <div class="registration">
+    <div class="intro-header registration">
         <div class="container">
             <div class="row">
-				<div class="col-lg-7">
-                    <h2 class="form-signin-heading">Regulamin</h2>
-                    <p class="text-justify">Użytkownik musi przestrzegać wszelkich zasad przedstawionych w ramach Usług.
-
-						Z Usług nie wolno korzystać w niewłaściwy sposób. Na przykład nie można utrudniać ich działania ani podejmować prób uzyskania do nich dostępu inaczej niż za pomocą interfejsu i instrukcji udostępnionych przez Google. Z Usług można korzystać wyłącznie w sposób dozwolony przez prawo, w tym obowiązujące przepisy dotyczące kontroli eksportu i reeksportu. Możemy zawiesić lub przerwać świadczenie Usług użytkownikowi, jeśli nie będzie on przestrzegał naszych warunków lub zasad bądź jeśli będziemy prowadzić dochodzenie związane z domniemanym niewłaściwym postępowaniem.
-
-						Korzystanie z Usług nie daje użytkownikowi żadnych praw własności intelektualnej do Usług ani do dostępnych treści. Materiałów pochodzących z Usług nie wolno wykorzystywać, chyba że ich właściciel udzieli na to pozwolenia lub jest to w inny sposób dozwolone przez prawo. Niniejsze warunki nie powodują przyznania użytkownikowi prawa do wykorzystania jakichkolwiek marek i logo użytych w Usługach. Nie wolno usuwać, zasłaniać ani zmieniać żadnych informacji prawnych wyświetlanych w Usługach lub w związku z nimi.</p>
-                </div>
-                <div class="col-lg-4">
-                    <form class="form-signin" id="signup_form" method="post" action="{% url 'account_signup' %}">
-                      {% csrf_token %}
-                      {{ form.as_p }}
-                      {% if redirect_field_value %}
-                      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-                      {% endif %}
-                      <input name="registration" type="submit" id="registration" value="Rejestracja" class="btn btn-lg btn-success btn-block"/>
-                    </form>
-                </div>
-            </div>
-
-        </div>
-        <!-- /.container -->
-
-    </div>
-    <!-- /.registration -->
+			<div class="col-lg-7">
+				<h2 class="form-signin-heading">Regulamin</h2>
+				<p class="text-justify">Użytkownik musi przestrzegać wszelkich zasad przedstawionych w ramach Usług. Z Usług nie wolno korzystać w niewłaściwy sposób. Na przykład nie można utrudniać ich działania ani podejmować prób uzyskania do nich dostępu inaczej niż za pomocą interfejsu i instrukcji udostępnionych przez Owndb. Z Usług można korzystać wyłącznie w sposób dozwolony przez prawo, w tym obowiązujące przepisy dotyczące kontroli eksportu i reeksportu. Możemy zawiesić lub przerwać świadczenie Usług użytkownikowi, jeśli nie będzie on przestrzegał naszych warunków lub zasad bądź jeśli będziemy prowadzić dochodzenie związane z domniemanym niewłaściwym postępowaniem. Korzystanie z Usług nie daje użytkownikowi żadnych praw własności intelektualnej do Usług ani do dostępnych treści. Materiałów pochodzących z Usług nie wolno wykorzystywać, chyba że ich właściciel udzieli na to pozwolenia lub jest to w inny sposób dozwolone przez prawo. Niniejsze warunki nie powodują przyznania użytkownikowi prawa do wykorzystania jakichkolwiek marek i logo użytych w Usługach. Nie wolno usuwać, zasłaniać ani zmieniać żadnych informacji prawnych wyświetlanych w Usługach lub w związku z nimi.</p>
+			</div>
+			<div class="col-lg-4">
+				<form class="form-signin" id="signup_form" method="post" action="{% url 'account_signup' %}">
+				  {% csrf_token %}
+				  {{ form.as_p }}
+				  {% if redirect_field_value %}
+				  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+				  {% endif %}
+				  <input name="registration" type="submit" id="registration" value="Rejestracja" class="btn btn-lg btn-success btn-block"/>
+				</form>
+			</div>
+		</div>
+		</div>
+</div>
 {% endblock %}
