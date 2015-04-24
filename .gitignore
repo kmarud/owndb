@@ -2,6 +2,7 @@
 *.py[cod]
 owndb/local_settings.py
 media
+images
 store/migrations/
 runserver.bat
 makemigrations.bat

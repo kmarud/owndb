@@ -134,8 +134,14 @@ class FormEdit(VerifiedMixin,TemplateView):
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
         
-        if (request.POST.get('connection') == "false"):
-        
+        if (request.POST.get('connection')) == "forms":
+            forms = ""
+            for form in models.Form.objects.filter(project=self.kwargs['project']):
+                forms += '<option value="' + str(form.pk) + '">' + form.title + '</option>'
+            return HttpResponse(forms)        
+
+        else:
+
             title_pattern = re.compile("^([a-zA-Z0-9][a-zA-Z0-9 ]*[a-zA-Z0-9])$")
             if not title_pattern.match(request.POST.get('title')):
                 return HttpResponse("Form name is invalid (letters, digits and spaces between allowed)!")
@@ -146,6 +152,7 @@ class FormEdit(VerifiedMixin,TemplateView):
             f.save()
 
             models.FormField.objects.filter(form=f).delete()
+            
             #the simplest but in the future will be easily added more intelligent solution here
 
             i = 0
@@ -163,19 +170,6 @@ class FormEdit(VerifiedMixin,TemplateView):
 
             return HttpResponse("OK")
             
-        elif (request.POST.get('connection') == "field"):
-            #fields of form (active choice should be at first option)
-            fields = ""
-            for field in models.FormField.objects.filter(form=request.POST.get('form')):
-                fields += '<option value="' + str(field.pk) + '">' + field.caption + '</option>'
-            return HttpResponse(fields)
-            
-        else:
-            #list of forms in project for connection field (active choice should be at first option)
-            forms = ""
-            for form in models.Form.objects.filter(project=self.kwargs['project']):
-                forms += '<option value="' + str(form.pk) + '">' + form.title + '</option>'
-            return HttpResponse(forms)
 
         
 class FormInstanceAdd(VerifiedMixin, TemplateView):
@@ -187,15 +181,14 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
         context['form'] = models.Form.objects.get(pk=self.kwargs['form'])
         context['fields'] = models.FormField.objects.filter(form=self.kwargs['form']).order_by('position')
 
-        context['labelimages'] = models.Image.objects.get(formfield=models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'), forminstance=null)
         
-        ''' 
         try:
+            context['labelimages'] = models.Image.objects.filter(formfield=models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'), forminstance__isnull=True)
             temp = models.FormField.objects.filter(form=self.kwargs['form'], type=models.Type.objects.get(name="Connection"))[0]
             context['temp_data_list'] = models.FormInstance.objects.filter(formfield=models.Connection.objects.get(formfield_begin=temp).formfield_end)
         except:
             print("That's only temporary...")
-        '''
+        
             
         return context
 
@@ -211,7 +204,7 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
         
         i = 0
         for field in models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'):
-            if (field.type.pk != 8):
+            if (field.type.pk != 8 and field.type.pk != 9):
                 data = models.DataText(
                         formfield = field,
                         forminstance = fi,

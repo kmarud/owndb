@@ -302,7 +302,7 @@ $(function() {
             if ($(this).find('.textcontent').length > 0) {
                 field_contents[i] = $(this).find('.textcontent').val();
             } else {
-                field_contents[i] = "temp answer";
+                field_contents[i] = "not_implemented_yet;-;-;-;-;none";
             }
             i = i + 1;
         });
