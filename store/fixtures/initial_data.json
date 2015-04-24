@@ -61,5 +61,12 @@
     "fields": {
       "name": "LabelImage"
     }
+  },
+  {
+    "model": "store.type",
+    "pk": 10,
+    "fields": {
+      "name": "NextForm"
+    }
   }
 ]

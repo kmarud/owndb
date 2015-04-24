@@ -14,7 +14,7 @@ from django.http import JsonResponse
 from allauth.account.decorators import verified_email_required
 from datetime import datetime
 from store import models
-import re
+import re, json
 
 
 # Check if guest is a logged user
@@ -43,29 +43,46 @@ class FormAdd(VerifiedMixin,TemplateView):
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
-
-        if (request.POST.get('connection') == "false"):
         
+        print(request.POST)
+        print(request.FILES)
+
+        if (request.POST.get('connection')) == "forms":
+            forms = ""
+            for form in models.Form.objects.filter(project=self.kwargs['project']):
+                forms += '<option value="' + str(form.pk) + '">' + form.title + '</option>'
+            return HttpResponse(forms)        
+
+        else:
+            
+            form_title = request.POST.get('title')
+            
             title_pattern = re.compile("^([a-zA-Z0-9][a-zA-Z0-9 ]*[a-zA-Z0-9])$")
-            if not title_pattern.match(request.POST.get('title')):
+            
+            if not title_pattern.match(form_title):
                 return HttpResponse("Form name is invalid (letters, digits and spaces between allowed)!")
 
             p = models.Project.objects.get(pk=self.kwargs['project'])
             f = models.Form(
-                    title=request.POST.get('title'),
+                    title=form_title,
                     project=p, 
-                    slug = slugify(request.POST.get('title'))
+                    slug = slugify(form_title)
                 )
             f.save()
 
             i = 0
-            for name in request.POST.getlist("names[]"):
+            
+            names = json.loads(request.POST.get('names'))
+            types = json.loads(request.POST.get('types'))
+            settings = json.loads(request.POST.get('settings'))
+            
+            for name in names:
                 
-                t = models.Type.objects.get(name=request.POST.getlist("types[]")[i])
-                s = request.POST.getlist("settings[]")[i]
+                t = models.Type.objects.get(name=types[i])
+                s = settings[i]
 
                 ff = models.FormField(
-                    form=f, 
+                    form=f,
                     type=t,
                     caption=name, 
                     settings=s,
@@ -79,33 +96,31 @@ class FormAdd(VerifiedMixin,TemplateView):
                             data = s
                         )
                     data.save()
-
+                    
+                if (t.name == "LabelImage"):
+                    imgname = "labelimage" + str(i)
+                    if (request.FILES):
+                        img = models.Image(
+                            formfield=ff, 
+                            image=request.FILES[imgname]
+                        )
+                        img.save()
+                    else:
+                        return HttpResponse("You should provide image for label.")
+                    
                 if (t.name == "Connection"):
-                    ffepk = s.split(';')
-                    ffe = models.FormField.objects.get(pk=ffepk[1])
+                    cf = models.Form.objects.get(pk=s)
                     c = models.Connection(
-                            formfield_begin = ff,
-                            formfield_end = ffe
+                            formfield = ff,
+                            form = cf
                         )
                     c.save()
                 
                 i = i + 1
 
             return HttpResponse("OK")
+
             
-        elif (request.POST.get('connection') == "field"):
-            fields = ""
-            for field in models.FormField.objects.filter(form=request.POST.get('form')):
-                fields += '<option value="' + str(field.pk) + '">' + field.caption + '</option>'
-            return HttpResponse(fields)
-            
-        else:
-            forms = ""
-            for form in models.Form.objects.filter(project=self.kwargs['project']):
-                forms += '<option value="' + str(form.pk) + '">' + form.title + '</option>'
-            return HttpResponse(forms)
-        
-        
 class FormEdit(VerifiedMixin,TemplateView):
     template_name = 'store/form_edit.html'
     
@@ -143,6 +158,7 @@ class FormEdit(VerifiedMixin,TemplateView):
                     position=i
                 )
                 ff.save()
+                
                 i = i + 1
 
             return HttpResponse("OK")
@@ -171,11 +187,15 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
         context['form'] = models.Form.objects.get(pk=self.kwargs['form'])
         context['fields'] = models.FormField.objects.filter(form=self.kwargs['form']).order_by('position')
 
+        context['labelimages'] = models.Image.objects.get(formfield=models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'), forminstance=null)
+        
+        ''' 
         try:
             temp = models.FormField.objects.filter(form=self.kwargs['form'], type=models.Type.objects.get(name="Connection"))[0]
-            context['temp_data_list'] = models.DataText.objects.filter(formfield=models.Connection.objects.get(formfield_begin=temp).formfield_end)
+            context['temp_data_list'] = models.FormInstance.objects.filter(formfield=models.Connection.objects.get(formfield_begin=temp).formfield_end)
         except:
             print("That's only temporary...")
+        '''
             
         return context
 
@@ -191,24 +211,17 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
         
         i = 0
         for field in models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'):
-            data = models.DataText(
-                    formfield = field,
-                    forminstance = fi,
-                    data = request.POST.getlist("contents[]")[i]
-                )
-            data.save()
+            if (field.type.pk != 8):
+                data = models.DataText(
+                        formfield = field,
+                        forminstance = fi,
+                        data = request.POST.getlist("contents[]")[i]
+                    )
+                data.save()
             i = i + 1
         
         return HttpResponse("OK")
-        
-
-class FormInstanceAddConnectionAutocomplete(View):
-
-    def get(self, request, *args, **kwargs):
-        if 'connection' in kwargs:
-            json_response = ['value1','value2','value3','value4']
-            return HttpResponse(json_response,content_type='application/json')
-    
+            
     
 class ProjectList(VerifiedMixin, ListView):
     model = models.Project

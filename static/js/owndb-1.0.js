@@ -12,139 +12,90 @@ var choice_settings = field_name + '<p><a class="add_choice">Add option</a></p><
 var checkbox_settings = field_name + '<p><a class="add_checkbox">Add option</a></p><ul class="options_block"></ul>';
 var image_settings = field_name + '<p><input class="image" disabled type="file" accept=".png,.gif,.jpg,.jpeg" /></p>';
 var file_settings = field_name + '<p><input class="file" disabled type="file" /></p>';
-var connection_settings = field_name + '<p>Select form and field:&nbsp;<select class="connection_form"></select>&nbsp;<select class="connection_field"></select></p>';
+var connection_settings = field_name + '<p>Select form:&nbsp;<select class="connection_form"></select></p>';
 var labeltext_settings = field_name_label + '<p><input class="label_text" type="text" placeholder=" set text" /></p>';
-var labelimage_settings = field_name_label + '<p><input class="label_image" name="file" type="file" accept=".png,.gif,.jpg,.jpeg" /><input type="button" class="send" value="Upload"><progress min="0" max="100" value="0"></progress></p>';
+var labelimage_settings = field_name_label + '<p><input class="label_image" name="file" type="file" accept=".png,.gif,.jpg,.jpeg" /><progress min="0" max="100" value="0"></progress></p>';
 
 var choice_item = '\
-	<li>\
-		<span>\
-			<input type="radio" name="r" tabindex="-1" />&nbsp;\
-			<input class="option_item" type="text" placeholder=" option text" />\
-			<a class="remove_option">Remove</a>\
-		</span>\
-	</li>';
-	
+    <li>\
+        <span>\
+            <input type="radio" name="r" tabindex="-1" />&nbsp;\
+            <input class="option_item" type="text" placeholder=" option text" />\
+            <a class="remove_option">Remove</a>\
+        </span>\
+    </li>';
+    
 var checkbox_item = '\
-	<li>\
-		<span>\
-			<input type="checkbox" tabindex="-1" />&nbsp;\
-			<input class="option_item" type="text" placeholder=" option text" />\
-			<a class="remove_option">Remove</a>\
-		</span>\
-	</li>';
-	
+    <li>\
+        <span>\
+            <input type="checkbox" tabindex="-1" />&nbsp;\
+            <input class="option_item" type="text" placeholder=" option text" />\
+            <a class="remove_option">Remove</a>\
+        </span>\
+    </li>';
+    
 var field = '\
-	<tr class="field_row">\
-		<td class="field_cell">\
-			<div class="field_settings">\
-				<p>Choose type:&nbsp;\
-					<select class="field_type">\
-						<option value="LabelText">Text label</option>\
-						<option value="LabelImage">Image label</option>\
-						<option value="Text">Plain text</option>\
-						<option value="Number">Number</option>\
-						<option value="Choice">Choice (single)</option>\
-						<option value="Checkbox">Checkbox (multiple)</option>\
-						<option value="Image">Image</option>\
-						<option value="File">File</option>\
-						<option value="Connection">Connection</option>\
-					</select>\
-				</p>\
-				' + labeltext_settings + '\
-			</div>\
-			<p>\
-				<a class="remove_field">Remove</a> or customize this field.\
-			</p>\
-		</td>\
-	</tr>';
+    <tr class="field_row">\
+        <td class="field_cell">\
+            <div class="field_settings">\
+                <p>Choose type:&nbsp;\
+                    <select class="field_type">\
+                        <option value="LabelText">Text label</option>\
+                        <option value="LabelImage">Image label</option>\
+                        <option value="Text">Plain text</option>\
+                        <option value="Number">Number</option>\
+                        <option value="Choice">Choice (single)</option>\
+                        <option value="Checkbox">Checkbox (multiple)</option>\
+                        <option value="Image">Image</option>\
+                        <option value="File">File</option>\
+                        <option value="Connection">Connection</option>\
+                    </select>\
+                </p>\
+                ' + labeltext_settings + '\
+            </div>\
+            <p>\
+                <a class="remove_field">Remove</a> or customize this field.\
+            </p>\
+        </td>\
+    </tr>';
  
 var error = "Some error occured while sending data. Try again later.";
  
 var redirect = false;
 
 $(function() {
-    	
-	//set up a loading indicator
-	$(document).bind("ajaxStart", function() {
-		$("#loading").show();
-	}).bind("ajaxStop", function() {
-		$("#loading").hide();
-	});
-	
-	//prevent redirection
+        
+    //set up a loading indicator
+    $(document).bind("ajaxStart", function() {
+        $("#loading").show();
+    }).bind("ajaxStop", function() {
+        $("#loading").hide();
+    });
+    
+    //prevent redirection
     $(window).bind('beforeunload', function () {
         if ($(".field_cell").length > 0 && !redirect)
             return 'Unsaved data will be lost! Are you sure?';
     });
-	
+    
     //prevent accidental enter
     $('#add_form, #edit_form, #add_forminstance').bind('keypress keydown keyup', function (e) {
         if (e.keyCode == 13) { e.preventDefault(); }
     });
-	
-	//discard changes
+    
+    //discard changes
     $("#cancel_button").click(function (e) {
         redirect = true;
-		$(location).attr('href', $('input[name="after_process"]').prop('value'));
+        $(location).attr('href', $('input[name="after_process"]').prop('value'));
     });
 
 });
  
 $(function() {
-		
-	var $wrapper = $("#fields_wrapper tbody");
-	
-	//post file asynchronously
-	$($wrapper).on("change", ":file", function () {
-		var file = this.files[0];
-		var name = file.name;
-		var size = file.size;
-		var type = file.type;
-		alert(size + " " + type);
-		//Your validation
-
-	});	
-	function progressHandlingFunction(e){
-		if(e.lengthComputable){
-			$('progress').attr({value:e.loaded,max:e.total});
-		}
-	}
-	$($wrapper).on("click", ":button", function () {
-		var formData = new FormData($('form')[0]);
-		$.ajax({
-			url: 'upload.php',  //Server script to process data
-			type: 'POST',
-			xhr: function() {  // Custom XMLHttpRequest
-				var myXhr = $.ajaxSettings.xhr();
-				if(myXhr.upload){ // Check if upload property exists
-					myXhr.upload.addEventListener('progress',progressHandlingFunction, false); // For handling the progress of the upload
-				}
-				return myXhr;
-			},
-			//Ajax events
-			beforeSend: function() {
-				
-			},
-			success: function() {
-				
-			},
-			error: function() {
-				alert(formData);
-				
-			},
-			// Form data
-			data: formData,
-			//Options to tell jQuery not to process data or worry about content-type.
-			cache: false,
-			contentType: false,
-			processData: false
-		});
-	});
-
-	
-	
-	//insert field area
+        
+    var $wrapper = $("#fields_wrapper tbody");
+    
+    //insert field area
     $("#add_field").click(function (e) {
         e.preventDefault();
         $($wrapper).append(field);
@@ -152,7 +103,7 @@ $(function() {
             $("#submit_button").removeAttr("disabled");
     });
 
-	//remove field area
+    //remove field area
     $($wrapper).on("click", ".remove_field", function () {
         $(this).parent().closest('tr').remove();
         if ($(".field_cell").length == 0)
@@ -163,28 +114,28 @@ $(function() {
     $($wrapper).on("click", ".add_choice", function () {
         $(this).parent().siblings(".options_block").append(choice_item);
     });
-	
-	//insert checkbox item
+    
+    //insert checkbox item
     $($wrapper).on("click", ".add_checkbox", function () {
         $(this).parent().siblings(".options_block").append(checkbox_item);
     });
-	
-	//reorder option list
-	$('.options_block').livequery(function() {
-		$(this).sortable({
-			tolerance: 'pointer',
-			cursor: "move",
-			axis: "y",
-			opacity: 0.75
-		});
+    
+    //reorder option list
+    $('.options_block').livequery(function() {
+        $(this).sortable({
+            tolerance: 'pointer',
+            cursor: "move",
+            axis: "y",
+            opacity: 0.75
+        });
     });
 
     //remove option list item
     $($wrapper).on("click", ".remove_option", function () {
         $(this).closest("li").remove();
     });
-	
-	//reorder field areas
+    
+    //reorder field areas
     $($wrapper).sortable({
         tolerance: 'pointer',
         cursor: "move",
@@ -195,27 +146,7 @@ $(function() {
             ui.placeholder.height(ui.item.height());
         }
     });
-	
-	//change field list of form in connection settings
-	$($wrapper).on("change", ".connection_form", function () {
-		
-		$.ajax({
-			url: $(this).attr('action'),
-			method: "POST",
-			data: {
-				'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').prop('value'),
-				'connection': "field",
-				'form': $(".connection_form").find('option:selected').val()
-			}
-		}).done(function (data) {
-			$("#add_form, #edit_form").find(".connection_field").children().remove();
-			$("#add_form, #edit_form").find(".connection_field").append(data);
-		}).fail(function () {
-			alert(error);
-		});
-
-    });
-	
+    
     //change field settings area
     $($wrapper).on("change", ".field_type", function () {
         $(this).parent('p').siblings().remove();
@@ -230,148 +161,169 @@ $(function() {
             case "Choice":
                 settings = choice_settings;
                 break;
-			case "Checkbox":
+            case "Checkbox":
                 settings = checkbox_settings;
                 break;
-			case "Image":
+            case "Image":
                 settings = image_settings;
                 break;
-			case "File":
+            case "File":
                 settings = file_settings;
                 break;
-			case "Connection":
+            case "Connection":
 
-				$.ajax({
-					url: $(this).attr('action'),
-					method: "POST",
-					data: {
-						'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').prop('value'),
-						'connection': "form"
-					}
-				}).done(function (data) {
-					$("#add_form, #edit_form").find(".connection_form").append(data);
-					$(".connection_form").trigger("change");
-				}).fail(function () {
-					alert("Some error occured while sending data. Try again later.");
-				});
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: "POST",
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').prop('value'),
+                        'connection': "forms"
+                    }
+                }).done(function (data) {
+                    $("#add_form, #edit_form").find(".connection_form").append(data);
+                }).fail(function () {
+                    alert(error);
+                });
 
                 settings = connection_settings;
                 break;
-			case "LabelText":
-			    settings = labeltext_settings;
+            case "LabelText":
+                settings = labeltext_settings;
                 break;
-			case "LabelImage":
+            case "LabelImage":
                 settings = labelimage_settings;
                 break;
         }
         $(this).parent().closest('div').append(settings);
     });
-
+	
+    function progressHandlingFunction(e) {
+        if (e.lengthComputable) {
+            $('progress').attr({value:e.loaded,max:e.total});
+        }
+    }
+	
     //parse form and send
     $("#add_form, #edit_form").submit(function (e) {
-		e.preventDefault();
+        e.preventDefault();
+
+        var formData = new FormData();
+		var csrf = $('input[name="csrfmiddlewaretoken"]').prop('value');
+		formData.append('csrfmiddlewaretoken', csrf);
 
 		var title = $("#form_name").val();
-		var field_names = [];
+        var field_names = [];
         var field_types = [];
-		var field_settings = [];
-        var i = 0;
+        var field_settings = [];
+		
+		var i = 0;
         $(".field_cell").each(function () {
-			field_names[i] = $(this).find(".field_name").val();
+            field_names[i] = $(this).find(".field_name").val();
             field_types[i] = $(this).find(".field_type").find('option:selected').val();
-			switch (field_types[i]) {
-				case "Text":
-					field_settings[i] = $(this).find('.notnull').is(':checked') ? "1" : "0";
-					field_settings[i] += $(this).find('.multiline').is(':checked') ? ";1" : ";0";
-					break;
-				case "Number":
-					field_settings[i] = $(this).find('.notnull').is(':checked') ? "1" : "0";
-					field_settings[i] += $(this).find('.natural').is(':checked') ? ";1" : ";0";
-					break;
-				case "Choice":
-				case "Checkbox":
-					field_settings[i] = $(this).find(".option_item").length;
-					$(this).find(".option_item").each(function () {
-						field_settings[i] += ";"+$(this).val();
-					});
-					break;
-				case "Image":
-				case "File":
-					field_settings[i] = "none";
-					break;
-				case "Connection":
-					var formid = $(this).find(".connection_form").find('option:selected').val();
-					var fieldid = $(this).find(".connection_field").find('option:selected').val();
-					field_settings[i] = formid + ";" + fieldid;
-					break;
-				case "LabelText":
-					field_settings[i] = $(this).find(".label_text").val();
-					break;
-				case "LabelImage":
-					field_settings[i] = "primary_key_of_image_object";
-					break;
-				default:
-					field_settings[i] = "error";
-					break;
-			}
+            switch (field_types[i]) {
+                case "Text":
+                    field_settings[i] = $(this).find('.notnull').is(':checked') ? "1" : "0";
+                    field_settings[i] += $(this).find('.multiline').is(':checked') ? ";1" : ";0";
+                    break;
+                case "Number":
+                    field_settings[i] = $(this).find('.notnull').is(':checked') ? "1" : "0";
+                    field_settings[i] += $(this).find('.natural').is(':checked') ? ";1" : ";0";
+                    break;
+                case "Choice":
+                case "Checkbox":
+                    field_settings[i] = $(this).find(".option_item").length;
+                    $(this).find(".option_item").each(function () {
+                        field_settings[i] += ";"+$(this).val();
+                    });
+                    break;
+                case "Image":
+                case "File":
+                    field_settings[i] = "none";
+                    break;
+                case "Connection":
+                    var formid = $(this).find(".connection_form").find('option:selected').val();
+                    field_settings[i] = formid;
+                    break;
+                case "LabelText":
+                    field_settings[i] = $(this).find(".label_text").val();
+                    break;
+                case "LabelImage":
+                    field_settings[i] = "-";
+					var file = $(this).find(".label_image").get(0).files[0];
+					var label = 'labelimage' + i;
+					formData.append(label, file);
+                    break;
+                default:
+                    field_settings[i] = "error";
+                    break;
+            }
             i = i + 1;
         });
 
+		formData.append('title', title);
+		formData.append('names', JSON.stringify(field_names));
+		formData.append('types', JSON.stringify(field_types));
+		formData.append('settings', JSON.stringify(field_settings));
+
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            enctype: 'multipart/form-data',
+            xhr: function() {
+                var myXhr = $.ajaxSettings.xhr();
+                if(myXhr.upload) {
+                    myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
+                }
+                return myXhr;
+            },
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false
+        }).done(function (data) {
+            if (data == "OK") {
+                redirect = true;
+                $(location).attr('href', $('input[name="after_process"]').prop('value'));
+            } else {
+                alert(data);
+            }
+        }).fail(function () {
+            alert(error);
+        });
+    });
+
+    //parse form and send
+    $("#add_forminstance").submit(function (e) {
+        e.preventDefault();
+        
+        var field_contents = [];
+        var i = 0;
+        $(".field_render").each(function () {
+            if ($(this).find('.textcontent').length > 0) {
+                field_contents[i] = $(this).find('.textcontent').val();
+            } else {
+                field_contents[i] = "temp answer";
+            }
+            i = i + 1;
+        });
+        
         $.ajax({
             url: $(this).attr('action'),
             method: "POST",
             data: {
                 'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').prop('value'),
-				'connection': "false",
-				'title': title,
-                'names': field_names,
-                'types': field_types,
-				'settings': field_settings
+                'contents': field_contents
             }
         }).done(function (data) {
             if (data == "OK") {
-				redirect = true;
-				$(location).attr('href', $('input[name="after_process"]').prop('value'));
-			} else {
-				alert(data);
-			}
+                redirect = true;
+                $(location).attr('href', $('input[name="after_process"]').prop('value'));
+            } else {
+                alert(data);
+            }
         }).fail(function () {
             alert(error);
         });
     });
 	
-	//parse form and send
-    $("#add_forminstance").submit(function (e) {
-		e.preventDefault();
-		
-		var field_contents = [];
-		var i = 0;
-        $(".field_render").each(function () {
-			if ($(this).find('.textcontent').length > 0) {
-				field_contents[i] = $(this).find('.textcontent').val();
-			} else {
-				field_contents[i] = "temp answer";
-			}
-            i = i + 1;
-        });
-		
-        $.ajax({
-            url: $(this).attr('action'),
-            method: "POST",
-            data: {
-                'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').prop('value'),
-				'contents': field_contents
-            }
-        }).done(function (data) {
-            if (data == "OK") {
-				redirect = true;
-				$(location).attr('href', $('input[name="after_process"]').prop('value'));
-			} else {
-				alert(data);
-			}
-        }).fail(function () {
-            alert(error);
-        });
-    });
-
 });

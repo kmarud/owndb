@@ -84,6 +84,9 @@
 							<input id="cancel_button" type="button" value="Cancel" />
 						</p>
 					</form>
+					{% for image in labelimages %}
+						{{ image.display }}
+					{% endfor %}
 					
 				</div>
 			</div>

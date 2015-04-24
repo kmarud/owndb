@@ -141,8 +141,8 @@ def photo_post_delete_handler(sender, **kwargs):
 
         
 class Connection(models.Model):
-    formfield_begin = models.ForeignKey(FormField)
-    formfield_end = models.ForeignKey(FormField, related_name='ff_end-ff')
+    formfield = models.ForeignKey(FormField)
+    form = models.ForeignKey(Form)
 
     def __str__(self):
         return str(self.pk)
@@ -151,10 +151,8 @@ class Connection(models.Model):
 class ConnectionInstance(models.Model):
     connection = models.ForeignKey(Connection)
     forminstance = models.ForeignKey(FormInstance)
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    content = GenericForeignKey('content_type', 'object_id')
    
     def __str__(self):
         return str(self.pk)
+        
         
