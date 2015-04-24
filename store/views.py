@@ -307,3 +307,23 @@ class ProjectEdit(VerifiedMixin, TemplateView):
         p.save()
         messages.success(request, "Your project succesfully edited!")
         return HttpResponseRedirect('/store/')
+
+
+class FormDelete(VerifiedMixin, TemplateView):
+    template_name = 'store/form_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(FormDelete, self).get_context_data(**kwargs)
+        context['project'] = models.Project.objects.get(pk=self.kwargs['project'])
+        context['form'] = models.Form.objects.get(pk=self.kwargs['form'])
+        context['fields'] = models.FormField.objects.filter(form=self.kwargs['form']).order_by('position')
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        num = self.kwargs['project']
+        f = models.Form.objects.get(pk=self.kwargs['form'])
+        models.FormField.objects.filter(form=f).delete()
+        f.delete()
+        messages.success(request, "Successfully deleted !")
+        return HttpResponseRedirect('/store/' + str(num))

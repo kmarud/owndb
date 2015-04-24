@@ -20,7 +20,7 @@
 				</div>
 				<div class="panel-body">
 		
-					<h3>Edit existing form</h3>
+					<h3>Edit existing form | <a href="{% url 'form-delete' project.pk form.pk %}">Delete form</a></h3>
 					<div id="loading"></div>
 					<form id="edit_form" action="{% url 'form-edit' project.pk form.pk %}">
 						{% csrf_token %}
