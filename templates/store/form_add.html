@@ -20,7 +20,7 @@
 				<div class="panel-body">
 					<h3>Design new form</h3>
 					<div id="loading"></div>
-					<form id="add_form" action="{% url 'form-add' project.pk %}">
+					<form id="add_form" enctype="multipart/form-data" action="{% url 'form-add' project.pk %}">
 						{% csrf_token %}
 						<input name="after_process" type="hidden" value="{% url 'form-list' project.pk %}" />
 						<p>

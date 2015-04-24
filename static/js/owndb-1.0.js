@@ -14,7 +14,7 @@ var image_settings = field_name + '<p><input class="image" disabled type="file" 
 var file_settings = field_name + '<p><input class="file" disabled type="file" /></p>';
 var connection_settings = field_name + '<p>Select form and field:&nbsp;<select class="connection_form"></select>&nbsp;<select class="connection_field"></select></p>';
 var labeltext_settings = field_name_label + '<p><input class="label_text" type="text" placeholder=" set text" /></p>';
-var labelimage_settings = field_name_label + '<p><input class="label_image" type="file" accept=".png,.gif,.jpg,.jpeg" /></p>';
+var labelimage_settings = field_name_label + '<p><input class="label_image" name="file" type="file" accept=".png,.gif,.jpg,.jpeg" /><input type="button" class="send" value="Upload"><progress min="0" max="100" value="0"></progress></p>';
 
 var choice_item = '\
 	<li>\
@@ -94,6 +94,55 @@ $(function() {
 $(function() {
 		
 	var $wrapper = $("#fields_wrapper tbody");
+	
+	//post file asynchronously
+	$($wrapper).on("change", ":file", function () {
+		var file = this.files[0];
+		var name = file.name;
+		var size = file.size;
+		var type = file.type;
+		alert(size + " " + type);
+		//Your validation
+
+	});	
+	function progressHandlingFunction(e){
+		if(e.lengthComputable){
+			$('progress').attr({value:e.loaded,max:e.total});
+		}
+	}
+	$($wrapper).on("click", ":button", function () {
+		var formData = new FormData($('form')[0]);
+		$.ajax({
+			url: 'upload.php',  //Server script to process data
+			type: 'POST',
+			xhr: function() {  // Custom XMLHttpRequest
+				var myXhr = $.ajaxSettings.xhr();
+				if(myXhr.upload){ // Check if upload property exists
+					myXhr.upload.addEventListener('progress',progressHandlingFunction, false); // For handling the progress of the upload
+				}
+				return myXhr;
+			},
+			//Ajax events
+			beforeSend: function() {
+				
+			},
+			success: function() {
+				
+			},
+			error: function() {
+				alert(formData);
+				
+			},
+			// Form data
+			data: formData,
+			//Options to tell jQuery not to process data or worry about content-type.
+			cache: false,
+			contentType: false,
+			processData: false
+		});
+	});
+
+	
 	
 	//insert field area
     $("#add_field").click(function (e) {

@@ -40,5 +40,14 @@ ul.options_block {
 p.textlabel {
 	font-size:18px; 
 	padding-top:10px; 
-	color:#789" 
+	color:#789;
+}
+
+progress::-webkit-progress-bar {
+    background-color: #C2D4FC;
+    border: 0;
+}
+
+progress::-webkit-progress-value {
+    background-color: #1345BA;
 }

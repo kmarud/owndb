@@ -63,7 +63,7 @@ class FormAdd(VerifiedMixin,TemplateView):
                 
                 t = models.Type.objects.get(name=request.POST.getlist("types[]")[i])
                 s = request.POST.getlist("settings[]")[i]
-                
+
                 ff = models.FormField(
                     form=f, 
                     type=t,
@@ -72,6 +72,13 @@ class FormAdd(VerifiedMixin,TemplateView):
                     position=i
                 )
                 ff.save()
+                
+                if (t.name == "LabelText"):
+                    data = models.DataText(
+                            formfield = ff,
+                            data = s
+                        )
+                    data.save()
 
                 if (t.name == "Connection"):
                     ffepk = s.split(';')
