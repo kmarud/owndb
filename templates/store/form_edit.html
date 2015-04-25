@@ -34,25 +34,29 @@
 								<tr class="field_row">
 									<td class="field_cell">
 										<div class="field_settings">
+											
 											<p>Choose type:&nbsp;
 												<select class="field_type">
-													<option value="{{ field.type.name }}">Without change</option>
-													<option value="LabelText">Text label</option>
-													<option value="LabelImage">Image label</option>
-													<option value="Text">Plain text</option>
+													<option value="{{ field.type.name }}">{{ field.type.name }}</option>
+													<option value="LabelText">LabelText</option>
+													<option value="LabelImage">LabelImage</option>
+													<option value="Text">Text</option>
 													<option value="Number">Number</option>
-													<option value="Choice">Choice (single)</option>
-													<option value="Checkbox">Checkbox (multiple)</option>
+													<option value="Choice">Choice</option>
+													<option value="Checkbox">Checkbox</option>
 													<option value="Image">Image</option>
 													<option value="File">File</option>
 													<option value="Connection">Connection</option>
+													<option value="NextForm">NextForm</option>
 												</select>
 											</p>
-											{% if field.type|stringformat:"s" == "LabelText" %}
-												<p><input class="field_name" type="hidden" value="label" /></p>
+											
+											{% if field.type|stringformat:"s" == "LabelText" or field.type|stringformat:"s" == "LabelImage" or field.type|stringformat:"s" == "NextForm" %}
+												<p><input class="field_name" type="hidden" value="-" /></p>
 											{% else %}
 												<p><input class="field_name" type="text" value="{{ field.caption }}" placeholder=" set field name" required /></p>
 											{% endif %}
+											
 											{% if field.type|stringformat:"s" == "Text" %}
 												{% with field.settings|split_all:";" as options %}
 													<p>Not null: <input class="notnull" type="checkbox" {% if options.0|stringformat:"s" == "1" %}checked {% endif %}/> | Multiline: <input class="multiline" type="checkbox" {% if options.1|stringformat:"s" == "1" %}checked {% endif %}/></p>
@@ -93,10 +97,18 @@
 												</ul>
 											{% elif field.type|stringformat:"s" == "LabelText" %}
 												<p><input class="label_text" type="text" value="{{ field.settings }}" placeholder=" set text" /></p>
+											{% elif field.type|stringformat:"s" == "LabelImage" %}
+												<p><input class="label_image" name="file" type="file" accept=".png,.gif,.jpg,.jpeg" /><progress min="0" max="100" value="0"></progress></p>
 											{% elif field.type|stringformat:"s" == "Connection" %}
-												<p>Select form and field:&nbsp;<select class="connection_form"></select>&nbsp;<select class="connection_field"></select></p>
+												<p>Select form:&nbsp;<select class="connection_form"></select></p>
+											{% elif field.type|stringformat:"s" == "Image" %}
+												<p><input class="image" disabled type="file" accept=".png,.gif,.jpg,.jpeg" /></p>
+											{% elif field.type|stringformat:"s" == "File" %}
+												<p><input class="file" disabled type="file" /></p>
+											{% elif field.type|stringformat:"s" == "NextForm" %}
+												<p>Select form:&nbsp;<select class="connection_form"><option value="{{ field.settings }}">Without changes</option></select></p>
 											{% else %}
-												<p>{{ field.settings }}</p>
+												<p>Unrecognized field!</p>
 											{% endif %}
 										</div>
 										<p>

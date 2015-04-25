@@ -4,7 +4,7 @@
  */
 
 var field_name = '<p><input class="field_name" type="text" placeholder=" set field name" required /></p>';
-var field_name_label = '<p><input class="field_name" type="hidden" value="label" /></p>';
+var field_name_empty = '<p><input class="field_name" type="hidden" value="-" /></p>';
 
 var text_settings = field_name + '<p>Not null: <input class="notnull" type="checkbox" /> | Multiline: <input class="multiline" type="checkbox" /></p>';
 var number_settings = field_name + '<p>Not null: <input class="notnull" type="checkbox" /> | Natural values: <input class="natural" type="checkbox" /></p>'
@@ -13,8 +13,9 @@ var checkbox_settings = field_name + '<p><a class="add_checkbox">Add option</a><
 var image_settings = field_name + '<p><input class="image" disabled type="file" accept=".png,.gif,.jpg,.jpeg" /></p>';
 var file_settings = field_name + '<p><input class="file" disabled type="file" /></p>';
 var connection_settings = field_name + '<p>Select form:&nbsp;<select class="connection_form"></select></p>';
-var labeltext_settings = field_name_label + '<p><input class="label_text" type="text" placeholder=" set text" /></p>';
-var labelimage_settings = field_name_label + '<p><input class="label_image" name="file" type="file" accept=".png,.gif,.jpg,.jpeg" /><progress min="0" max="100" value="0"></progress></p>';
+var labeltext_settings = field_name_empty + '<p><input class="label_text" type="text" placeholder=" set text" /></p>';
+var labelimage_settings = field_name_empty + '<p><input class="label_image" name="file" type="file" accept=".png,.gif,.jpg,.jpeg" /><progress min="0" max="100" value="0"></progress></p>';
+var nextform_settings = field_name_empty + '<p>Select form:&nbsp;<select class="connection_form"></select></p>';
 
 var choice_item = '\
     <li>\
@@ -40,15 +41,16 @@ var field = '\
             <div class="field_settings">\
                 <p>Choose type:&nbsp;\
                     <select class="field_type">\
-                        <option value="LabelText">Text label</option>\
-                        <option value="LabelImage">Image label</option>\
-                        <option value="Text">Plain text</option>\
+                        <option value="LabelText">LabelText</option>\
+                        <option value="LabelImage">LabelImage</option>\
+                        <option value="Text">Text</option>\
                         <option value="Number">Number</option>\
-                        <option value="Choice">Choice (single)</option>\
-                        <option value="Checkbox">Checkbox (multiple)</option>\
+                        <option value="Choice">Choice</option>\
+                        <option value="Checkbox">Checkbox</option>\
                         <option value="Image">Image</option>\
                         <option value="File">File</option>\
                         <option value="Connection">Connection</option>\
+						<option value="NextForm">NextForm</option>\
                     </select>\
                 </p>\
                 ' + labeltext_settings + '\
@@ -171,7 +173,6 @@ $(function() {
                 settings = file_settings;
                 break;
             case "Connection":
-
                 $.ajax({
                     url: $(this).attr('action'),
                     method: "POST",
@@ -184,8 +185,22 @@ $(function() {
                 }).fail(function () {
                     alert(error);
                 });
-
                 settings = connection_settings;
+                break;
+			case "NextForm":
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: "POST",
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').prop('value'),
+                        'connection': "forms"
+                    }
+                }).done(function (data) {
+                    $("#add_form, #edit_form").find(".connection_form").append(data);
+                }).fail(function () {
+                    alert(error);
+                });
+                settings = nextform_settings;
                 break;
             case "LabelText":
                 settings = labeltext_settings;
@@ -238,9 +253,10 @@ $(function() {
                     break;
                 case "Image":
                 case "File":
-                    field_settings[i] = "none";
+                    field_settings[i] = "-";
                     break;
                 case "Connection":
+				case "NextForm":
                     var formid = $(this).find(".connection_form").find('option:selected').val();
                     field_settings[i] = formid;
                     break;
@@ -252,9 +268,6 @@ $(function() {
 					var file = $(this).find(".label_image").get(0).files[0];
 					var label = 'labelimage' + i;
 					formData.append(label, file);
-                    break;
-                default:
-                    field_settings[i] = "error";
                     break;
             }
             i = i + 1;
@@ -296,6 +309,8 @@ $(function() {
     $("#add_forminstance").submit(function (e) {
         e.preventDefault();
         
+		//replace to formdata object and json content as above
+		
         var field_contents = [];
         var i = 0;
         $(".field_render").each(function () {

@@ -1,30 +1,10 @@
 from django.contrib import admin
 from imagekit.admin import AdminThumbnail
-from store.models import Project
-from store.models import Form
-from store.models import Type
-from store.models import FormField
-from store.models import FormInstance
-from store.models import DataText
 from store.models import Image
-
-
-class ProjectAdmin(admin.ModelAdmin):
-    prepopulated_fields = {"slug": ("title",)}
-
-
-class FormAdmin(admin.ModelAdmin):
-    prepopulated_fields = {"slug": ("title",)}
 
 
 class ImageAdmin(admin.ModelAdmin):
     list_display = ["__str__", "admin_thumbnail"]
     admin_thumbnail = AdminThumbnail(image_field='thumbnailSmall')
 
-
-admin.site.register(Project, ProjectAdmin)
-admin.site.register(Form, FormAdmin)
-admin.site.register(FormField)
-admin.site.register(FormInstance)
-admin.site.register(DataText)
 admin.site.register(Image, ImageAdmin)

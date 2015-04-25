@@ -18,14 +18,6 @@ import re, json
 
 
 # Check if guest is a logged user
-class LoggedInMixin(object):
-    # Transform function decorator into method decorator
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(LoggedInMixin, self).dispatch(*args, **kwargs)
-
-        
-# Check if guest is a logged user
 class VerifiedMixin(object):
     # Transform function decorator into method decorator
     @method_decorator(verified_email_required)
@@ -47,7 +39,7 @@ class FormAdd(VerifiedMixin,TemplateView):
         print(request.POST)
         print(request.FILES)
 
-        if (request.POST.get('connection')) == "forms":
+        if request.POST.get('connection') == "forms":
             forms = ""
             for form in models.Form.objects.filter(project=self.kwargs['project']):
                 forms += '<option value="' + str(form.pk) + '">' + form.title + '</option>'
@@ -57,12 +49,29 @@ class FormAdd(VerifiedMixin,TemplateView):
             
             form_title = request.POST.get('title')
             
+            names = json.loads(request.POST.get('names'))
+            types = json.loads(request.POST.get('types'))
+            settings = json.loads(request.POST.get('settings'))
+            
+            c = 0
+            for type in types:
+                if type == "LabelImage":
+                    c = c + 1
+            
+            if c > 0:
+                if request.FILES:
+                    if len(request.FILES) < c:
+                        return HttpResponse("You should provide all images for labels.")
+                else:
+                    return HttpResponse("You should provide image for label.")
+            
             title_pattern = re.compile("^([a-zA-Z0-9][a-zA-Z0-9 ]*[a-zA-Z0-9])$")
             
             if not title_pattern.match(form_title):
                 return HttpResponse("Form name is invalid (letters, digits and spaces between allowed)!")
 
             p = models.Project.objects.get(pk=self.kwargs['project'])
+            
             f = models.Form(
                     title=form_title,
                     project=p, 
@@ -71,11 +80,7 @@ class FormAdd(VerifiedMixin,TemplateView):
             f.save()
 
             i = 0
-            
-            names = json.loads(request.POST.get('names'))
-            types = json.loads(request.POST.get('types'))
-            settings = json.loads(request.POST.get('settings'))
-            
+
             for name in names:
                 
                 t = models.Type.objects.get(name=types[i])
@@ -99,14 +104,11 @@ class FormAdd(VerifiedMixin,TemplateView):
                     
                 if (t.name == "LabelImage"):
                     imgname = "labelimage" + str(i)
-                    if (request.FILES):
-                        img = models.Image(
-                            formfield=ff, 
-                            image=request.FILES[imgname]
-                        )
-                        img.save()
-                    else:
-                        return HttpResponse("You should provide image for label.")
+                    img = models.Image(
+                        formfield=ff, 
+                        image=request.FILES[imgname]
+                    )
+                    img.save()
                     
                 if (t.name == "Connection"):
                     cf = models.Form.objects.get(pk=s)
@@ -134,42 +136,103 @@ class FormEdit(VerifiedMixin,TemplateView):
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
         
-        if (request.POST.get('connection')) == "forms":
+        if request.POST.get('connection') == "forms":
             forms = ""
             for form in models.Form.objects.filter(project=self.kwargs['project']):
                 forms += '<option value="' + str(form.pk) + '">' + form.title + '</option>'
-            return HttpResponse(forms)        
+            return HttpResponse(forms)
 
         else:
 
-            title_pattern = re.compile("^([a-zA-Z0-9][a-zA-Z0-9 ]*[a-zA-Z0-9])$")
-            if not title_pattern.match(request.POST.get('title')):
-                return HttpResponse("Form name is invalid (letters, digits and spaces between allowed)!")
-
-            f = models.Form.objects.get(pk=self.kwargs['form'])
-            f.title = request.POST.get('title')
-            f.slug = slugify(request.POST.get('title'))
-            f.save()
-
-            models.FormField.objects.filter(form=f).delete()
             
-            #the simplest but in the future will be easily added more intelligent solution here
+            form_title = request.POST.get('title')
+            
+            names = json.loads(request.POST.get('names'))
+            types = json.loads(request.POST.get('types'))
+            settings = json.loads(request.POST.get('settings'))
+            
+            c = 0
+            for type in types:
+                if type == "LabelImage":
+                    c = c + 1
+            
+            if c > 0:
+                if request.FILES:
+                    if len(request.FILES) < c:
+                        return HttpResponse("You should provide all images for labels.")
+                else:
+                    return HttpResponse("You should provide image for label.")
+            
+            title_pattern = re.compile("^([a-zA-Z0-9][a-zA-Z0-9 ]*[a-zA-Z0-9])$")
+            
+            if not title_pattern.match(form_title):
+                return HttpResponse("Form name is invalid (letters, digits and spaces between allowed)!")
+            
+                
+            f = models.Form.objects.get(pk=self.kwargs['form'])
+            f.title = form_title
+            f.slug = slugify(form_title)
+            f.save()
+            
+            #remove instances inserted via this form
+            models.FormInstance.objects.filter(form=f).delete()
+            
+            #remove datatext, image and connection objects 
+            #related to formfields in modifying form
+            models.DataText.objects.filter(formfield=models.FormField.objects.filter(form=f)).delete()
+            
+            models.Image.objects.filter(formfield=models.FormField.objects.filter(form=f)).delete() #unable to delete images !!!bug so we cant edit forms with images now
+            
+            models.ConnectionInstance.objects.filter(connection=models.Connection.objects.filter(formfield=models.FormField.objects.filter(form=f))).delete()
+            
+            models.Connection.objects.filter(formfield=models.FormField.objects.filter(form=f)).delete()
 
+            #remove all formfields, better we should check to not delete 
+            #unchanged fields but correct their position and add new ones only
+            models.FormField.objects.filter(form=f).delete() 
+            
             i = 0
-            for name in request.POST.getlist("names[]"):
+
+            for name in names:
+                
+                t = models.Type.objects.get(name=types[i])
+                s = settings[i]
+
                 ff = models.FormField(
-                    form=f, 
-                    type=models.Type.objects.get(name=request.POST.getlist("types[]")[i]),
+                    form=f,
+                    type=t,
                     caption=name, 
-                    settings=request.POST.getlist("settings[]")[i],
+                    settings=s,
                     position=i
                 )
                 ff.save()
                 
+                if (t.name == "LabelText"):
+                    data = models.DataText(
+                            formfield = ff,
+                            data = s
+                        )
+                    data.save()
+                    
+                if (t.name == "LabelImage"):
+                    imgname = "labelimage" + str(i)
+                    img = models.Image(
+                        formfield=ff, 
+                        image=request.FILES[imgname]
+                    )
+                    img.save()
+                    
+                if (t.name == "Connection"):
+                    cf = models.Form.objects.get(pk=s)
+                    c = models.Connection(
+                            formfield = ff,
+                            form = cf
+                        )
+                    c.save()
+                
                 i = i + 1
 
             return HttpResponse("OK")
-            
 
         
 class FormInstanceAdd(VerifiedMixin, TemplateView):
@@ -184,8 +247,7 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
         
         try:
             context['labelimages'] = models.Image.objects.filter(formfield=models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'), forminstance__isnull=True)
-            temp = models.FormField.objects.filter(form=self.kwargs['form'], type=models.Type.objects.get(name="Connection"))[0]
-            context['temp_data_list'] = models.FormInstance.objects.filter(formfield=models.Connection.objects.get(formfield_begin=temp).formfield_end)
+            context['temp_data_list'] = models.FormInstance.objects.filter(form=self.kwargs['form']) #temporary to the same form
         except:
             print("That's only temporary...")
         
