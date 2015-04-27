@@ -88,6 +88,7 @@ class FormField(models.Model):
     def get_data(self):
         data = {
             'Text': self.datatext_set.all(),
+            'LabelText': self.datatext_set.all(),
             'Image': self.image_set.all(),
         }[self.type.name]
         return data
@@ -101,6 +102,20 @@ class FormInstance(models.Model):
     def __str__(self):
         return str(self.pk)
 
+    def next_instance(self):
+        next_instance = FormInstance.objects.get(pk=self.pk+1)
+        if next_instance.form.pk == self.form.pk:
+            return next_instance.pk
+        else:
+            return False
+
+    def prev_instance(self):
+        prev_instance = FormInstance.objects.get(pk=self.pk-1)
+        if prev_instance.form.pk == self.form.pk:
+            return prev_instance.pk
+        else:
+            return False
+
 
 class DataText(models.Model):
     formfield = models.ForeignKey(FormField)
@@ -108,7 +123,10 @@ class DataText(models.Model):
     data = models.TextField()
 
     def display(self):
-        return self.data
+        if self.forminstance is None:
+            return format_html('<h4>{0}</h4>', self.data)
+        else:
+            return self.data
         
         
 class Image(models.Model):
