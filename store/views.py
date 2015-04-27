@@ -255,27 +255,39 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        context = self.get_context_data()
-                    
+        context = self.get_context_data()     
+
         f = models.Form.objects.get(pk=self.kwargs['form'])
         fi = models.FormInstance(
-                form=f,
+                form = f,
                 user = self.request.user
             )
         fi.save()
         
+        contents = json.loads(request.POST.get('contents'))
+        
         i = 0
         for field in models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'):
-            if (field.type.pk != 8 and field.type.pk != 9):
-                data = models.DataText(
+            if (field.type.pk != 8 and field.type.pk != 9 and field.type.pk != 10):
+                if (field.type.pk == 5):
+                    imgname = "image" + str(i)
+                    img = models.Image(
+                        formfield=field,
+                        forminstance = fi,
+                        image=request.FILES[imgname]
+                    )
+                    img.save()
+                else:
+                    data = models.DataText(
                         formfield = field,
                         forminstance = fi,
-                        data = request.POST.getlist("contents[]")[i]
+                        data = contents[i]
                     )
-                data.save()
+                    data.save()
             i = i + 1
-        
+
         return HttpResponse("OK")
+        
             
     
 class ProjectList(VerifiedMixin, ListView):
@@ -303,7 +315,7 @@ class FormList(VerifiedMixin, ListView):
 
 class FormInstanceList(VerifiedMixin, ListView):
     model = models.FormInstance
-    paginate_by = 10
+    paginate_by = 5
     context_object_name = 'forminstance_list'
 
     def get_queryset(self):

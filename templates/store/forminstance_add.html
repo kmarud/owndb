@@ -29,7 +29,7 @@
 							<tbody>
 								{% for field in fields %}
 								<tr>
-									<td class="field_render">
+									<td class="field_render {{ field.type }}">
 										{% if field.type|stringformat:"s" == "Text" %}
 											{% with field.settings|split_all:";" as options %}
 												{% if options.1|stringformat:"s" == "0" %}
@@ -41,21 +41,21 @@
 										{% elif field.type|stringformat:"s" == "Number" %}
 											{% with field.settings|split_all:";" as options %}
 												{% if options.1|stringformat:"s" == "0" %}
-													<input type="text" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
+													<input class="numbercontent" type="text" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
 												{% else %}
-													<input type="number" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
+													<input class="numbercontent" type="number" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
 												{% endif %}
 											{% endwith %}
 										{% elif field.type|stringformat:"s" == "Choice" %}
 											{% with field.settings|split_remove_first:";" as options %}
 												{% for option in options %}
-													<input type="radio" name="{{ field.pk }}" /> {{ option }}<br />
+													<input class="option_item" type="radio" name="{{ field.pk }}" /> {{ option }}<br />
 												{% endfor %}
 											{% endwith %}
 										{% elif field.type|stringformat:"s" == "Checkbox" %}
 											{% with field.settings|split_remove_first:";" as options %}
 												{% for option in options %}
-													<input type="checkbox" /> {{ option }}<br />
+													<input class="option_item" type="checkbox" /> {{ option }}<br />
 												{% endfor %}
 											{% endwith %}
 										{% elif field.type|stringformat:"s" == "LabelText" %}
@@ -65,7 +65,10 @@
 												{{ image.display }}
 											{% endfor %}
 										{% elif field.type|stringformat:"s" == "Image" %}
-											<p><input class="image" type="file" accept=".png,.gif,.jpg,.jpeg" /></p>
+											<p>
+												<input class="image" name="file" type="file" accept=".png,.gif,.jpg,.jpeg" required />
+												<progress min="0" max="100" value="0"></progress>
+											</p>
 										{% elif field.type|stringformat:"s" == "File" %}
 											<p><input class="file" type="file" /></p>
 										{% elif field.type|stringformat:"s" == "Connection" %}
@@ -77,7 +80,7 @@
 												</select>
 											</p>
 										{% elif field.type|stringformat:"s" == "NextForm" %}
-											<input type="button" name="nextform" value="Next form in sequence" />
+											<input class="next_form" type="button" name="{% url 'forminstance-add' project.pk field.settings %}" value="Add and go to next form" />
 										{% else %}
 											<p>Unrecognized field!</p>
 										{% endif %}

@@ -33,7 +33,7 @@
 
                     <div class="panel panel-default" style="margin-top: 12%">
                       <div class="panel-heading">
-                        <h3 class="panel-title">List of available instances</h3>
+                        <h3 class="panel-title">List of available instances</h3> <a href="{% url 'forminstance-add' project.pk form.pk %}">Add new instance</a>
                       </div>
                       <table class="table">
                         <thead>
@@ -59,12 +59,18 @@
                 <ul class="pagination">
                     {% if is_paginated %}
                         {% if page_obj.has_previous %}
-                            <li class="enabled"><a href="{% url 'forminstance-list' form.project.pk form.pk page_obj.previous_page_number %}"
-                                                    aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                            <li class="enabled">
+								<a href="{% url 'forminstance-list' form.project.pk form.pk page_obj.previous_page_number %}" aria-label="Previous">
+									<span aria-hidden="true">&laquo;</span>
+								</a>
+							</li>
                         {% endif %}
                         {% if page_obj.has_next %}
-                            <li class="enabled"><a href="{% url 'forminstance-list' form.project.pk form.pk page_obj.next_page_number %}"
-                                                    aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+                            <li class="enabled">
+								<a href="{% url 'forminstance-list' form.project.pk form.pk page_obj.next_page_number %}" aria-label="Next">
+									<span aria-hidden="true">&raquo;</span>
+								</a>
+							</li>
                         {% endif %}
                     {% endif %}
 

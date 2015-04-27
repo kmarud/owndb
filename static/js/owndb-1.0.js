@@ -14,7 +14,7 @@ var image_settings = field_name + '<p><input class="image" disabled type="file" 
 var file_settings = field_name + '<p><input class="file" disabled type="file" /></p>';
 var connection_settings = field_name + '<p>Select form:&nbsp;<select class="connection_form"></select></p>';
 var labeltext_settings = field_name_empty + '<p><input class="label_text" type="text" placeholder=" set text" /></p>';
-var labelimage_settings = field_name_empty + '<p><input class="label_image" name="file" type="file" accept=".png,.gif,.jpg,.jpeg" /><progress min="0" max="100" value="0"></progress></p>';
+var labelimage_settings = field_name_empty + '<p><input class="label_image" name="file" type="file" accept=".png,.gif,.jpg,.jpeg" required /><progress min="0" max="100" value="0"></progress></p>';
 var nextform_settings = field_name_empty + '<p>Select form:&nbsp;<select class="connection_form"></select></p>';
 
 var choice_item = '\
@@ -148,12 +148,19 @@ $(function() {
             ui.placeholder.height(ui.item.height());
         }
     });
+	
+	//next form button
+    $("#fields_render tbody").on("click", ".next_form", function () {
+		$('input[name="after_process"]').prop('value', $(this).prop('name'));
+		$("#add_forminstance").trigger("submit");
+    });
     
     //change field settings area
     $($wrapper).on("change", ".field_type", function () {
         $(this).parent('p').siblings().remove();
         var settings = "";
-        switch ($(this).find('option:selected').val()) {
+		var type = $(this).find('option:selected').val();
+        switch (type) {
             case "Text":
                 settings = text_settings;
                 break;
@@ -173,20 +180,6 @@ $(function() {
                 settings = file_settings;
                 break;
             case "Connection":
-                $.ajax({
-                    url: $(this).attr('action'),
-                    method: "POST",
-                    data: {
-                        'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').prop('value'),
-                        'connection': "forms"
-                    }
-                }).done(function (data) {
-                    $("#add_form, #edit_form").find(".connection_form").append(data);
-                }).fail(function () {
-                    alert(error);
-                });
-                settings = connection_settings;
-                break;
 			case "NextForm":
                 $.ajax({
                     url: $(this).attr('action'),
@@ -200,7 +193,10 @@ $(function() {
                 }).fail(function () {
                     alert(error);
                 });
-                settings = nextform_settings;
+				if (type == "Connection")
+					settings = connection_settings;
+				else
+					settings = nextform_settings;
                 break;
             case "LabelText":
                 settings = labeltext_settings;
@@ -308,27 +304,66 @@ $(function() {
     //parse form and send
     $("#add_forminstance").submit(function (e) {
         e.preventDefault();
-        
-		//replace to formdata object and json content as above
+		
+		var formData = new FormData();
+		var csrf = $('input[name="csrfmiddlewaretoken"]').prop('value');
+		formData.append('csrfmiddlewaretoken', csrf);
 		
         var field_contents = [];
         var i = 0;
         $(".field_render").each(function () {
-            if ($(this).find('.textcontent').length > 0) {
-                field_contents[i] = $(this).find('.textcontent').val();
-            } else {
-                field_contents[i] = "not_implemented_yet;-;-;-;-;none";
-            }
+			switch (true) {
+				case $(this).hasClass('Text'):
+					field_contents[i] = $(this).find('.textcontent').val();
+					break;
+				case $(this).hasClass('Number'):
+					field_contents[i] = $(this).find('.numbercontent').val();
+					break;
+				case $(this).hasClass('Choice'):
+				case $(this).hasClass('Checkbox'):
+					field_contents[i] = $(this).find(".option_item").length;
+                    $(this).find(".option_item").each(function () {
+                        field_contents[i] += ($(this).is(':checked'))?";1":";0";
+                    });
+					break;
+				case $(this).hasClass('Image'):
+					field_contents[i] = "-";
+					var file = $(this).find(".image").get(0).files[0];
+					var label = 'image' + i;
+					formData.append(label, file);
+					break;
+				case $(this).hasClass('File'):
+					field_contents[i] = "-";
+					break;
+				case $(this).hasClass('Connection'):
+					field_contents[i] = "-";
+					break;
+				case $(this).hasClass('LabelText'):
+				case $(this).hasClass('LabelImage'):
+				case $(this).hasClass('NextForm'):
+					field_contents[i] = "-";
+					break;
+			}
             i = i + 1;
         });
-        
-        $.ajax({
+		
+		formData.append('contents', JSON.stringify(field_contents));
+        		
+		$.ajax({
             url: $(this).attr('action'),
-            method: "POST",
-            data: {
-                'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').prop('value'),
-                'contents': field_contents
-            }
+            type: 'POST',
+            enctype: 'multipart/form-data',
+            xhr: function() {
+                var myXhr = $.ajaxSettings.xhr();
+                if(myXhr.upload) {
+                    myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
+                }
+                return myXhr;
+            },
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false
         }).done(function (data) {
             if (data == "OK") {
                 redirect = true;
