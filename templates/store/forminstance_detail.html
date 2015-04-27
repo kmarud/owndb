@@ -24,48 +24,37 @@
 		            <div class="col-lg-3">
 	                        <h3>Form instance details</h3>
 	                </div>
-	                <div class="container" style="margin-top: 10%">
-	                	<div class="media" style="margin-right: 20%">
-						 	<div class="media-left media-middle">
-								<a href="#">
-									<img class="media-object" src="{% static "img/web-design.png" %}" alt="..." style="margin: 20px">
-								</a>
-							</div>
-							<div class="media-body" style="text-align: justify">
-								<h4 class="media-heading">Middle aligned media</h4>
-						    		Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-
-									Donec sed odio dui. Nullam quis risus eget urna mollis ornare vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-						  	</div>
-						</div>
-						<nav style="text-align: center">
-							<ul class="pagination">
-								<li>
-									<a href="#" aria-label="Previous">
-										<span aria-hidden="true">&laquo;</span>
-									</a>
-									</li>
-							    	<li><a href="#">Instancja {{ forminstance.pk }}</a></li>
-							    	<li>
-							     	<a href="#" aria-label="Next">
-						        		<span aria-hidden="true">&raquo;</span>
-						      		</a>
-						    	</li>
-						  		</ul>
-						</nav>
+	                <div class="container">
 						<div class="col-md-7">
 							<div>
 									{% for formfield in formfield_list %}
 									<li class="list-group-item">
-									{% comment %}
-										<b>{{ formfield.get_data|instance:forminstance }}</b>
-									{% endcomment %}
+										{{ formfield.get_data|instance:forminstance }}
 									</li>
 									{% endfor %}
 								</ul>
 							</div>
 						 </div>
-	                </div>
+                    </div>
+                    <nav style="text-align: center">
+							<ul class="pagination">
+                                {% if forminstance.prev_instance %}
+								    <li>
+									<a href="{% url 'forminstance-detail' forminstance.form.project.pk forminstance.form.pk forminstance.prev_instance %}" aria-label="Previous">
+										<span aria-hidden="true">&laquo;</span>
+									</a>
+									</li>
+                                {% endif %}
+							    	<li><a href="#">Instancja {{ forminstance.pk }}</a></li>
+                                {% if forminstance.next_instance %}
+							    	<li>
+							     	<a href="{% url 'forminstance-detail' forminstance.form.project.pk forminstance.form.pk forminstance.next_instance %}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+						      		</a>
+						    	    </li>
+                                {% endif %}
+						  		</ul>
+						</nav>
 	            </div>
 	        </div>
 	    </div>
