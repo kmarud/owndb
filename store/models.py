@@ -89,7 +89,7 @@ class FormField(models.Model):
         data = {
             'Text': self.datatext_set.all(),
             'LabelText': self.datatext_set.all(),
-            'Image': self.image_set.all(),
+            'LabelImage': self.image_set.all(),
         }[self.type.name]
         return data
 
