@@ -1,11 +1,19 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Edit existing project
+    Edit project - {{ project.title }} - Owndb
 {% endblock %}
 
-{% block main-title %}
-    <a class="navbar-brand topnav" >Edit project</a>
+{% block main-nav %}
+<li>
+	<a href="{% url 'project-list' %}">My projects</a>
+</li>
+<li>
+	<a href="{% url 'form-list' project.pk %}">{{ project.title }}</a>
+</li>
+<li class="active">
+    <a href="{{ current_path }}">Edit project</a>
+</li>
 {% endblock %}
 
 {% block container %}
@@ -13,20 +21,25 @@
     <div class="row">
         <div class="col-lg-12">
         	<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h3 class="panel-title"><a href="/">Home</a></h3>
-				</div>
+				<div class="panel-heading"></div>
 				<div class="panel-body">
+				
+					<ul class="messages">
+						{% for message in messages %}
+						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						{% endfor %}
+					</ul>
 				
 					<h3>Edit project</h3>
 					<div id="loading"></div>
-					<form method="post" action="{% url 'project-edit' project %}">
+					<form method="post" action="{% url 'project-edit' project.pk %}">
 						{% csrf_token %}
 							<p>
-								<input id="project_name" type="text" placeholder=" set project name" autofocus name="project_name" />
+								<label>Project name:</label><br/><input id="project_name" type="text" placeholder=" set project name" name="project_name" value="{{ project.title }}" autofocus />
 							</p>
 							<p>
 								<input type="submit" value="Edit this project" />
+								<input id="cancel_button" name="{% url 'form-list' project.pk %}" type="button" value="Cancel" />
 							</p>
 					</form>
 			

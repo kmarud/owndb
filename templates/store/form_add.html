@@ -2,11 +2,19 @@
 {% load staticfiles %}
 
 {% block title %}
-    Design new form
+    Design new form - {{ project.title }} - Owndb
 {% endblock %}
 
-{% block main-title %}
-	<a class="navbar-brand topnav" href="{% url 'form-list' project.pk %}">{{ project.title }}</a> <a class="navbar-brand topnav" >Design new form</a>
+{% block main-nav %}
+<li>
+	<a href="{% url 'project-list' %}">My projects</a>
+</li>
+<li>
+	<a href="{% url 'form-list' project.pk %}">{{ project.title }}</a>
+</li>
+<li class="active">
+	<a href="{{ current_path }}">Design new form</a>
+</li>
 {% endblock %}
 
 {% block container %}
@@ -14,10 +22,15 @@
     <div class="row">
         <div class="col-lg-12">
         	<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h3 class="panel-title"><a href="/">Home</a> / <a href="{% url 'form-list' project.pk %}">{{ project.title }}</a> / <a href="{{ current_url }}">Design new form</a></h3>
-				</div>
+				<div class="panel-heading"></div>
 				<div class="panel-body">
+					
+					<ul class="messages">
+						{% for message in messages %}
+						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						{% endfor %}
+					</ul>
+					
 					<h3>Design new form</h3>
 					<div id="loading"></div>
 					<form id="add_form" action="{% url 'form-add' project.pk %}">
@@ -34,7 +47,7 @@
 						</p>
 						<p>
 							<input id="submit_button" type="submit" value="Add this form to project" disabled="disabled" />
-							<input id="cancel_button" type="button" value="Cancel" />
+							<input id="cancel_button" name="{% url 'form-list' project.pk %}" type="button" value="Cancel" />
 						</p>
 					</form>
 					

@@ -3,13 +3,22 @@
 {% load store_extras %}
 
 {% block title %}
-    Form instance detail
+    Form instance detail - {{ forminstance.pk }} - {{ form.title }} - {{ project.title }} - Owndb
 {% endblock %}
 
-{% block main-title %}
-    <a class="navbar-brand topnav" href="{% url 'form-list' forminstance.form.project.pk %}">{{ forminstance.form.project.title }}</a>
-    <a class="navbar-brand topnav" href="{% url 'forminstance-list' forminstance.form.project.pk forminstance.form.pk %}">{{ forminstance.form.title }}</a>
-    <a class="navbar-brand topnav">Instance {{ forminstance.pk }}</a>
+{% block main-nav %}
+<li>
+	<a href="{% url 'project-list' %}">My projects</a>
+</li>
+<li>
+	<a href="{% url 'form-list' forminstance.form.project.pk %}">{{ forminstance.form.project.title }}</a>
+</li>
+<li>
+	<a href="{% url 'forminstance-list' forminstance.form.project.pk forminstance.form.pk %}">{{ forminstance.form.title }}</a>
+</li>
+<li class="active">
+	<a href="{{ current_path }}">Instance {{ forminstance.pk }}</a>
+</li>
 {% endblock %}
 
 {% block container %}
@@ -17,10 +26,15 @@
     <div class="row">
         <div class="col-lg-12">
         	<div class="panel panel-primary">
-				<div class="panel-heading">
-	            	<h3 class="panel-title"><a href="/">Home</a> / <a href="/store/">Projects</a></h3>
-	             </div>
+				<div class="panel-heading"></div>
 	            <div class="panel-body">
+				
+					<ul class="messages">
+						{% for message in messages %}
+						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						{% endfor %}
+					</ul>
+				
 		            <div class="col-lg-3">
 	                        <h3>Form instance details</h3>
 	                </div>

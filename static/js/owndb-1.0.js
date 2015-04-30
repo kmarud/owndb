@@ -65,36 +65,46 @@ var error = "Some error occured while sending data. Try again later.";
  
 var redirect = false;
 
-$(function() {
-        
-    //set up a loading indicator
-    $(document).bind("ajaxStart", function() {
-        $("#loading").show();
-    }).bind("ajaxStop", function() {
-        $("#loading").hide();
-    });
-    
-    //prevent redirection
-    $(window).bind('beforeunload', function () {
-        if ($(".field_cell").length > 0 && !redirect)
-            return 'Unsaved data will be lost! Are you sure?';
-    });
-    
-    //prevent accidental enter
-    $('#add_form, #edit_form, #add_forminstance').bind('keypress keydown keyup', function (e) {
-        if (e.keyCode == 13) { e.preventDefault(); }
-    });
-    
-    //discard changes
-    $("#cancel_button").click(function (e) {
-        redirect = true;
-        $(location).attr('href', $('input[name="after_process"]').prop('value'));
-    });
-
-});
+var owndbHelpers = {
+	
+	lostWarning: "Unsaved data will be lost! Are you sure?",
+	
+	loadingIndicator: function() {
+		$(document).bind('ajaxStart', function() {
+			$("#loading").show();
+		}).bind('ajaxStop', function() {
+			$("#loading").hide();
+		});
+	},
+	
+	preventRedirection: function() {
+		$(window).bind('beforeunload', function () {
+			if ($(".field_cell").length > 0 && !redirect)
+				return owndbHelpers.lostWarning;
+		});
+	},
+	
+	preventAccidentalEnter: function() {
+		$('#add_form, #edit_form, #add_forminstance').bind('keypress keydown keyup', function (e) {
+			if (e.keyCode == 13) { e.preventDefault(); }
+		});
+	},
+	
+	discardChanges: function() {
+		$("#cancel_button").click(function (e) {
+			redirect = true;
+			$(location).attr('href', $(this).prop('name'));
+		});
+	}
+};
  
 $(function() {
-        
+    
+	owndbHelpers.loadingIndicator();
+    owndbHelpers.preventRedirection();
+    owndbHelpers.preventAccidentalEnter();
+    owndbHelpers.discardChanges();
+
     var $wrapper = $("#fields_wrapper tbody");
     
     //insert field area
@@ -294,7 +304,8 @@ $(function() {
                 redirect = true;
                 $(location).attr('href', $('input[name="after_process"]').prop('value'));
             } else {
-                alert(data);
+				$(".messages").children().remove();
+				$(".messages").append("<li>" + data + "</li>");
             }
         }).fail(function () {
             alert(error);
@@ -369,7 +380,8 @@ $(function() {
                 redirect = true;
                 $(location).attr('href', $('input[name="after_process"]').prop('value'));
             } else {
-                alert(data);
+				$(".messages").children().remove();
+				$(".messages").append("<li>" + data + "</li>");
             }
         }).fail(function () {
             alert(error);

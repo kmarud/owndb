@@ -1,6 +1,7 @@
 ﻿from django.views.generic import ListView, DetailView, View
 from django.views.generic.base import TemplateView
 from django.db.models import Q
+from django.core.urlresolvers import reverse
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -119,7 +120,8 @@ class FormAdd(VerifiedMixin,TemplateView):
                     c.save()
                 
                 i = i + 1
-
+                
+            messages.success(request, "Form successfully added!")
             return HttpResponse("OK")
 
             
@@ -232,6 +234,7 @@ class FormEdit(VerifiedMixin,TemplateView):
 
                 i = i + 1
 
+            messages.success(request, "Form changes saved successfully!")
             return HttpResponse("OK")
 
         
@@ -286,6 +289,7 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
                     data.save()
             i = i + 1
 
+        messages.success(request, "Form instance added successfully!")
         return HttpResponse("OK")
         
             
@@ -358,11 +362,11 @@ class ProjectAdd(VerifiedMixin, SuccessMessageMixin, TemplateView):
         )
         if ( p.title.isspace() or p.title=='' ):
             messages.error(request, "Bad project name!")
-            return HttpResponseRedirect('/store/')
+            return HttpResponseRedirect(reverse('project-list'))
 
         p.save()
-        messages.success(request, "Your project succesfully added!")
-        return HttpResponseRedirect('/store/')
+        messages.success(request, "Project \"" + p.title + "\" succesfully added!")
+        return HttpResponseRedirect(reverse('project-list'))
 
 
 class ProjectEdit(VerifiedMixin, TemplateView):
@@ -370,6 +374,7 @@ class ProjectEdit(VerifiedMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(ProjectEdit, self).get_context_data(**kwargs)
+        context['project'] = models.Project.objects.get(pk=self.kwargs['project'])
         return context
 
     def post(self, request, *args, **kwargs):
@@ -379,11 +384,11 @@ class ProjectEdit(VerifiedMixin, TemplateView):
         p.slug = slugify(self.request.POST.get('project_name'))
         if ( p.title.isspace() or p.title=='' ):
             messages.error(request, "Bad project name!")
-            return HttpResponseRedirect('/store/')
+            return HttpResponseRedirect(reverse('project-list'))
 
         p.save()
-        messages.success(request, "Your project succesfully edited!")
-        return HttpResponseRedirect('/store/')
+        messages.success(request, "Project \"" + p.title + "\" succesfully edited!")
+        return HttpResponseRedirect(reverse('form-list', kwargs={'project': self.kwargs['project'] } ))
 
 
 class FormDelete(VerifiedMixin, TemplateView):
@@ -393,14 +398,13 @@ class FormDelete(VerifiedMixin, TemplateView):
         context = super(FormDelete, self).get_context_data(**kwargs)
         context['project'] = models.Project.objects.get(pk=self.kwargs['project'])
         context['form'] = models.Form.objects.get(pk=self.kwargs['form'])
-        context['fields'] = models.FormField.objects.filter(form=self.kwargs['form']).order_by('position')
         return context
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
-        num = self.kwargs['project']
         f = models.Form.objects.get(pk=self.kwargs['form'])
+        titleBackup = f.title
         models.FormField.objects.filter(form=f).delete()
         f.delete()
-        messages.success(request, "Successfully deleted !")
-        return HttpResponseRedirect('/store/' + str(num))
+        messages.success(request, "Form \"" + titleBackup + "\" successfully deleted!")
+        return HttpResponseRedirect(reverse('form-list', kwargs={'project': self.kwargs['project'] } ))

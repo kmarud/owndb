@@ -2,12 +2,19 @@
 {% load staticfiles %}
 
 {% block title %}
-    Form instances
+    Form instances - {{ form.title }} - {{ project.title }} - Owndb
 {% endblock %}
 
-{% block main-title %}
-	<a class="navbar-brand topnav" href="{% url 'form-list' form.project.pk %}">{{ form.project.title }}</a> 
-	<a class="navbar-brand topnav" href="{{ current_path }}" >{{ form.title }}</a>
+{% block main-nav %}
+<li>
+	<a href="{% url 'project-list' %}">My projects</a>
+</li>
+<li>
+	<a href="{% url 'form-list' form.project.pk %}">{{ form.project.title }}</a>
+</li>
+<li class="active">
+	<a href="{{ current_path }}">{{ form.title }}</a>
+</li>
 {% endblock %}
 
 {% block container %}
@@ -15,10 +22,15 @@
     <div class="row">
         <div class="col-lg-12">
         	<div class="panel panel-primary">
-				<div class="panel-heading">
-                <h3 class="panel-title"><a href="/">Home</a> / <a href="/store">Projects</a> / <a href="{% url 'form-list' form.project.pk %}">{{ form.project.title }}</a> / <a href="{{ current_path }}">{{ form.title }}</a></h3>
-              </div>
+				<div class="panel-heading"></div>
               <div class="panel-body">
+			  
+					<ul class="messages">
+						{% for message in messages %}
+						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						{% endfor %}
+					</ul>
+			  
                     <div class="col-lg-5">
                             
                         <h3>Form instances<small>{{ form.title }}</small></h3>       
@@ -33,7 +45,9 @@
 
                     <div class="panel panel-default" style="margin-top: 12%">
                       <div class="panel-heading">
-                        <h3 class="panel-title">List of available instances</h3> <a href="{% url 'forminstance-add' project.pk form.pk %}">Add new instance</a>
+                        <h3 class="panel-title">List of available instances</h3>
+							<a href="{% url 'forminstance-add' project.pk form.pk %}">Add new instance</a> |
+							<a href="{% url 'form-edit' project.pk form.pk %}">Edit form</a>
                       </div>
                       <table class="table">
                         <thead>

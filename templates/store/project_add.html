@@ -2,11 +2,16 @@
 {% load staticfiles %}
 
 {% block title %}
-    Add new project
+    Add project - Owndb
 {% endblock %}
 
-{% block main-title %}
-    <a class="navbar-brand topnav" >Add new project</a>
+{% block main-nav %}
+<li>
+	<a href="{% url 'project-list' %}">My projects</a>
+</li>
+<li class="active">
+    <a href="{{ current_path }}">Add project</a>
+</li>
 {% endblock %}
 
 {% block container %}
@@ -14,10 +19,15 @@
 	<div class="row">
 		<div class="col-lg-12">
         	<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h3 class="panel-title"><a href="/">Home</a></h3>
-				</div>
+				<div class="panel-heading"></div>
 				<div class="panel-body">
+				
+					<ul class="messages">
+						{% for message in messages %}
+						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						{% endfor %}
+					</ul>
+				
 					<h3>Add project</h3>
 					<form method="post" action="{% url 'project-add' %}">
 						{% csrf_token %}
@@ -25,7 +35,8 @@
 								<input id="project_name" type="text" placeholder=" set project name" autofocus name="project_name" />
 							</p>
 							<p>
-								<input type="submit" value="Add this project" />
+								<input type="submit" value="Add project" />
+								<input id="cancel_button" name="{% url 'project-list' %}" type="button" value="Cancel" />
 							</p>
 					</form>
 			

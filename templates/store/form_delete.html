@@ -2,11 +2,22 @@
 {% load staticfiles %}
 
 {% block title %}
-    Delete form
+    Delete form - {{ form.title }} - {{ project.title }} - Owndb
 {% endblock %}
 
-{% block main-title %}
-    <a class="navbar-brand topnav" >Delete form</a>
+{% block main-nav %}
+<li>
+	<a href="{% url 'project-list' %}">My projects</a>
+</li>
+<li>
+	<a href="{% url 'form-list' project.pk %}">{{ project.title }}</a>
+</li>
+<li>
+	<a href="{% url 'forminstance-list' project.pk form.pk %}">{{ form.title }}</a> 
+</li>
+<li class="active">
+	<a href="{{ current_path }}">Delete form</a>
+</li>
 {% endblock %}
 
 {% block container %}
@@ -14,16 +25,22 @@
 	<div class="row">
 		<div class="col-lg-12">
         	<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h3 class="panel-title"><a href="/">Home</a></h3>
-				</div>
+				<div class="panel-heading"></div>
 				<div class="panel-body">
+				
+					<ul class="messages">
+						{% for message in messages %}
+						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						{% endfor %}
+					</ul>
+				
 					<h3>Delete form</h3>
 					<form method="post" action="{% url 'form-delete' project.pk form.pk %}">
 						{% csrf_token %}
-                        Are You sure ?
+                        <p>Are you sure to delete this form? All data will be completely lost if you continue!
 							<p>
 								<input type="submit" value="Definitely delete form" />
+								<input id="cancel_button" name="{% url 'form-edit' project.pk form.pk %}" type="button" value="Cancel" />
 							</p>
 					</form>
 
