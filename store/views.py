@@ -258,39 +258,47 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        context = self.get_context_data()     
+        context = self.get_context_data()
 
-        f = models.Form.objects.get(pk=self.kwargs['form'])
-        fi = models.FormInstance(
-                form = f,
-                user = self.request.user
-            )
-        fi.save()
-        
-        contents = json.loads(request.POST.get('contents'))
-        
-        i = 0
-        for field in models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'):
-            if (field.type.pk != 8 and field.type.pk != 9 and field.type.pk != 10):
-                if (field.type.pk == 5):
-                    imgname = "image" + str(i)
-                    img = models.Image(
-                        formfield=field,
-                        forminstance = fi,
-                        image=request.FILES[imgname]
-                    )
-                    img.save()
-                else:
-                    data = models.DataText(
-                        formfield = field,
-                        forminstance = fi,
-                        data = contents[i]
-                    )
-                    data.save()
-            i = i + 1
+        if request.POST.get('connection') == "instances":
+            forms = "<tr><td>Date</td><td>User</td></tr>"
+            for instance in models.FormInstance.objects.filter(form=self.kwargs['form']):
+                forms += '<tr><td>' + str(instance.date) + '</td><td>' + str(instance.user) + '</td></tr>'
+            return HttpResponse(forms)
 
-        messages.success(request, "Form instance added successfully!")
-        return HttpResponse("OK")
+        else:
+
+            f = models.Form.objects.get(pk=self.kwargs['form'])
+            fi = models.FormInstance(
+                    form = f,
+                    user = self.request.user
+                )
+            fi.save()
+            
+            contents = json.loads(request.POST.get('contents'))
+            
+            i = 0
+            for field in models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'):
+                if (field.type.pk != 8 and field.type.pk != 9 and field.type.pk != 10):
+                    if (field.type.pk == 5):
+                        imgname = "image" + str(i)
+                        img = models.Image(
+                            formfield=field,
+                            forminstance = fi,
+                            image=request.FILES[imgname]
+                        )
+                        img.save()
+                    else:
+                        data = models.DataText(
+                            formfield = field,
+                            forminstance = fi,
+                            data = contents[i]
+                        )
+                        data.save()
+                i = i + 1
+
+            messages.success(request, "Form instance added successfully!")
+            return HttpResponse("OK")
         
             
     

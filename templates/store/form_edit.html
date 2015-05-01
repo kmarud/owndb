@@ -115,7 +115,7 @@
 											{% elif field.type|stringformat:"s" == "LabelImage" %}
 												<p><input class="label_image" name="file" type="file" accept=".png,.gif,.jpg,.jpeg" /><progress min="0" max="100" value="0"></progress></p>
 											{% elif field.type|stringformat:"s" == "Connection" %}
-												<p>Select form:&nbsp;<select class="connection_form"></select></p>
+												<p>Select form:&nbsp;<select class="connection_form"><option value="{{ field.settings }}">Without changes</option></select></p>
 											{% elif field.type|stringformat:"s" == "Image" %}
 												<p><input class="image" disabled type="file" accept=".png,.gif,.jpg,.jpeg" /></p>
 											{% elif field.type|stringformat:"s" == "File" %}

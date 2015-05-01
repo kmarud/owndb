@@ -65,6 +65,34 @@ var error = "Some error occured while sending data. Try again later.";
  
 var redirect = false;
 
+
+$(function() {
+
+	$("#modal-launcher, #modal-background").click(function () {
+		if(!$("#modal-content, #modal-background").hasClass("active")) {
+			$.ajax({
+				url: $(this).attr('action'),
+				method: "POST",
+				data: {
+					'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').prop('value'),
+					'connection': "instances"
+				}
+			}).done(function (data) {
+				$("#modal-content").find(".instances").children().remove();
+				$("#modal-content").find(".instances").append(data);
+				$("#modal-content, #modal-background").toggleClass("active");
+			}).fail(function () {
+				alert(error);
+			});
+		}
+		$("#modal-background").click(function () {
+			$("#modal-content, #modal-background").toggleClass("active");
+		});
+	});
+	
+});
+  
+
 var owndbHelpers = {
 	
 	lostWarning: "Unsaved data will be lost! Are you sure?",

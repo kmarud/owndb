@@ -93,6 +93,12 @@
 													<option value="{{ item.pk }}">{{ item.date }}</option>
 												{% endfor %}
 												</select>
+												<br/>
+												<a id="modal-launcher">Choose instance</a>
+												<div id="modal-background"></div>
+												<div id="modal-content">
+													<table class="instances"></table>
+												</div>
 											</p>
 										{% elif field.type|stringformat:"s" == "NextForm" %}
 											<input class="next_form" type="button" name="{% url 'forminstance-add' project.pk field.settings %}" value="Add and go to next form" />
@@ -112,6 +118,10 @@
 							<input id="cancel_button" name="{% url 'form-list' project.pk %}" type="button" value="Cancel" />
 						</p>
 					</form>
+					
+					
+
+
 					
 				</div>
 			</div>
