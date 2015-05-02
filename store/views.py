@@ -250,7 +250,6 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
         
         try:
             context['labelimages'] = models.Image.objects.filter(formfield=models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'), forminstance__isnull=True)
-            context['temp_data_list'] = models.FormInstance.objects.filter(form=self.kwargs['form']) #temporary to the same form
         except:
             print("That's only temporary...")
         
@@ -261,9 +260,28 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
         context = self.get_context_data()
 
         if request.POST.get('connection') == "instances":
-            forms = "<tr><td>Date</td><td>User</td></tr>"
-            for instance in models.FormInstance.objects.filter(form=self.kwargs['form']):
-                forms += '<tr><td>' + str(instance.date) + '</td><td>' + str(instance.user) + '</td></tr>'
+
+            fpk = request.POST.get('form')
+            forms = "<thead><tr><td></td>"
+            for field in models.FormField.objects.filter(form=fpk).order_by('position'):
+                if (field.type.pk != 8 and field.type.pk != 9 and field.type.pk != 10):
+                    forms += '<td>'+ field.caption +'</td>'
+            forms += "</tr></thead><tbody>"
+
+            i = 0
+            for instance in models.FormInstance.objects.filter(form=models.Form.objects.get(pk=fpk)):
+                forms += '<tr><td><a class="modal-select" name="'+str(instance.pk)+'">#</a></td>'
+                for field in models.FormField.objects.filter(form=fpk).order_by('position'):
+                    if (field.type.pk != 8 and field.type.pk != 9 and field.type.pk != 10 and field.type.pk != 5):
+                        insd = models.DataText.objects.get(formfield = field, forminstance = instance)
+                        forms += '<td>' + str(insd.data) + '</td>'
+                forms += '</tr>'
+                i = i + 1
+            forms += '</tbody>'
+            
+            if i==0:
+                forms = '<tr><td>Connected form is empty!</td></tr>'
+            
             return HttpResponse(forms)
 
         else:

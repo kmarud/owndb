@@ -67,29 +67,44 @@ var redirect = false;
 
 
 $(function() {
+	
+	var destElem;
 
-	$("#modal-launcher, #modal-background").click(function () {
-		if(!$("#modal-content, #modal-background").hasClass("active")) {
-			$.ajax({
-				url: $(this).attr('action'),
-				method: "POST",
-				data: {
-					'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').prop('value'),
-					'connection': "instances"
-				}
-			}).done(function (data) {
-				$("#modal-content").find(".instances").children().remove();
-				$("#modal-content").find(".instances").append(data);
-				$("#modal-content, #modal-background").toggleClass("active");
-			}).fail(function () {
-				alert(error);
-			});
-		}
-		$("#modal-background").click(function () {
-			$("#modal-content, #modal-background").toggleClass("active");
+	$(".modal-launcher").click(function () {
+		destElem = $(this).siblings(".modal-choice");
+		var fpk = $(this).prop('name');
+		var table = $(this).siblings(".modal-content").find(".instances");
+		var modal = $(this).siblings(".modal-content, .modal-background");
+		$.ajax({
+			url: $(this).attr('action'),
+			method: "POST",
+			data: {
+				'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').prop('value'),
+				'connection': "instances",
+				'form': fpk
+			}
+		}).done(function (data) {
+			table.children().remove();
+			table.append(data);
+			modal.toggleClass("active");
+		}).fail(function () {
+			alert(error);
 		});
 	});
 	
+	$(".modal-background").click(function () {
+		$(this).siblings(".modal-content").toggleClass("active");
+		$(this).toggleClass("active");
+	});
+	
+	$('.modal-content').on('click', '.modal-select', function () {
+		destElem.children().remove();
+		$(this).parent().parent().clone().appendTo(destElem);
+		var pk = destElem.find('.modal-select').attr('name');
+		destElem.attr('name', pk);
+		destElem.find('.modal-select').remove();
+	});
+		
 });
   
 

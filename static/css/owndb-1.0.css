@@ -52,11 +52,11 @@ progress::-webkit-progress-value {
     background-color: #1345BA;
 }
 
-#modal-launcher {
+.modal-launcher, .modal-select {
 	cursor:pointer;
 }
 
-#modal-background {
+.modal-background {
 	display:none; 
 	opacity:0.8; 
 	background-color:#fafafa; 
@@ -68,7 +68,7 @@ progress::-webkit-progress-value {
 	z-index:2000;
 }
 
-#modal-content {
+.modal-content {
 	background-color: #fff;
 	border-radius: 5px;
 	-webkit-border-radius: 5px;
@@ -77,16 +77,30 @@ progress::-webkit-progress-value {
 	-webkit-box-shadow: 0 0 10px 0 #222;
 	-moz-box-shadow: 0 0 10px 0 #222;
 	display: none;
-	height: auto;
-	left: 50%;
-	margin: -120px 0 0 -160px;
-	padding: 10px;
-	position: absolute;
-	top: 50%;
+	position: fixed;
 	width: auto;
+	height: auto;
+	top: 60px;
+	left: 50%;
+	margin: 0 0 0 -150px;
+	width:auto;
+	padding: 10px;
 	z-index: 2100;
 }
 
-#modal-background.active, #modal-content.active {
+.modal-background.active, .modal-content.active {
 	display: block;
+}
+
+table.instances td {
+	border: 2px solid black;
+	padding: 5px;
+}
+
+table.instances thead {
+	background-color:#fafafa;
+}
+
+table.modal-choice td {
+	padding-right: 5px;
 }
