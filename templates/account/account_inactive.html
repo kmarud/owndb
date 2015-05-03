@@ -14,6 +14,13 @@
             		<h3 class="panel-title"><a href="/">{% trans "Konto nieaktywne" %}</a></h3>
             	</div>
         	    <div class="panel-body">
+				
+					<ul class="messages">
+						{% for message in messages %}
+						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						{% endfor %}
+					</ul>
+				
         	    	<p>Twoje konto zostało zdezaktywowane. W celu odzyskania konta, skontaktuj się z administratorem.</p>
 				</div>
             </div>

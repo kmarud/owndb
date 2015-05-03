@@ -5,7 +5,6 @@ when you run "manage.py test".
 
 from django.test import TestCase
 
-'''
 class ViewTest(TestCase):
     """Tests for the application views."""
 
@@ -29,4 +28,3 @@ class ViewTest(TestCase):
         """Tests the about page."""
         response = self.client.get('/about')
         self.assertContains(response, 'About', 3, 200)
-'''

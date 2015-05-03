@@ -80,25 +80,30 @@ class FormField(models.Model):
     caption = models.CharField(max_length=200)
     settings = models.CharField(max_length=1000, null=True)
     position = models.IntegerField(default=0)
-
-    def __str__(self):
-        return str(self.pk)
-            
+    
     def get_data(self):
-        data = {
-            'Text': self.datatext_set.all(),
-            'Number': self.datatext_set.all(),
-            'Choice': self.datatext_set.all(),
-            'Checkbox': self.datatext_set.all(),
-            'Image': self.image_set.all(),
-            'File': self.image_set.all(),
-            'Connection': self.datatext_set.all(),
-            'LabelText': self.datatext_set.all(),
-            'LabelImage': self.image_set.all(),
-            'NextForm': self.datatext_set.all(),
-        }[self.type.name]
-        return data
-
+        if self.type.name=='Text':
+            return self.datatext_set.all()
+        elif self.type.name=='Number':
+            return self.datatext_set.all()
+        elif self.type.name=='Choice':
+            return self.datatext_set.all()
+        elif self.type.name=='Checkbox':
+            return self.datatext_set.all()
+        elif self.type.name=='Image':
+            return self.image_set.all()
+        elif self.type.name=='File':
+            return self.image_set.all()
+        elif self.type.name=='Connection':
+            return ConnectionInstance.objects.filter(connection=Connection.objects.get(formfield=self.pk))
+        elif self.type.name=='LabelText':
+            return self.datatext_set.all()
+        elif self.type.name=='LabelImage':
+            return self.image_set.all()
+        elif self.type.name=='NextForm':
+            return self.datatext_set.all()
+        else:
+            return None
 
 class FormInstance(models.Model):
     form = models.ForeignKey(Form)
@@ -134,9 +139,23 @@ class Connection(models.Model):
 class ConnectionInstance(models.Model):
     connection = models.ForeignKey(Connection)
     forminstance = models.ForeignKey(FormInstance)
-   
-    def __str__(self):
-        return str(self.pk)
+    choseninstance = models.ForeignKey(FormInstance, related_name='chosen_instance')
+    
+    def display(self):
+        form = Connection.objects.get(pk=self.connection.pk).form
+        out = "<table><thead><tr>"
+        for field in FormField.objects.filter(form=form).order_by('position'):
+            if (field.type.pk != 8 and field.type.pk != 9 and field.type.pk != 10 and field.type.pk != 5):
+                out += '<td>'+ field.caption +'</td>'
+        out += "</tr></thead><tbody>"
+        instance = FormInstance.objects.get(pk=self.choseninstance.pk)
+        out += '<tr>'
+        for field in FormField.objects.filter(form=form).order_by('position'):
+            if (field.type.pk != 8 and field.type.pk != 9 and field.type.pk != 10 and field.type.pk != 5):
+                insd = DataText.objects.get(formfield = field, forminstance = instance)
+                out += '<td>' + str(insd.data) + '</td>'
+        out += '</tr></tbody></table>'
+        return format_html(out)
         
 
 class DataText(models.Model):
@@ -160,8 +179,8 @@ class DataText(models.Model):
                     temp += str(opt[i]) + '<br />'
                 i += 1
             return format_html(temp)
-        elif type.pk == 7 or type.pk == 10: #connection or nextform
-            return format_html('<span>Here is connection to other form! You shouldn\'t see that! <br/>...Or you should see chosen instance, yes!</span>')
+        elif type.pk == 10: #nextform
+            return format_html('<span>Here is NextForm button! You shouldn\'t see that!</span>')
         elif type.pk == 8: #labeltext
             return format_html('<h4>{0}</h4>', self.data)
         else:

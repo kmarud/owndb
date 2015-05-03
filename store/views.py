@@ -138,6 +138,9 @@ class FormEdit(VerifiedMixin,TemplateView):
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
         
+        print(request.POST)
+        print(request.FILES)
+        
         if request.POST.get('connection') == "forms":
             forms = ""
             for form in models.Form.objects.filter(project=self.kwargs['project']):
@@ -258,6 +261,9 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
+        
+        print(request.POST)
+        print(request.FILES)
 
         if request.POST.get('connection') == "instances":
 
@@ -298,7 +304,17 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
             i = 0
             for field in models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'):
                 if (field.type.pk != 8 and field.type.pk != 9): #and field.type.pk != 10):  #nextform is bugging displaying forminstancedetails because there is no information in datatext, we should extend store_extras instance filter probably to not query database if there is nextform field
-                    if (field.type.pk == 5):
+                    if (field.type.pk == 7):
+                        if contents[i] != '':
+                            con = models.Connection.objects.get(formfield=field)
+                            chfi = models.FormInstance.objects.get(pk=contents[i])
+                            ins = models.ConnectionInstance(
+                                connection=con,
+                                forminstance = fi,
+                                choseninstance = chfi
+                            )
+                            ins.save()
+                    elif (field.type.pk == 5):
                         imgname = "image" + str(i)
                         img = models.Image(
                             formfield=field,
@@ -319,7 +335,6 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
             return HttpResponse("OK")
         
             
-    
 class ProjectList(VerifiedMixin, ListView):
     model = models.Project
     paginate_by = 2

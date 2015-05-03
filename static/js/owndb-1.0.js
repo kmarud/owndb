@@ -363,6 +363,8 @@ $(function() {
 		var csrf = $('input[name="csrfmiddlewaretoken"]').prop('value');
 		formData.append('csrfmiddlewaretoken', csrf);
 		
+		var t = true;
+		
         var field_contents = [];
         var i = 0;
         $(".field_render").each(function () {
@@ -390,7 +392,13 @@ $(function() {
 					field_contents[i] = "-";
 					break;
 				case $(this).hasClass('Connection'):
-					field_contents[i] = "-";
+					var fpk = $(this).find(".modal-choice").attr('name');
+					if (fpk != '')
+						field_contents[i] = fpk;
+					else {
+						field_contents[i] = '';
+						t = false;
+					}
 					break;
 				case $(this).hasClass('LabelText'):
 				case $(this).hasClass('LabelImage'):
@@ -400,6 +408,12 @@ $(function() {
 			}
             i = i + 1;
         });
+		
+		if (t==false) {
+			$(".messages").children().remove();
+			$(".messages").append("<li>You have to choose all instances!</li>");
+			return 0;
+		}
 		
 		formData.append('contents', JSON.stringify(field_contents));
         		
