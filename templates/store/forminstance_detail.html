@@ -3,7 +3,7 @@
 {% load store_extras %}
 
 {% block title %}
-    Form instance detail - {{ forminstance.pk }} - {{ form.title }} - {{ project.title }} - Owndb
+    Form instance details - {{ forminstance.pk }} - {{ form.title }} - {{ project.title }} - Owndb
 {% endblock %}
 
 {% block main-nav %}
@@ -59,7 +59,7 @@
 									</a>
 									</li>
                                 {% endif %}
-							    	<li><a href="#">Instancja {{ forminstance.pk }}</a></li>
+							    	<li><a href="{{ current_path }}">Instance {{ forminstance.pk }}</a></li>
                                 {% if forminstance.next_instance %}
 							    	<li>
 							     	<a href="{% url 'forminstance-detail' forminstance.form.project.pk forminstance.form.pk forminstance.next_instance %}" aria-label="Next">

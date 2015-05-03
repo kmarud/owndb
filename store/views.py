@@ -119,7 +119,7 @@ class FormAdd(VerifiedMixin,TemplateView):
                         )
                     c.save()
                 
-                i = i + 1
+                i += 1
                 
             messages.success(request, "Form successfully added!")
             return HttpResponse("OK")
@@ -232,7 +232,7 @@ class FormEdit(VerifiedMixin,TemplateView):
                         )
                     c.save()
 
-                i = i + 1
+                i += 1
 
             messages.success(request, "Form changes saved successfully!")
             return HttpResponse("OK")
@@ -276,7 +276,7 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
                         insd = models.DataText.objects.get(formfield = field, forminstance = instance)
                         forms += '<td>' + str(insd.data) + '</td>'
                 forms += '</tr>'
-                i = i + 1
+                i += 1
             forms += '</tbody>'
             
             if i==0:
@@ -297,7 +297,7 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
             
             i = 0
             for field in models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'):
-                if (field.type.pk != 8 and field.type.pk != 9 and field.type.pk != 10):
+                if (field.type.pk != 8 and field.type.pk != 9): #and field.type.pk != 10):  #nextform is bugging displaying forminstancedetails because there is no information in datatext, we should extend store_extras instance filter probably to not query database if there is nextform field
                     if (field.type.pk == 5):
                         imgname = "image" + str(i)
                         img = models.Image(
@@ -313,7 +313,7 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
                             data = contents[i]
                         )
                         data.save()
-                i = i + 1
+                i += 1
 
             messages.success(request, "Form instance added successfully!")
             return HttpResponse("OK")

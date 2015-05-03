@@ -104,3 +104,7 @@ table.instances thead {
 table.modal-choice td {
 	padding-right: 5px;
 }
+
+.form_image {
+	width: 100%;
+}
