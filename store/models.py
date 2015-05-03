@@ -7,11 +7,10 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.dispatch import receiver
 from django.db.models.signals import post_delete
-import os
 from django.utils.html import format_html
 from allauth.account.models import EmailAddress
 from allauth.socialaccount.models import SocialAccount
-import hashlib
+import os, hashlib
 
 
 # Class needed by django-allauth to access account_verified signal in templates
@@ -81,18 +80,30 @@ class FormField(models.Model):
     caption = models.CharField(max_length=200)
     settings = models.CharField(max_length=1000, null=True)
     position = models.IntegerField(default=0)
-
-    def __str__(self):
-        return str(self.pk)
-            
+    
     def get_data(self):
-        data = {
-            'Text': self.datatext_set.all(),
-            'LabelText': self.datatext_set.all(),
-            'Image': self.image_set.all(),
-        }[self.type.name]
-        return data
-
+        if self.type.name=='Text':
+            return self.datatext_set.all()
+        elif self.type.name=='Number':
+            return self.datatext_set.all()
+        elif self.type.name=='Choice':
+            return self.datatext_set.all()
+        elif self.type.name=='Checkbox':
+            return self.datatext_set.all()
+        elif self.type.name=='Image':
+            return self.image_set.all()
+        elif self.type.name=='File':
+            return self.image_set.all()
+        elif self.type.name=='Connection':
+            return ConnectionInstance.objects.filter(connection=Connection.objects.get(formfield=self.pk))
+        elif self.type.name=='LabelText':
+            return self.datatext_set.all()
+        elif self.type.name=='LabelImage':
+            return self.image_set.all()
+        elif self.type.name=='NextForm':
+            return self.datatext_set.all()
+        else:
+            return None
 
 class FormInstance(models.Model):
     form = models.ForeignKey(Form)
@@ -116,6 +127,36 @@ class FormInstance(models.Model):
         else:
             return False
 
+            
+class Connection(models.Model):
+    formfield = models.ForeignKey(FormField)
+    form = models.ForeignKey(Form)
+
+    def __str__(self):
+        return str(self.pk)
+        
+ 
+class ConnectionInstance(models.Model):
+    connection = models.ForeignKey(Connection)
+    forminstance = models.ForeignKey(FormInstance)
+    choseninstance = models.ForeignKey(FormInstance, related_name='chosen_instance')
+    
+    def display(self):
+        form = Connection.objects.get(pk=self.connection.pk).form
+        out = "<table><thead><tr>"
+        for field in FormField.objects.filter(form=form).order_by('position'):
+            if (field.type.pk != 8 and field.type.pk != 9 and field.type.pk != 10 and field.type.pk != 5):
+                out += '<td>'+ field.caption +'</td>'
+        out += "</tr></thead><tbody>"
+        instance = FormInstance.objects.get(pk=self.choseninstance.pk)
+        out += '<tr>'
+        for field in FormField.objects.filter(form=form).order_by('position'):
+            if (field.type.pk != 8 and field.type.pk != 9 and field.type.pk != 10 and field.type.pk != 5):
+                insd = DataText.objects.get(formfield = field, forminstance = instance)
+                out += '<td>' + str(insd.data) + '</td>'
+        out += '</tr></tbody></table>'
+        return format_html(out)
+        
 
 class DataText(models.Model):
     formfield = models.ForeignKey(FormField)
@@ -123,10 +164,27 @@ class DataText(models.Model):
     data = models.TextField()
 
     def display(self):
-        if self.forminstance is None:
+        type = Type.objects.get(pk=FormField.objects.get(pk=self.formfield.pk).type.pk)
+        if type.pk == 1 or type.pk == 2: #text or number
+            return format_html('<span>{0}</span>', self.data)
+        elif type.pk == 3 or type.pk == 4: #choice or checkbox
+            opt = FormField.objects.get(pk=self.formfield.pk).settings.split(';')
+            del opt[0]
+            ans = self.data.split(';')
+            del ans[0]
+            temp = ''
+            i = 0
+            for val in ans:
+                if val == '1':
+                    temp += str(opt[i]) + '<br />'
+                i += 1
+            return format_html(temp)
+        elif type.pk == 10: #nextform
+            return format_html('<span>Here is NextForm button! You shouldn\'t see that!</span>')
+        elif type.pk == 8: #labeltext
             return format_html('<h4>{0}</h4>', self.data)
         else:
-            return self.data
+            return format_html('<span>Unrecognized field type!</span>')
         
         
 class Image(models.Model):
@@ -142,7 +200,7 @@ class Image(models.Model):
         return self.image.name
 
     def display(self):
-        return format_html('<img border="0" alt="" src="{0}"/>', os.path.join(MEDIA_URL, self.image.name))
+        return format_html('<img class="form_image" border="0" alt="" src="{0}"/>', os.path.join(MEDIA_URL, self.image.name))
     display.allow_tags = True
 
 
@@ -157,20 +215,4 @@ def photo_post_delete_handler(sender, **kwargs):
     # Delete empty folder created by django-imagekit
     os.rmdir(os.path.dirname(path))
 
-        
-class Connection(models.Model):
-    formfield = models.ForeignKey(FormField)
-    form = models.ForeignKey(Form)
-
-    def __str__(self):
-        return str(self.pk)
-        
- 
-class ConnectionInstance(models.Model):
-    connection = models.ForeignKey(Connection)
-    forminstance = models.ForeignKey(FormInstance)
-   
-    def __str__(self):
-        return str(self.pk)
-        
         

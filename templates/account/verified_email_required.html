@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block title %}
-    owndb - weryfikacja adresu email
+    Owndb - E-mail verification
 {% endblock %}
 
 {% load url from future %}
@@ -21,6 +21,12 @@
                 <h3 class="panel-title"><a href="{{ current_path }}">Weryfikacja adresu email</a></h3>
               </div>
               <div class="panel-body">
+			  
+					<ul class="messages">
+						{% for message in messages %}
+						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						{% endfor %}
+					</ul>
 
                 {% url 'account_email' as email_url %}
 

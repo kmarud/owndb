@@ -1,6 +1,7 @@
 ﻿from django.views.generic import ListView, DetailView, View
 from django.views.generic.base import TemplateView
 from django.db.models import Q
+from django.core.urlresolvers import reverse
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -118,8 +119,9 @@ class FormAdd(VerifiedMixin,TemplateView):
                         )
                     c.save()
                 
-                i = i + 1
-
+                i += 1
+                
+            messages.success(request, "Form successfully added!")
             return HttpResponse("OK")
 
             
@@ -135,6 +137,9 @@ class FormEdit(VerifiedMixin,TemplateView):
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
+        
+        print(request.POST)
+        print(request.FILES)
         
         if request.POST.get('connection') == "forms":
             forms = ""
@@ -230,8 +235,9 @@ class FormEdit(VerifiedMixin,TemplateView):
                         )
                     c.save()
 
-                i = i + 1
+                i += 1
 
+            messages.success(request, "Form changes saved successfully!")
             return HttpResponse("OK")
 
         
@@ -247,7 +253,6 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
         
         try:
             context['labelimages'] = models.Image.objects.filter(formfield=models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'), forminstance__isnull=True)
-            context['temp_data_list'] = models.FormInstance.objects.filter(form=self.kwargs['form']) #temporary to the same form
         except:
             print("That's only temporary...")
         
@@ -255,41 +260,81 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        context = self.get_context_data()     
-
-        f = models.Form.objects.get(pk=self.kwargs['form'])
-        fi = models.FormInstance(
-                form = f,
-                user = self.request.user
-            )
-        fi.save()
+        context = self.get_context_data()
         
-        contents = json.loads(request.POST.get('contents'))
-        
-        i = 0
-        for field in models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'):
-            if (field.type.pk != 8 and field.type.pk != 9 and field.type.pk != 10):
-                if (field.type.pk == 5):
-                    imgname = "image" + str(i)
-                    img = models.Image(
-                        formfield=field,
-                        forminstance = fi,
-                        image=request.FILES[imgname]
-                    )
-                    img.save()
-                else:
-                    data = models.DataText(
-                        formfield = field,
-                        forminstance = fi,
-                        data = contents[i]
-                    )
-                    data.save()
-            i = i + 1
+        print(request.POST)
+        print(request.FILES)
 
-        return HttpResponse("OK")
+        if request.POST.get('connection') == "instances":
+
+            fpk = request.POST.get('form')
+            forms = "<thead><tr><td></td>"
+            for field in models.FormField.objects.filter(form=fpk).order_by('position'):
+                if (field.type.pk != 8 and field.type.pk != 9 and field.type.pk != 10):
+                    forms += '<td>'+ field.caption +'</td>'
+            forms += "</tr></thead><tbody>"
+
+            i = 0
+            for instance in models.FormInstance.objects.filter(form=models.Form.objects.get(pk=fpk)):
+                forms += '<tr><td><a class="modal-select" name="'+str(instance.pk)+'">#</a></td>'
+                for field in models.FormField.objects.filter(form=fpk).order_by('position'):
+                    if (field.type.pk != 8 and field.type.pk != 9 and field.type.pk != 10 and field.type.pk != 5):
+                        insd = models.DataText.objects.get(formfield = field, forminstance = instance)
+                        forms += '<td>' + str(insd.data) + '</td>'
+                forms += '</tr>'
+                i += 1
+            forms += '</tbody>'
+            
+            if i==0:
+                forms = '<tr><td>Connected form is empty!</td></tr>'
+            
+            return HttpResponse(forms)
+
+        else:
+
+            f = models.Form.objects.get(pk=self.kwargs['form'])
+            fi = models.FormInstance(
+                    form = f,
+                    user = self.request.user
+                )
+            fi.save()
+            
+            contents = json.loads(request.POST.get('contents'))
+            
+            i = 0
+            for field in models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'):
+                if (field.type.pk != 8 and field.type.pk != 9): #and field.type.pk != 10):  #nextform is bugging displaying forminstancedetails because there is no information in datatext, we should extend store_extras instance filter probably to not query database if there is nextform field
+                    if (field.type.pk == 7):
+                        if contents[i] != '':
+                            con = models.Connection.objects.get(formfield=field)
+                            chfi = models.FormInstance.objects.get(pk=contents[i])
+                            ins = models.ConnectionInstance(
+                                connection=con,
+                                forminstance = fi,
+                                choseninstance = chfi
+                            )
+                            ins.save()
+                    elif (field.type.pk == 5):
+                        imgname = "image" + str(i)
+                        img = models.Image(
+                            formfield=field,
+                            forminstance = fi,
+                            image=request.FILES[imgname]
+                        )
+                        img.save()
+                    else:
+                        data = models.DataText(
+                            formfield = field,
+                            forminstance = fi,
+                            data = contents[i]
+                        )
+                        data.save()
+                i += 1
+
+            messages.success(request, "Form instance added successfully!")
+            return HttpResponse("OK")
         
             
-    
 class ProjectList(VerifiedMixin, ListView):
     model = models.Project
     paginate_by = 2
@@ -358,11 +403,11 @@ class ProjectAdd(VerifiedMixin, SuccessMessageMixin, TemplateView):
         )
         if ( p.title.isspace() or p.title=='' ):
             messages.error(request, "Bad project name!")
-            return HttpResponseRedirect('/store/')
+            return HttpResponseRedirect(reverse('project-list'))
 
         p.save()
-        messages.success(request, "Your project succesfully added!")
-        return HttpResponseRedirect('/store/')
+        messages.success(request, "Project \"" + p.title + "\" succesfully added!")
+        return HttpResponseRedirect(reverse('project-list'))
 
 
 class ProjectEdit(VerifiedMixin, TemplateView):
@@ -370,6 +415,7 @@ class ProjectEdit(VerifiedMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(ProjectEdit, self).get_context_data(**kwargs)
+        context['project'] = models.Project.objects.get(pk=self.kwargs['project'])
         return context
 
     def post(self, request, *args, **kwargs):
@@ -379,8 +425,27 @@ class ProjectEdit(VerifiedMixin, TemplateView):
         p.slug = slugify(self.request.POST.get('project_name'))
         if ( p.title.isspace() or p.title=='' ):
             messages.error(request, "Bad project name!")
-            return HttpResponseRedirect('/store/')
+            return HttpResponseRedirect(reverse('project-list'))
 
         p.save()
-        messages.success(request, "Your project succesfully edited!")
-        return HttpResponseRedirect('/store/')
+        messages.success(request, "Project \"" + p.title + "\" succesfully edited!")
+        return HttpResponseRedirect(reverse('form-list', kwargs={'project': self.kwargs['project'] } ))
+
+
+class FormDelete(VerifiedMixin, TemplateView):
+    template_name = 'store/form_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(FormDelete, self).get_context_data(**kwargs)
+        context['project'] = models.Project.objects.get(pk=self.kwargs['project'])
+        context['form'] = models.Form.objects.get(pk=self.kwargs['form'])
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        f = models.Form.objects.get(pk=self.kwargs['form'])
+        titleBackup = f.title
+        models.FormField.objects.filter(form=f).delete()
+        f.delete()
+        messages.success(request, "Form \"" + titleBackup + "\" successfully deleted!")
+        return HttpResponseRedirect(reverse('form-list', kwargs={'project': self.kwargs['project'] } ))

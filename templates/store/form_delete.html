@@ -2,15 +2,21 @@
 {% load staticfiles %}
 
 {% block title %}
-    Add project - Owndb
+    Delete form - {{ form.title }} - {{ project.title }} - Owndb
 {% endblock %}
 
 {% block main-nav %}
 <li>
 	<a href="{% url 'project-list' %}">My projects</a>
 </li>
+<li>
+	<a href="{% url 'form-list' project.pk %}">{{ project.title }}</a>
+</li>
+<li>
+	<a href="{% url 'forminstance-list' project.pk form.pk %}">{{ form.title }}</a> 
+</li>
 <li class="active">
-    <a href="{{ current_path }}">Add project</a>
+	<a href="{{ current_path }}">Delete form</a>
 </li>
 {% endblock %}
 
@@ -28,18 +34,16 @@
 						{% endfor %}
 					</ul>
 				
-					<h3>Add project</h3>
-					<form method="post" action="{% url 'project-add' %}">
+					<h3>Delete form</h3>
+					<form method="post" action="{% url 'form-delete' project.pk form.pk %}">
 						{% csrf_token %}
+                        <p>Are you sure to delete this form? All data will be completely lost if you continue!
 							<p>
-								<input id="project_name" type="text" placeholder=" set project name" autofocus name="project_name" />
-							</p>
-							<p>
-								<input type="submit" value="Add project" />
-								<input id="cancel_button" name="{% url 'project-list' %}" type="button" value="Cancel" />
+								<input type="submit" value="Definitely delete form" />
+								<input id="cancel_button" name="{% url 'form-edit' project.pk form.pk %}" type="button" value="Cancel" />
 							</p>
 					</form>
-			
+
 				</div>
 			</div>
 		</div>

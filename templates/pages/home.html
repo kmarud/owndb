@@ -9,6 +9,12 @@
 	<link href="{% static "css/landing-page.css" %}" rel="stylesheet">
 {% endblock %}
 
+{% block main-nav %}
+<li>
+	<a href="{% url 'project-list' %}">My projects</a>
+</li>
+{% endblock %}
+
 {% block container %}
     <div class="intro-header">
         <div class="container">

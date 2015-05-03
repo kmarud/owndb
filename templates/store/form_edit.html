@@ -3,11 +3,22 @@
 {% load store_extras %}
 
 {% block title %}
-    Edit existing form
+    Edit existing form - {{ form.title }} - {{ project.title }} - Owndb
 {% endblock %}
 
-{% block main-title %}
-	<a class="navbar-brand topnav" href="{% url 'form-list' project.pk %}">{{ project.title }}</a>  <a class="navbar-brand topnav" href="{% url 'forminstance-list' project.pk form.pk %}">{{ form.title }}</a> <a class="navbar-brand topnav" >Edit existing form</a>
+{% block main-nav %}
+<li>
+	<a href="{% url 'project-list' %}">My projects</a>
+</li>
+<li>
+	<a href="{% url 'form-list' project.pk %}">{{ project.title }}</a>
+</li>
+<li>
+	<a href="{% url 'forminstance-list' project.pk form.pk %}">{{ form.title }}</a> 
+</li>
+<li class="active">
+	<a href="{{ current_path }}">Edit existing form</a>
+</li>
 {% endblock %}
 
 {% block container %}
@@ -15,10 +26,14 @@
     <div class="row">
         <div class="col-lg-12">
         	<div class="panel panel-primary">
-				<div class="panel-heading">
-					<h3 class="panel-title"><a href="/">Home</a></h3>
-				</div>
+				<div class="panel-heading"></div>
 				<div class="panel-body">
+		
+					<ul class="messages">
+						{% for message in messages %}
+						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						{% endfor %}
+					</ul>
 		
 					<h3>Edit existing form</h3>
 					<div id="loading"></div>
@@ -100,7 +115,7 @@
 											{% elif field.type|stringformat:"s" == "LabelImage" %}
 												<p><input class="label_image" name="file" type="file" accept=".png,.gif,.jpg,.jpeg" /><progress min="0" max="100" value="0"></progress></p>
 											{% elif field.type|stringformat:"s" == "Connection" %}
-												<p>Select form:&nbsp;<select class="connection_form"></select></p>
+												<p>Select form:&nbsp;<select class="connection_form"><option value="{{ field.settings }}">Without changes</option></select></p>
 											{% elif field.type|stringformat:"s" == "Image" %}
 												<p><input class="image" disabled type="file" accept=".png,.gif,.jpg,.jpeg" /></p>
 											{% elif field.type|stringformat:"s" == "File" %}
@@ -120,11 +135,11 @@
 							</tbody>
 						</table>
 						<p>
-							<a id="add_field">Add new field</a> or drag and drop to reorder them.
+							<a id="add_field">Add new field</a> or drag and drop to reorder them. <a href="{% url 'form-delete' project.pk form.pk %}">Delete form</a>
 						</p>
 						<p>
 							<input id="submit_button" type="submit" value="Save changes" />
-							<input id="cancel_button" type="button" value="Cancel" />
+							<input id="cancel_button" name="{% url 'form-list' project.pk %}" type="button" value="Cancel" />
 						</p>
 					</form>
 			

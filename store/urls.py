@@ -8,7 +8,7 @@ from store.views import ProjectEdit
 from store.views import FormAdd
 from store.views import FormInstanceAdd
 from store.views import FormEdit
-
+from store.views import FormDelete
 
 urlpatterns = patterns('',
     url(r'^p(?P<page>[0-9]+)/$', ProjectList.as_view(), name='project-list'),
@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     url(r'^(?P<project>[\w\-\_]+)/?$', FormList.as_view(), name='form-list'),
     url(r'^(?P<project>[\w\-\_]+)/(?P<form>[\w\-\_]+)/p(?P<page>[0-9]+)/$', FormInstanceList.as_view(), name='forminstance-list'),
     url(r'^(?P<project>[\w\-\_]+)/(?P<form>[\w\-\_]+)/edit/?$', FormEdit.as_view(), name='form-edit'),
+    url(r'^(?P<project>[\w\-\_]+)/(?P<form>[\w\-\_]+)/delete/?$', FormDelete.as_view(), name='form-delete'),
     url(r'^(?P<project>[\w\-\_]+)/(?P<form>[\w\-\_]+)/add/?$', FormInstanceAdd.as_view(), name='forminstance-add'),
     url(r'^(?P<project>[\w\-\_]+)/(?P<form>[\w\-\_]+)/?$', FormInstanceList.as_view(), name='forminstance-list'),
     url(r'^(?P<project>[\w\-\_]+)/(?P<form>[\w\-\_]+)/(?P<forminstance>[\w\-\_]+)/p(?P<page>[0-9]+)/$', FormInstanceDetail.as_view(), name='forminstance-detail'),

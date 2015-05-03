@@ -65,36 +65,89 @@ var error = "Some error occured while sending data. Try again later.";
  
 var redirect = false;
 
-$(function() {
-        
-    //set up a loading indicator
-    $(document).bind("ajaxStart", function() {
-        $("#loading").show();
-    }).bind("ajaxStop", function() {
-        $("#loading").hide();
-    });
-    
-    //prevent redirection
-    $(window).bind('beforeunload', function () {
-        if ($(".field_cell").length > 0 && !redirect)
-            return 'Unsaved data will be lost! Are you sure?';
-    });
-    
-    //prevent accidental enter
-    $('#add_form, #edit_form, #add_forminstance').bind('keypress keydown keyup', function (e) {
-        if (e.keyCode == 13) { e.preventDefault(); }
-    });
-    
-    //discard changes
-    $("#cancel_button").click(function (e) {
-        redirect = true;
-        $(location).attr('href', $('input[name="after_process"]').prop('value'));
-    });
 
+$(function() {
+	
+	var destElem;
+
+	$(".modal-launcher").click(function () {
+		destElem = $(this).siblings(".modal-choice");
+		var fpk = $(this).prop('name');
+		var table = $(this).siblings(".modal-content").find(".instances");
+		var modal = $(this).siblings(".modal-content, .modal-background");
+		$.ajax({
+			url: $(this).attr('action'),
+			method: "POST",
+			data: {
+				'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').prop('value'),
+				'connection': "instances",
+				'form': fpk
+			}
+		}).done(function (data) {
+			table.children().remove();
+			table.append(data);
+			modal.toggleClass("active");
+		}).fail(function () {
+			alert(error);
+		});
+	});
+	
+	$(".modal-background").click(function () {
+		$(this).siblings(".modal-content").toggleClass("active");
+		$(this).toggleClass("active");
+	});
+	
+	$('.modal-content').on('click', '.modal-select', function () {
+		destElem.children().remove();
+		$(this).parent().parent().clone().appendTo(destElem);
+		var pk = destElem.find('.modal-select').attr('name');
+		destElem.attr('name', pk);
+		destElem.find('.modal-select').remove();
+	});
+		
 });
+  
+
+var owndbHelpers = {
+	
+	lostWarning: "Unsaved data will be lost! Are you sure?",
+	
+	loadingIndicator: function() {
+		$(document).bind('ajaxStart', function() {
+			$("#loading").show();
+		}).bind('ajaxStop', function() {
+			$("#loading").hide();
+		});
+	},
+	
+	preventRedirection: function() {
+		$(window).bind('beforeunload', function () {
+			if ($(".field_cell").length > 0 && !redirect)
+				return owndbHelpers.lostWarning;
+		});
+	},
+	
+	preventAccidentalEnter: function() {
+		$('#add_form, #edit_form, #add_forminstance').bind('keypress keydown keyup', function (e) {
+			if (e.keyCode == 13) { e.preventDefault(); }
+		});
+	},
+	
+	discardChanges: function() {
+		$("#cancel_button").click(function (e) {
+			redirect = true;
+			$(location).attr('href', $(this).prop('name'));
+		});
+	}
+};
  
 $(function() {
-        
+    
+	owndbHelpers.loadingIndicator();
+    owndbHelpers.preventRedirection();
+    owndbHelpers.preventAccidentalEnter();
+    owndbHelpers.discardChanges();
+
     var $wrapper = $("#fields_wrapper tbody");
     
     //insert field area
@@ -294,7 +347,8 @@ $(function() {
                 redirect = true;
                 $(location).attr('href', $('input[name="after_process"]').prop('value'));
             } else {
-                alert(data);
+				$(".messages").children().remove();
+				$(".messages").append("<li>" + data + "</li>");
             }
         }).fail(function () {
             alert(error);
@@ -308,6 +362,8 @@ $(function() {
 		var formData = new FormData();
 		var csrf = $('input[name="csrfmiddlewaretoken"]').prop('value');
 		formData.append('csrfmiddlewaretoken', csrf);
+		
+		var t = true;
 		
         var field_contents = [];
         var i = 0;
@@ -336,7 +392,13 @@ $(function() {
 					field_contents[i] = "-";
 					break;
 				case $(this).hasClass('Connection'):
-					field_contents[i] = "-";
+					var fpk = $(this).find(".modal-choice").attr('name');
+					if (fpk != '')
+						field_contents[i] = fpk;
+					else {
+						field_contents[i] = '';
+						t = false;
+					}
 					break;
 				case $(this).hasClass('LabelText'):
 				case $(this).hasClass('LabelImage'):
@@ -346,6 +408,12 @@ $(function() {
 			}
             i = i + 1;
         });
+		
+		if (t==false) {
+			$(".messages").children().remove();
+			$(".messages").append("<li>You have to choose all instances!</li>");
+			return 0;
+		}
 		
 		formData.append('contents', JSON.stringify(field_contents));
         		
@@ -369,7 +437,8 @@ $(function() {
                 redirect = true;
                 $(location).attr('href', $('input[name="after_process"]').prop('value'));
             } else {
-                alert(data);
+				$(".messages").children().remove();
+				$(".messages").append("<li>" + data + "</li>");
             }
         }).fail(function () {
             alert(error);

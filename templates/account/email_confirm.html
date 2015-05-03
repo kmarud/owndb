@@ -17,6 +17,13 @@
             		<h3 class="panel-title"><a href="/">{% trans "Aktywuj swoje konto" %}</a></h3>
             	</div>
         	    <div class="panel-body">
+				
+					<ul class="messages">
+						{% for message in messages %}
+						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						{% endfor %}
+					</ul>
+				
         	    	<h1>{% trans "Confirm E-mail Address" %}</h1>
 
 					{% if confirmation %}

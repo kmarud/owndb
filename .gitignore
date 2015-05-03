@@ -1,8 +1,7 @@
 .idea
 *.py[cod]
 owndb/local_settings.py
-media
-images
+media/
 store/migrations/
 runserver.bat
 makemigrations.bat
