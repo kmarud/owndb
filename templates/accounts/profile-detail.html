@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load store_extras %}
+
+{% block title %}
+    My profile
+{% endblock %}
+
+{% block main-title %}
+{% endblock %}
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+{% endblock %}
+
+{% block container %}
+<script>
+    $(document).ready(function() {
+    $("#profile-edit").hide();
+    $(".profile-edit").click(function(){
+        $("#profile-detail").hide();
+        $("#profile-edit").show();
+    });
+    $(".profile-detail").click(function(){
+        $("#profile-detail").show();
+        $("#profile-edit").hide();
+    });
+    });
+</script>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+        	<div class="panel panel-primary">
+				<div class="panel-heading">
+                    <h3 class="panel-title"><a href="/">My profile</a></h3>
+	            </div>
+                <div class="panel-body">
+                    {% if messages %}
+					<ul class="messages">
+						{% for message in messages %}
+						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						{% endfor %}
+					</ul>
+					{% endif %}
+	                <div class="container">
+						<div class="col-md-7">
+                                <img src="http://s13.postimg.org/q3nixbebb/photo.jpg" width="100" height="100"/>
+                                <table>
+                                    <tr>
+                                        <td><h3>Welcome, {{ user.username }}!</h3></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center">Projects: <br>{{ projects_count }}</td>
+                                        <td style="text-align: center">Forms: <br>{{ forms_count }}</td>
+                                    </tr>
+                                </table>
+                            <div id="profile-detail">
+                                <table>
+                                    <tr>
+                                        <td>First name: &nbsp</td>
+                                        <td>{{ user.first_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Last name: &nbsp</td>
+                                        <td>{{ user.last_name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>E-mail: &nbsp</td>
+                                        <td>{{ user.email }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Joined: &nbsp</td>
+                                        <td>{{ user.date_joined }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Last login: &nbsp</td>
+                                        <td>{{ user.last_login }}</td>
+                                    </tr>
+                                </table>
+                                <a href="#" class="profile-edit">Edit profile</a>
+                                <a href="{% url 'account_change_password' %}">Change password</a>
+                            </div>
+                            <div id="profile-edit">
+                                <form action="" method="post">{% csrf_token %}
+                                        <li>{{ form.first_name }}</li>
+                                        <li>{{ form.last_name }}</li>
+                                    <input type="submit" class="profile-detail" value="Save changes" />
+                                </form>
+                                <a href="#" class="profile-detail">Cancel changes</a>
+                            </div>
+						</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

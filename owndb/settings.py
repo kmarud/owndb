@@ -27,7 +27,8 @@ INSTALLED_APPS = (
     'allauth.socialaccount.providers.facebook',
     'imagekit',
     'store',
-    'pages'
+    'pages',
+    'accounts'
 )
 
 SITE_ID = 1
