@@ -443,9 +443,35 @@ class FormDelete(VerifiedMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
+        
         f = models.Form.objects.get(pk=self.kwargs['form'])
         titleBackup = f.title
         models.FormField.objects.filter(form=f).delete()
         f.delete()
+        
         messages.success(request, "Form \"" + titleBackup + "\" successfully deleted!")
+        
         return HttpResponseRedirect(reverse('form-list', kwargs={'project': self.kwargs['project'] } ))
+
+        
+class ProjectDelete(VerifiedMixin, TemplateView):
+    template_name = 'store/project_delete.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProjectDelete, self).get_context_data(**kwargs)
+        context['project'] = models.Project.objects.get(pk=self.kwargs['project'])
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        
+        p = models.Project.objects.get(pk=self.kwargs['project'])
+        forms = models.Form.objects.filter(project=p)
+        for f in forms:
+            models.FormField.objects.filter(form=f).delete()
+            f.delete()
+        p.delete()
+        
+        messages.success(request, "Project successfully deleted!")
+        
+        return HttpResponseRedirect(reverse('project-list'))

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pl">
 {% load staticfiles %}
 <head>
@@ -39,7 +39,7 @@
 </head>
 <body>
     <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
-        <div class="container topnav">
+        <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                     <span class="sr-only">Toggle navigation</span>
@@ -50,18 +50,23 @@
                 <a class="navbar-brand topnav" href="/">Owndb</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                {% if user.is_authenticated %}
-					<ul class="nav navbar-nav">
+                <ul class="nav navbar-nav">
+					{% block main-nav-out %}{% endblock %}
+				{% if user.is_authenticated %}
+						<li>
+							<a href="{% url 'project-list' %}">My projects</a>
+						</li>
 						{% block main-nav %}{% endblock %}
                     </ul>
                     <form class="navbar-form navbar-right" role="search" action="/accounts/logout">
                             Witaj, <a href="/accounts/profile">{{ user.username }}</a>! &nbsp;
-							<button type="submit" class="btn btn-default">Wyloguj</button>
+							<button type="submit" class="btn btn-default">Log out</button>
                     </form>
-                {% else %}
+                {% else %}				
+                    </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li>
-                            <a href="{% url 'account_signup' %}">Zarejestruj się</a>
+                            <a href="{% url 'account_signup' %}">Sign up</a>
                         </li>
                     </ul>
                     <form class="navbar-form navbar-right" role="search" action="{% url 'account_login' %}" method="POST">
@@ -70,9 +75,9 @@
                             <input name="login" type="text" class="form-control" placeholder="Login">
                         </div>
                         <div class="form-group">
-                            <input name="password" type="password" class="form-control" placeholder="Hasło">
+                            <input name="password" type="password" class="form-control" placeholder="Password">
                         </div>
-                        <button type="submit" class="btn btn-default">Zaloguj się</button>
+                        <button type="submit" class="btn btn-default">Sign in</button>
                     </form>
                 {% endif %}
             </div>
@@ -87,19 +92,19 @@
                 <div class="col-lg-12">
                     <ul class="list-inline">
                         <li>
-                            <a href="/">Home</a>
+                            <a href="/">Owndb</a>
                         </li>
-                        <li class="footer-menu-divider">&sdot;</li>
+						<li class="footer-menu-divider">&sdot;</li>
                         <li>
-                            <a href="/about">O nas</a>
+                            <a href="{% url 'about' %}">About us</a>
                         </li>
-                        <li class="footer-menu-divider">&sdot;</li>
+						<li class="footer-menu-divider">&sdot;</li>
                         <li>
-                            <a href="/help">Pomoc</a>
+                            <a href="{% url 'help' %}">Help</a>
                         </li>
-                        <li class="footer-menu-divider">&sdot;</li>
+						<li class="footer-menu-divider">&sdot;</li>
                         <li>
-                            <a href="/contact">Kontakt</a>
+                            <a href="{% url 'contact' %}">Contact</a>
                         </li>
                     </ul>
                     <p class="copyright text-muted small">Copyright &copy; Owndb 2015. All Rights Reserved</p>
@@ -107,6 +112,7 @@
             </div>
         </div>
     </footer>
+	
     <script src="{% static 'js/jquery-1.11.2.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/jquery-ui.min.js' %}"></script>

@@ -1,4 +1,4 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 {% load staticfiles %}
 {% load store_extras %}
 
@@ -8,67 +8,61 @@
 
 {% block main-nav %}
 <li>
-	<a href="{% url 'project-list' %}">My projects</a>
-</li>
-<li>
 	<a href="{% url 'form-list' forminstance.form.project.pk %}">{{ forminstance.form.project.title }}</a>
 </li>
 <li>
 	<a href="{% url 'forminstance-list' forminstance.form.project.pk forminstance.form.pk %}">{{ forminstance.form.title }}</a>
 </li>
-<li class="active">
+<li>
 	<a href="{{ current_path }}">Instance {{ forminstance.pk }}</a>
 </li>
 {% endblock %}
 
 {% block container %}
 <div class="container">
-    <div class="row">
-        <div class="col-lg-12">
-        	<div class="panel panel-primary">
-				<div class="panel-heading"></div>
-	            <div class="panel-body">
-				
+	<div class="panel panel-primary">
+		<div class="panel-heading"></div>
+		<div class="panel-body">
+			<div class="panel">
+				<div class="panel-body">
 					<ul class="messages">
 						{% for message in messages %}
 						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
 						{% endfor %}
 					</ul>
-				
-		            <div class="col-lg-3">
-	                        <h3>Form instance details</h3>
-	                </div>
-	                <div class="container">
-						<div class="col-md-7">
-							<div>
+					<div class="container">
+	                    <h3>Form instance details</h3>
+						<div class="container">
+							<div class="col-md-7">
+								<ul>
 									{% for formfield in formfield_list %}
 									<li class="list-group-item">
 										{{ formfield.get_data|instance:forminstance }}
 									</li>
 									{% endfor %}
 								</ul>
-							</div>
-						 </div>
-                    </div>
-                    <nav style="text-align: center">
-							<ul class="pagination">
-                                {% if forminstance.prev_instance %}
-								    <li>
-									<a href="{% url 'forminstance-detail' forminstance.form.project.pk forminstance.form.pk forminstance.prev_instance %}" aria-label="Previous">
-										<span aria-hidden="true">&laquo;</span>
-									</a>
-									</li>
-                                {% endif %}
-							    	<li><a href="{{ current_path }}">Instance {{ forminstance.pk }}</a></li>
-                                {% if forminstance.next_instance %}
-							    	<li>
-							     	<a href="{% url 'forminstance-detail' forminstance.form.project.pk forminstance.form.pk forminstance.next_instance %}" aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
-						      		</a>
-						    	    </li>
-                                {% endif %}
-						  		</ul>
-						</nav>
+							 </div>
+						</div>
+					</div>
+					<nav style="text-align: center">
+						<ul class="pagination">
+						{% if forminstance.prev_instance %}
+							<li>
+							<a href="{% url 'forminstance-detail' forminstance.form.project.pk forminstance.form.pk forminstance.prev_instance %}" aria-label="Previous">
+								<span aria-hidden="true">&laquo;</span>
+							</a>
+							</li>
+						{% endif %}
+							<li><a href="{{ current_path }}">Instance {{ forminstance.pk }}</a></li>
+						{% if forminstance.next_instance %}
+							<li>
+							<a href="{% url 'forminstance-detail' forminstance.form.project.pk forminstance.form.pk forminstance.next_instance %}" aria-label="Next">
+								<span aria-hidden="true">&raquo;</span>
+							</a>
+							</li>
+						{% endif %}
+						</ul>
+					</nav>
 	            </div>
 	        </div>
 	    </div>

@@ -1,4 +1,4 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 {% load staticfiles %}
 
 {% block title %}
@@ -7,50 +7,46 @@
 
 {% block main-nav %}
 <li>
-	<a href="{% url 'project-list' %}">My projects</a>
-</li>
-<li>
 	<a href="{% url 'form-list' project.pk %}">{{ project.title }}</a>
 </li>
-<li class="active">
+<li>
 	<a href="{{ current_path }}">Design new form</a>
 </li>
 {% endblock %}
 
 {% block container %}
 <div class="container">
-    <div class="row">
-        <div class="col-lg-12">
-        	<div class="panel panel-primary">
-				<div class="panel-heading"></div>
+	<div class="panel panel-primary">
+		<div class="panel-heading"></div>
+		<div class="panel-body">
+			<div class="panel">
 				<div class="panel-body">
-					
 					<ul class="messages">
 						{% for message in messages %}
 						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
 						{% endfor %}
 					</ul>
-					
+					<div class="container">
 					<h3>Design new form</h3>
 					<div id="loading"></div>
-					<form id="add_form" action="{% url 'form-add' project.pk %}">
-						{% csrf_token %}
-						<input name="after_process" type="hidden" value="{% url 'form-list' project.pk %}" />
-						<p>
-							<input id="form_name" type="text" placeholder=" set form name" autofocus required />
-						</p>
-						<table id="fields_wrapper">
-							<tbody></tbody>
-						</table>
-						<p>
-							<a id="add_field">Add new field</a> or drag and drop to reorder them.
-						</p>
-						<p>
-							<input id="submit_button" type="submit" value="Add this form to project" disabled="disabled" />
-							<input id="cancel_button" name="{% url 'form-list' project.pk %}" type="button" value="Cancel" />
-						</p>
-					</form>
-
+						<form id="add_form" action="{% url 'form-add' project.pk %}">
+							{% csrf_token %}
+							<input name="after_process" type="hidden" value="{% url 'form-list' project.pk %}" />
+							<p>
+								<input id="form_name" type="text" placeholder=" set form name" autofocus required />
+							</p>
+							<table id="fields_wrapper">
+								<tbody></tbody>
+							</table>
+							<p>
+								<a id="add_field">Add new field</a> or drag and drop to reorder them.
+							</p>
+							<p>
+								<input id="submit_button" type="submit" value="Add this form to project" disabled="disabled" />
+								<input id="cancel_button" name="{% url 'form-list' project.pk %}" type="button" value="Cancel" />
+							</p>
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>

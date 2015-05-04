@@ -22,7 +22,7 @@ class ProfileDetail(UpdateView):
         return context
 
     def get_success_url(self):
-        messages.success(self.request, _("Profile succesfully updated"))
+        messages.success(self.request, _("Profile successfully updated"))
         return super(ProfileDetail, self).get_success_url()
 
 

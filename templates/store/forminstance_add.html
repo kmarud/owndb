@@ -8,116 +8,108 @@
 
 {% block main-nav %}
 <li>
-	<a href="{% url 'project-list' %}">My projects</a>
-</li>
-<li>
 	<a href="{% url 'form-list' project.pk %}">{{ project.title }}</a>
 </li>
 <li>
 	<a href="{% url 'forminstance-list' project.pk form.pk %}">{{ form.title }}</a>
 </li>
-<li class="active">
+<li>
 	<a href="{{ current_path }}">Add instance</a>
 </li>
 {% endblock %}
 
 {% block container %}
 <div class="container">
-    <div class="row">
-        <div class="col-lg-12">
-        	<div class="panel panel-primary">
-				<div class="panel-heading"></div>
+	<div class="panel panel-primary">
+		<div class="panel-heading"></div>
+		<div class="panel-body">
+			<div class="panel">
 				<div class="panel-body">
-
 					<ul class="messages">
 						{% for message in messages %}
 						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
 						{% endfor %}
 					</ul>
-					
-					<h3>Add instance</h3>
-					<div id="loading"></div>
-					<form id="add_forminstance" action="{% url 'forminstance-add' project.pk form.pk %}">
-						{% csrf_token %}
-						<input name="after_process" type="hidden" value="{% url 'forminstance-list' project.pk form.pk %}" />
-						<table id="fields_render">
-							<tbody>
-								{% for field in fields %}
-								<tr>
-									<td class="field_render {{ field.type }}">
-										{% if field.type|stringformat:"s" == "Text" %}
-											{% with field.settings|split_all:";" as options %}
-												{% if options.1|stringformat:"s" == "0" %}
-													<input class="textcontent" type="text" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
-												{% else %}
-													<textarea class="textcontent" {% if options.0|stringformat:"s" == "1" %}required="required" {% endif %}></textarea>
-												{% endif %}
-											{% endwith %}
-										{% elif field.type|stringformat:"s" == "Number" %}
-											{% with field.settings|split_all:";" as options %}
-												{% if options.1|stringformat:"s" == "0" %}
-													<input class="numbercontent" type="text" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
-												{% else %}
-													<input class="numbercontent" type="number" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
-												{% endif %}
-											{% endwith %}
-										{% elif field.type|stringformat:"s" == "Choice" %}
-											{% with field.settings|split_remove_first:";" as options %}
-												{% for option in options %}
-													<input class="option_item" type="radio" name="{{ field.pk }}" /> {{ option }}<br />
+					<div class="container">
+						<h3>Add instance</h3>
+						<div id="loading"></div>
+						<form id="add_forminstance" action="{% url 'forminstance-add' project.pk form.pk %}">
+							{% csrf_token %}
+							<input name="after_process" type="hidden" value="{% url 'forminstance-list' project.pk form.pk %}" />
+							<table id="fields_render">
+								<tbody>
+									{% for field in fields %}
+									<tr>
+										<td class="field_render {{ field.type }}">
+											{% if field.type|stringformat:"s" == "Text" %}
+												{% with field.settings|split_all:";" as options %}
+													{% if options.1|stringformat:"s" == "0" %}
+														<input class="textcontent" type="text" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
+													{% else %}
+														<textarea class="textcontent" {% if options.0|stringformat:"s" == "1" %}required="required" {% endif %}></textarea>
+													{% endif %}
+												{% endwith %}
+											{% elif field.type|stringformat:"s" == "Number" %}
+												{% with field.settings|split_all:";" as options %}
+													{% if options.1|stringformat:"s" == "0" %}
+														<input class="numbercontent" type="text" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
+													{% else %}
+														<input class="numbercontent" type="number" placeholder="" {% if options.0|stringformat:"s" == "1" %}required {% endif %}/>
+													{% endif %}
+												{% endwith %}
+											{% elif field.type|stringformat:"s" == "Choice" %}
+												{% with field.settings|split_remove_first:";" as options %}
+													{% for option in options %}
+														<input class="option_item" type="radio" name="{{ field.pk }}" /> {{ option }}<br />
+													{% endfor %}
+												{% endwith %}
+											{% elif field.type|stringformat:"s" == "Checkbox" %}
+												{% with field.settings|split_remove_first:";" as options %}
+													{% for option in options %}
+														<input class="option_item" type="checkbox" /> {{ option }}<br />
+													{% endfor %}
+												{% endwith %}
+											{% elif field.type|stringformat:"s" == "LabelText" %}
+												<p class="textlabel" >{{ field.settings }}</p>
+											{% elif field.type|stringformat:"s" == "LabelImage" %}
+												{% for image in labelimages %}
+													{{ image.display }}
 												{% endfor %}
-											{% endwith %}
-										{% elif field.type|stringformat:"s" == "Checkbox" %}
-											{% with field.settings|split_remove_first:";" as options %}
-												{% for option in options %}
-													<input class="option_item" type="checkbox" /> {{ option }}<br />
-												{% endfor %}
-											{% endwith %}
-										{% elif field.type|stringformat:"s" == "LabelText" %}
-											<p class="textlabel" >{{ field.settings }}</p>
-										{% elif field.type|stringformat:"s" == "LabelImage" %}
-											{% for image in labelimages %}
-												{{ image.display }}
-											{% endfor %}
-										{% elif field.type|stringformat:"s" == "Image" %}
-											<p>
-												<input class="image" name="file" type="file" accept=".png,.gif,.jpg,.jpeg" required />
-												<progress min="0" max="100" value="0"></progress>
-											</p>
-										{% elif field.type|stringformat:"s" == "File" %}
-											<p><input class="file" type="file" /></p>
-										{% elif field.type|stringformat:"s" == "Connection" %}
-											<p>
-												<div class="modal-background"></div>
-												<div class="modal-content">
-													<table class="instances"></table>
-												</div>
-												<a class="modal-launcher" name="{{ field.settings }}">Choose one instance</a> from connected form.
-												<table class="modal-choice" name="" ><tr><td></td><td>Your choice will be placed here.</td></tr></table>
-											</p>
-										{% elif field.type|stringformat:"s" == "NextForm" %}
-											<input class="next_form" type="button" name="{% url 'forminstance-add' project.pk field.settings %}" value="Add and go to next form" />
-										{% else %}
-											<p>Unrecognized field!</p>
-										{% endif %}
-									</td>
-								</tr>
-								{% endfor %}
-							</tbody>
-						</table>
-						<p>
-							Complete form and click button below.
-						</p>
-						<p>
-							<input id="submit_button" type="submit" value="Add instance" />
-							<input id="cancel_button" name="{% url 'form-list' project.pk %}" type="button" value="Cancel" />
-						</p>
-					</form>
-					
-					
-
-
-					
+											{% elif field.type|stringformat:"s" == "Image" %}
+												<p>
+													<input class="image" name="file" type="file" accept=".png,.gif,.jpg,.jpeg" required />
+													<progress min="0" max="100" value="0"></progress>
+												</p>
+											{% elif field.type|stringformat:"s" == "File" %}
+												<p><input class="file" type="file" /></p>
+											{% elif field.type|stringformat:"s" == "Connection" %}
+												<p>
+													<div class="modal-background"></div>
+													<div class="modal-content">
+														<table class="instances"></table>
+													</div>
+													<a class="modal-launcher" name="{{ field.settings }}">Choose one instance</a> from connected form.
+													<table class="modal-choice" name="" ><tr><td></td><td>Your choice will be placed here.</td></tr></table>
+												</p>
+											{% elif field.type|stringformat:"s" == "NextForm" %}
+												<input class="next_form" type="button" name="{% url 'forminstance-add' project.pk field.settings %}" value="Add and go to next form" />
+											{% else %}
+												<p>Unrecognized field!</p>
+											{% endif %}
+										</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+							<p>
+								Complete form and click button below.
+							</p>
+							<p>
+								<input id="submit_button" type="submit" value="Add instance" />
+								<input id="cancel_button" name="{% url 'forminstance-list' project.pk form.pk %}" type="button" value="Cancel" />
+							</p>
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>

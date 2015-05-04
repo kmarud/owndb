@@ -4,7 +4,13 @@
 {% load url from future %}
 
 {% block title %}
-    Owndb - Rejestracja
+    Sign up - Owndb
+{% endblock %}
+
+{% block main-nav-out %}
+<li>
+    <a href="{{ current_path }}">Sign up</a>
+</li>
 {% endblock %}
 
 {% block container %}
@@ -25,7 +31,7 @@
 				    {% if redirect_field_value %}
 				        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
 				    {% endif %}
-				    <input name="registration" type="submit" id="registration" value="Rejestracja" class="btn btn-lg btn-success btn-block"/>
+				    <input name="registration" type="submit" id="registration" value="Sign up" class="btn btn-lg btn-success btn-block"/>
 				</form>
 			</div>
 		</div>

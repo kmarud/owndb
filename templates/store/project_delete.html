@@ -1,8 +1,7 @@
 {% extends "base.html" %}
-{% load staticfiles %}
 
 {% block title %}
-    Delete form - {{ form.title }} - {{ project.title }} - Owndb
+    Delete project - {{ project.title }} - Owndb
 {% endblock %}
 
 {% block main-nav %}
@@ -10,10 +9,7 @@
 	<a href="{% url 'form-list' project.pk %}">{{ project.title }}</a>
 </li>
 <li>
-	<a href="{% url 'forminstance-list' project.pk form.pk %}">{{ form.title }}</a> 
-</li>
-<li>
-	<a href="{{ current_path }}">Delete form</a>
+    <a href="{{ current_path }}">Delete project</a>
 </li>
 {% endblock %}
 
@@ -30,13 +26,13 @@
 						{% endfor %}
 					</ul>
 					<div class="container">
-						<h3>Delete form</h3>
-						<form method="post" action="{% url 'form-delete' project.pk form.pk %}">
+						<h3>Delete project</h3>
+						<form method="post" action="{% url 'project-delete' project.pk %}">
 							{% csrf_token %}
-							<p>Are you sure to delete this form? All data will be completely lost if you continue!
+							<p>Are you sure to delete this project? All data will be completely lost if you continue!
 								<p>
-									<input type="submit" value="Definitely delete form" />
-									<input id="cancel_button" name="{% url 'form-edit' project.pk form.pk %}" type="button" value="Cancel" />
+									<input type="submit" value="Definitely delete project" />
+									<input id="cancel_button" name="{% url 'project-edit' project.pk %}" type="button" value="Cancel" />
 								</p>
 						</form>
 					</div>
