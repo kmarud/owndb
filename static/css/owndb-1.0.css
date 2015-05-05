@@ -9,7 +9,7 @@ table#fields_wrapper, table#fields_render {
 }
 
 td.field_cell, td.field_render {
-	background-color:#eef; 
+	background-color:#f8f8f8; 
 	padding:5px; 
 	border-bottom:5px solid #fff; 
 	width:600px;
