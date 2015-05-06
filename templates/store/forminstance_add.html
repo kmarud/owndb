@@ -67,9 +67,7 @@
 											{% elif field.type|stringformat:"s" == "LabelText" %}
 												<p class="textlabel" >{{ field.settings }}</p>
 											{% elif field.type|stringformat:"s" == "LabelImage" %}
-												{% for image in labelimages %}
-													{{ image.display }}
-												{% endfor %}
+												{{ field.labelimage.display }}
 											{% elif field.type|stringformat:"s" == "Image" %}
 												<p>
 													<input class="image" name="file" type="file" accept=".png,.gif,.jpg,.jpeg" required />

@@ -255,15 +255,13 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
         context = super(FormInstanceAdd, self).get_context_data(**kwargs)
         context['project'] = models.Project.objects.get(pk=self.kwargs['project'])
         context['form'] = models.Form.objects.get(pk=self.kwargs['form'])
-        context['fields'] = models.FormField.objects.filter(form=self.kwargs['form']).order_by('position')
-
         
-        try:
-            context['labelimages'] = models.Image.objects.filter(formfield=models.FormField.objects.filter(form=self.kwargs['form']).order_by('position'), forminstance__isnull=True)
-        except:
-            print("That's only temporary...")
+        fields = models.FormField.objects.filter(form=self.kwargs['form']).order_by('position')
+        for field in fields:
+            if models.Image.objects.filter(formfield=field, forminstance__isnull=True).exists():
+                field.labelimage = models.Image.objects.get(formfield=field, forminstance__isnull=True)
+        context['fields'] = fields
         
-            
         return context
 
     def post(self, request, *args, **kwargs):
