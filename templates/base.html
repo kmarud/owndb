@@ -81,9 +81,15 @@
             </div>
         </div>
     </nav>
-
+	<div class="container" id="alertsJS">
+		{% for message in messages %}
+		<div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} alert-dismissible" role="alert">
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			{{ message }}
+		</div>
+		{% endfor %}
+	</div>
     {% block container %}{% endblock %}
-
     <footer>
         <div class="container">
             <div class="row">

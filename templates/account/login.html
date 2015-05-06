@@ -24,14 +24,7 @@
             <div class="panel panel-primary">
               <div class="panel-heading"></div>
               <div class="panel-body">
-			  
-					<ul class="messages">
-						{% for message in messages %}
-						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-						{% endfor %}
-					</ul>
-
-                
+			                  
                 {% if socialaccount.providers %}
                   <p>{% blocktrans with site.name as site_name %}Please sign in with one
                   of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>

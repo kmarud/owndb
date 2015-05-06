@@ -142,6 +142,12 @@ var owndbHelpers = {
 };
  
 $(function() {
+	
+	function alertsJS(d) {
+		$("#alertsJS").children().remove();
+		$("#alertsJS").append('<div class="alert alert-success alert-dismissible" role="alert">\
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + d + '</div>')
+	}
     
 	owndbHelpers.loadingIndicator();
     owndbHelpers.preventRedirection();
@@ -347,8 +353,7 @@ $(function() {
                 redirect = true;
                 $(location).attr('href', $('input[name="after_process"]').prop('value'));
             } else {
-				$(".messages").children().remove();
-				$(".messages").append("<li>" + data + "</li>");
+				alertsJS(data);
             }
         }).fail(function () {
             alert(error);
@@ -410,8 +415,7 @@ $(function() {
         });
 		
 		if (t==false) {
-			$(".messages").children().remove();
-			$(".messages").append("<li>You have to choose all instances!</li>");
+			alertsJS("You have to choose all instances!");
 			return 0;
 		}
 		
@@ -437,8 +441,7 @@ $(function() {
                 redirect = true;
                 $(location).attr('href', $('input[name="after_process"]').prop('value'));
             } else {
-				$(".messages").children().remove();
-				$(".messages").append("<li>" + data + "</li>");
+				alertsJS(data);
             }
         }).fail(function () {
             alert(error);

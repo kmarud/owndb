@@ -13,13 +13,7 @@
             <div class="panel panel-primary">
             	<div class="panel-heading"></div>
         	    <div class="panel-body">
-				
-					<ul class="messages">
-						{% for message in messages %}
-						<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-						{% endfor %}
-					</ul>
-					
+									
         	    	<h1>{% trans "Confirm E-mail Address" %}</h1>
 
 					{% user_display confirmation.email_address.user as user_display %}
