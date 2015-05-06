@@ -14,7 +14,7 @@ var image_settings = field_name + '<p><input class="image" disabled type="file" 
 var file_settings = field_name + '<p><input class="file" disabled type="file" /></p>';
 var connection_settings = field_name + '<p>Select form:&nbsp;<select class="connection_form"></select></p>';
 var labeltext_settings = field_name_empty + '<p><input class="label_text" type="text" placeholder=" set text" /></p>';
-var labelimage_settings = field_name_empty + '<p><input class="label_image" name="file" type="file" accept=".png,.gif,.jpg,.jpeg" required /><progress min="0" max="100" value="0"></progress></p>';
+var labelimage_settings = field_name_empty + '<p><input class="label_image" name="file" type="file" accept=".png,.gif,.jpg,.jpeg" /><progress min="0" max="100" value="0"></progress></p>';
 var nextform_settings = field_name_empty + '<p>Select form:&nbsp;<select class="connection_form"></select></p>';
 
 var choice_item = '\
@@ -143,10 +143,11 @@ var owndbHelpers = {
  
 $(function() {
 	
-	function alertsJS(d) {
+	function alertsJS(message, level) {
+		level = level || "success";
 		$("#alertsJS").children().remove();
-		$("#alertsJS").append('<div class="alert alert-success alert-dismissible" role="alert">\
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + d + '</div>')
+		$("#alertsJS").append('<div class="alert alert-' + level + ' alert-dismissible" role="alert">\
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + message + '</div>')
 	}
     
 	owndbHelpers.loadingIndicator();
@@ -353,7 +354,7 @@ $(function() {
                 redirect = true;
                 $(location).attr('href', $('input[name="after_process"]').prop('value'));
             } else {
-				alertsJS(data);
+				alertsJS(data, "danger");
             }
         }).fail(function () {
             alert(error);
@@ -441,7 +442,7 @@ $(function() {
                 redirect = true;
                 $(location).attr('href', $('input[name="after_process"]').prop('value'));
             } else {
-				alertsJS(data);
+				alertsJS(data, "danger");
             }
         }).fail(function () {
             alert(error);

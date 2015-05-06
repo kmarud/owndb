@@ -109,6 +109,12 @@ LOGIN_URL = '/accounts/login'
 
 MEDIA_URL = '/media/'
 
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger'
+}
+
 try:
     from owndb.local_settings import *
 except ImportError as e:

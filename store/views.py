@@ -2,7 +2,6 @@
 from django.views.generic.base import TemplateView
 from django.db.models import Q
 from django.core.urlresolvers import reverse
-from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
@@ -72,7 +71,7 @@ class FormAdd(VerifiedMixin,TemplateView):
                 return HttpResponse("Form name is invalid (letters, digits and spaces between allowed)!")
 
             p = models.Project.objects.get(pk=self.kwargs['project'])
-            
+                        
             f = models.Form(
                     title=form_title,
                     project=p, 
@@ -81,45 +80,53 @@ class FormAdd(VerifiedMixin,TemplateView):
             f.save()
 
             i = 0
+            
+            try:
 
-            for name in names:
-                
-                t = models.Type.objects.get(name=types[i])
-                s = settings[i]
-
-                ff = models.FormField(
-                    form=f,
-                    type=t,
-                    caption=name, 
-                    settings=s,
-                    position=i
-                )
-                ff.save()
-                
-                if (t.name == "LabelText"):
-                    data = models.DataText(
-                            formfield = ff,
-                            data = s
-                        )
-                    data.save()
+                for name in names:
                     
-                if (t.name == "LabelImage"):
-                    imgname = "labelimage" + str(i)
-                    img = models.Image(
-                        formfield=ff, 
-                        image=request.FILES[imgname]
-                    )
-                    img.save()
+                    t = models.Type.objects.get(name=types[i])
+                    s = settings[i]
 
-                if (t.name == "Connection"):
-                    cf = models.Form.objects.get(pk=s)
-                    c = models.Connection(
-                            formfield = ff,
-                            form = cf
+                    ff = models.FormField(
+                        form=f,
+                        type=t,
+                        caption=name, 
+                        settings=s,
+                        position=i
+                    )
+                    ff.save()
+                    
+                    if (t.name == "LabelText"):
+                        data = models.DataText(
+                                formfield = ff,
+                                data = s
+                            )
+                        data.save()
+                        
+                    if (t.name == "LabelImage"):
+                        imgname = "labelimage" + str(i)
+                        img = models.Image(
+                            formfield=ff, 
+                            image=request.FILES[imgname]
                         )
-                    c.save()
-                
-                i += 1
+                        img.save()
+
+                    if (t.name == "Connection"):
+                        cf = models.Form.objects.get(pk=s)
+                        c = models.Connection(
+                                formfield = ff,
+                                form = cf
+                            )
+                        c.save()
+                    
+                    i += 1
+                    
+            except:
+            
+                models.FormField.objects.filter(form=f).delete() 
+                f.delete()
+                return HttpResponse("Error occurred while creating form!")
                 
             messages.success(request, "Form successfully added!")
             return HttpResponse("OK")
@@ -385,7 +392,7 @@ class FormInstanceDetail(VerifiedMixin, DetailView):
         return context
 
 
-class ProjectAdd(VerifiedMixin, SuccessMessageMixin, TemplateView):
+class ProjectAdd(VerifiedMixin, TemplateView):
     template_name = 'store/project_add.html'
 
     def get_context_data(self, **kwargs):
@@ -403,10 +410,10 @@ class ProjectAdd(VerifiedMixin, SuccessMessageMixin, TemplateView):
         )
         if ( p.title.isspace() or p.title=='' ):
             messages.error(request, "Bad project name!")
-            return HttpResponseRedirect(reverse('project-list'))
+            return HttpResponseRedirect(reverse('project-add'))
 
         p.save()
-        messages.success(request, "Project \"" + p.title + "\" succesfully added!")
+        messages.success(request, "Project \"" + p.title + "\" successfully added!")
         return HttpResponseRedirect(reverse('project-list'))
 
 
@@ -428,7 +435,7 @@ class ProjectEdit(VerifiedMixin, TemplateView):
             return HttpResponseRedirect(reverse('project-list'))
 
         p.save()
-        messages.success(request, "Project \"" + p.title + "\" succesfully edited!")
+        messages.success(request, "Project \"" + p.title + "\" successfully edited!")
         return HttpResponseRedirect(reverse('form-list', kwargs={'project': self.kwargs['project'] } ))
 
 
@@ -444,13 +451,15 @@ class FormDelete(VerifiedMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
         
-        f = models.Form.objects.get(pk=self.kwargs['form'])
-        titleBackup = f.title
-        models.FormField.objects.filter(form=f).delete()
-        f.delete()
-        
-        messages.success(request, "Form \"" + titleBackup + "\" successfully deleted!")
-        
+        try:
+            f = models.Form.objects.get(pk=self.kwargs['form'])
+            titleBackup = f.title
+            models.FormField.objects.filter(form=f).delete()
+            f.delete()
+            messages.success(request, "Form \"" + titleBackup + "\" successfully deleted!")
+        except:
+            messages.error(request, "Error occurred while deleting form!")
+
         return HttpResponseRedirect(reverse('form-list', kwargs={'project': self.kwargs['project'] } ))
 
         
@@ -465,13 +474,15 @@ class ProjectDelete(VerifiedMixin, TemplateView):
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
         
-        p = models.Project.objects.get(pk=self.kwargs['project'])
-        forms = models.Form.objects.filter(project=p)
-        for f in forms:
-            models.FormField.objects.filter(form=f).delete()
-            f.delete()
-        p.delete()
-        
-        messages.success(request, "Project successfully deleted!")
-        
+        try:
+            p = models.Project.objects.get(pk=self.kwargs['project'])
+            forms = models.Form.objects.filter(project=p)
+            for f in forms:
+                models.FormField.objects.filter(form=f).delete()
+                f.delete()
+            p.delete()
+            messages.success(request, "Project successfully deleted!")
+        except:
+            messages.error(request, "Error occurred while deleting project!")
+
         return HttpResponseRedirect(reverse('project-list'))
