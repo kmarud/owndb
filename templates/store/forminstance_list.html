@@ -62,27 +62,25 @@
 					<li><a href="{% url 'form-edit' project.pk form.pk %}">Edit form</a></li>
 				</ul>
 			</div>
-            <nav>
-                <ul class="pagination">
-                    {% if is_paginated %}
-                        {% if page_obj.has_previous %}
-                            <li class="enabled">
-								<a href="{% url 'forminstance-list' form.project.pk form.pk page_obj.previous_page_number %}" aria-label="Previous">
-									<span aria-hidden="true">&laquo;</span>
-								</a>
-							</li>
-                        {% endif %}
-                        {% if page_obj.has_next %}
-                            <li class="enabled">
-								<a href="{% url 'forminstance-list' form.project.pk form.pk page_obj.next_page_number %}" aria-label="Next">
-									<span aria-hidden="true">&raquo;</span>
-								</a>
-							</li>
-                        {% endif %}
-                    {% endif %}
-
-                </ul>
-            </nav>
+			{% if is_paginated %}
+			<nav>
+				<ul class="pagination">
+					{% if page_obj.has_previous %}
+					<li><a href="{% url 'forminstance-list' form.project.pk form.pk page_obj.previous_page_number %}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+					{% else %}
+					<li class="disabled"><a aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+					{% endif %}
+					{% for i in page_obj.paginator.page_range %}
+					<li{% if page_obj.number == i %} class="active"{% endif %}><a href="{% url 'forminstance-list' form.project.pk form.pk i %}">{{ i }}</a></li>
+					{% endfor %}
+					{% if page_obj.has_next %}
+					<li><a href="{% url 'forminstance-list' form.project.pk form.pk page_obj.next_page_number %}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+					{% else %}
+					<li class="disabled"><a aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+					{% endif %}
+				</ul>
+			</nav>
+			{% endif %}
         </div>
     </div>
 </div>

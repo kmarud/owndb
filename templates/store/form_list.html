@@ -65,18 +65,25 @@
 					<li><a href="{% url 'project-edit' project.pk %}">Edit project</a></li>
 				</ul>
 			</div>
+			{% if is_paginated %}
 			<nav>
 				<ul class="pagination">
-					{% if is_paginated %}
-						{% if page_obj.has_previous %}
-							<li><a href="{% url 'form-list' project.pk page_obj.previous_page_number %}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-						{% endif %}
-						{% if page_obj.has_next %}
-							<li><a href="{% url 'form-list' project.pk page_obj.next_page_number %}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
-						{% endif %}
+					{% if page_obj.has_previous %}
+					<li><a href="{% url 'form-list' project.pk page_obj.previous_page_number %}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+					{% else %}
+					<li class="disabled"><a aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+					{% endif %}
+					{% for i in page_obj.paginator.page_range %}
+					<li{% if page_obj.number == i %} class="active"{% endif %}><a href="{% url 'form-list' project.pk i %}">{{ i }}</a></li>
+					{% endfor %}
+					{% if page_obj.has_next %}
+					<li><a href="{% url 'form-list' project.pk page_obj.next_page_number %}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+					{% else %}
+					<li class="disabled"><a aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
 					{% endif %}
 				</ul>
 			</nav>
+			{% endif %}
 		</div>
 	</div>
 </div>

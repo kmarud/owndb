@@ -342,7 +342,7 @@ class FormInstanceAdd(VerifiedMixin, TemplateView):
             
 class ProjectList(VerifiedMixin, ListView):
     model = models.Project
-    paginate_by = 2
+    paginate_by = 4
     context_object_name = 'project_list'
 
     def get_queryset(self):
@@ -365,7 +365,7 @@ class FormList(VerifiedMixin, ListView):
 
 class FormInstanceList(VerifiedMixin, ListView):
     model = models.FormInstance
-    paginate_by = 5
+    paginate_by = 10
     context_object_name = 'forminstance_list'
 
     def get_queryset(self):
