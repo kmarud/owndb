@@ -20,15 +20,14 @@
 				<div class="panel-body">
 					<div class="container">
 						<h3>Add project</h3>
-						<form method="post" action="{% url 'project-add' %}">
+						<form class="form-inline" method="post" action="{% url 'project-add' %}">
 							{% csrf_token %}
-							<p>
-								<input id="project_name" type="text" placeholder=" set project name" autofocus name="project_name" />
-							</p>
-							<p>
-								<input type="submit" value="Add project" />
-								<input id="cancel_button" name="{% url 'project-list' %}" type="button" value="Cancel" />
-							</p>
+							<div class="form-group">
+								<label class="sr-only" for="search">Set project name</label>
+								<input type="text" name="project_name" class="form-control" id="search-form" placeholder="Set project name" autofocus />
+							</div>
+							<input class="btn btn-default" type="submit" value="Add project" />
+							<input class="btn btn-default" id="cancel_button" name="{% url 'project-list' %}" type="button" value="Cancel" />
 						</form>
 					</div>
 				</div>

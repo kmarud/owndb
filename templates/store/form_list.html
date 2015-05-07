@@ -20,10 +20,10 @@
 				<div class="panel-body">
 					<div class="container">
 						<h3>Project forms <small>{{ project.title }}</small></h3>
-						<form class="form-inline">
+						<form class="form-inline" method="get" action="{% url 'form-list' project.pk %}">
 							<div class="form-group">
 								<label class="sr-only" for="search">Search forms</label>
-								<input type="text" class="form-control" id="search-form" placeholder="Search forms">
+								<input type="text" name="search" class="form-control" id="search-form" placeholder="Search forms">
 							</div>
 							<button type="submit" class="btn btn-default">Search</button>
 						</form>
@@ -34,28 +34,30 @@
 				<div class="panel-heading">
 					<h3 class="panel-title">List of available forms</h3>
 				</div>
-				<table class="table">
-					<thead>
-						<tr>
-							<th></th>
-							<th>Title</th>
-							<th>Instances count</th>
-							<th>Tasks</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for entry in form_list %}
-						<tr>
-							<th><img src="{% static "img/web-design.png" %}" class="img-rounded center-block"></th>
-							<td><a href="{% url 'forminstance-list' entry.project.pk entry.pk %}">{{ entry.title }}</a></td>
-							<td>{{ entry.forminstance_set.count }}</td>
-							<td>
-								<a href="{% url 'forminstance-add' entry.project.pk entry.pk %}">Add new instance</a>
-							</td>
-						</tr>
-						{% endfor %}
-					</tbody>
-				</table>
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th></th>
+								<th>Title</th>
+								<th>Instances count</th>
+								<th>Tasks</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for entry in form_list %}
+							<tr>
+								<th><img src="{% static "img/web-design.png" %}" class="img-rounded center-block"></th>
+								<td><a href="{% url 'forminstance-list' entry.project.pk entry.pk %}">{{ entry.title }}</a></td>
+								<td>{{ entry.forminstance_set.count }}</td>
+								<td>
+									<a href="{% url 'forminstance-add' entry.project.pk entry.pk %}">Add new instance</a>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
 			</div>
 			<a class="btn btn-default" href="{% url 'form-add' project.pk %}">Design new form</a>
 			<div class="btn-group">

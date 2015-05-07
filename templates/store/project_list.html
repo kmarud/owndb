@@ -14,10 +14,10 @@
 				<div class="panel-body">
 					<div class="container">
 						<h3>My projects</h3>       
-						<form class="form-inline">
+						<form class="form-inline" method="get" action="{% url 'project-list' %}">
 							<div class="form-group">
 								<label class="sr-only" for="search">Search projects</label>
-								<input type="text" class="form-control" id="search-project" placeholder="Search projects">
+								<input type="text" name="search" class="form-control" id="search-project" placeholder="Search projects">
 							</div>
 							<button type="submit" class="btn btn-default">Search</button>
 						</form>
@@ -28,24 +28,26 @@
 				<div class="panel-heading">
 					<h3 class="panel-title">List of available projects</h3>
 				</div>
-				<table class="table">
-					<thead>
-						<tr>
-							<th></th>
-							<th>Name</th>
-							<th>Forms quantity</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for entry in project_list %}
-						<tr>
-							<th><img src="{% static "img/web-design.png" %}" class="img-rounded center-block"></th>
-							<td><a href="{% url 'form-list' entry.pk %}">{{ entry.title }}</a></td>
-							<td>{{ entry.form_set.count }}</td>
-						</tr>
-						{% endfor  %}
-					</tbody>
-				</table>
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th></th>
+								<th>Name</th>
+								<th>Forms quantity</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for entry in project_list %}
+							<tr>
+								<th><img src="{% static "img/web-design.png" %}" class="img-rounded center-block"></th>
+								<td><a href="{% url 'form-list' entry.pk %}">{{ entry.title }}</a></td>
+								<td>{{ entry.form_set.count }}</td>
+							</tr>
+							{% endfor  %}
+						</tbody>
+					</table>
+				</div>
 			</div>
 			<a class="btn btn-default" href="{% url 'project-add' %}">Add project</a>
 			<div class="btn-group">

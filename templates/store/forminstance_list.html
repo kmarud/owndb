@@ -37,22 +37,24 @@
 				<div class="panel-heading">
 					<h3 class="panel-title">List of available instances</h3>
 				</div>
-				<table class="table">
-					<thead>
-						<tr>
-							<th>Completion date</th>
-							<th>User</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for entry in forminstance_list %}
-						<tr>
-							<td><a href="{% url 'forminstance-detail' entry.form.project.pk entry.form.pk entry.pk %}">{{ entry.date }}</a></td>
-							<td><a href="">{{ entry.user.username }}</a></td>
-						</tr>
-						{% endfor  %}
-					</tbody>
-				</table>
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Completion date</th>
+								<th>User</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for entry in forminstance_list %}
+							<tr>
+								<td><a href="{% url 'forminstance-detail' entry.form.project.pk entry.form.pk entry.pk %}">{{ entry.date }}</a></td>
+								<td><a href="">{{ entry.user.username }}</a></td>
+							</tr>
+							{% endfor  %}
+						</tbody>
+					</table>
+				</div>
 			</div>
 			<a class="btn btn-default" href="{% url 'forminstance-add' project.pk form.pk %}">Add new instance</a>
 			<div class="btn-group">

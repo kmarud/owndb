@@ -346,7 +346,19 @@ class ProjectList(VerifiedMixin, ListView):
     context_object_name = 'project_list'
 
     def get_queryset(self):
+        q = self.request.GET.get('search')
+        if q:
+            ret = self.model.objects.filter(owner__pk=self.request.user.pk, title__icontains=q)
+            if not ret.exists():
+                messages.error(self.request, "Projects with \"" + q + "\" were not found!")
+            else:
+                messages.success(self.request, "List of projects with \"" + q + "\" term.")
+                return ret
         return self.model.objects.filter(owner__pk=self.request.user.pk)
+        
+    def get_context_data(self, **kwargs):
+        context = super(ProjectList, self).get_context_data(**kwargs)
+        return context
 
 
 class FormList(VerifiedMixin, ListView):
@@ -355,6 +367,14 @@ class FormList(VerifiedMixin, ListView):
     context_object_name = 'form_list'
 
     def get_queryset(self):
+        q = self.request.GET.get('search')
+        if q:
+            ret = self.model.objects.filter(project__pk=self.kwargs['project'], title__icontains=q)
+            if not ret.exists():
+                messages.error(self.request, "Forms with \"" + q + "\" were not found!")
+            else:
+                messages.success(self.request, "List of forms with \"" + q + "\" term.")
+                return ret        
         return self.model.objects.filter(project__pk=self.kwargs['project'])
 
     def get_context_data(self, **kwargs):
@@ -404,9 +424,8 @@ class ProjectAdd(VerifiedMixin, TemplateView):
             title=self.request.POST.get('project_name'),
             owner=self.request.user,
             slug=slugify(self.request.POST.get('project_name'))
-
         )
-        if ( p.title.isspace() or p.title=='' ):
+        if p.title.isspace() or p.title=='':
             messages.error(request, "Bad project name!")
             return HttpResponseRedirect(reverse('project-add'))
 
@@ -428,7 +447,7 @@ class ProjectEdit(VerifiedMixin, TemplateView):
         p = models.Project.objects.get(pk=self.kwargs['project'])
         p.title = self.request.POST.get('project_name')
         p.slug = slugify(self.request.POST.get('project_name'))
-        if ( p.title.isspace() or p.title=='' ):
+        if p.title.isspace() or p.title=='':
             messages.error(request, "Bad project name!")
             return HttpResponseRedirect(reverse('project-list'))
 
